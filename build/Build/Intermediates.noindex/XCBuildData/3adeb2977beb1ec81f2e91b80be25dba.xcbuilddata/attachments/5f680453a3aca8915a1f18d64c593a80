@@ -1,0 +1,89 @@
+{
+  "" : {
+    "diagnostics" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/Smith-master.dia",
+    "emit-module-dependencies" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/Smith-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/Smith-master-emit-module.dia",
+    "pch" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/Smith-master-Bridging-header.pch",
+    "swift-dependencies" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/Smith-master.swiftdeps"
+  },
+  "/Users/yousef/Desktop/Smith/Smith/ContentView.swift" : {
+    "const-values" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/ContentView.swiftconstvalues",
+    "dependencies" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/ContentView.d",
+    "diagnostics" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/ContentView.dia",
+    "index-unit-output-path" : "/Smith.build/Debug/Smith.build/Objects-normal/arm64/ContentView.o",
+    "llvm-bc" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/ContentView.bc",
+    "object" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/ContentView.o",
+    "swift-dependencies" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/ContentView.swiftdeps",
+    "swiftmodule" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/ContentView~partial.swiftmodule"
+  },
+  "/Users/yousef/Desktop/Smith/Smith/Core/SmithAgent.swift" : {
+    "const-values" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/SmithAgent.swiftconstvalues",
+    "dependencies" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/SmithAgent.d",
+    "diagnostics" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/SmithAgent.dia",
+    "index-unit-output-path" : "/Smith.build/Debug/Smith.build/Objects-normal/arm64/SmithAgent.o",
+    "llvm-bc" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/SmithAgent.bc",
+    "object" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/SmithAgent.o",
+    "swift-dependencies" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/SmithAgent.swiftdeps",
+    "swiftmodule" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/SmithAgent~partial.swiftmodule"
+  },
+  "/Users/yousef/Desktop/Smith/Smith/Core/SmithSettings.swift" : {
+    "const-values" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/SmithSettings.swiftconstvalues",
+    "dependencies" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/SmithSettings.d",
+    "diagnostics" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/SmithSettings.dia",
+    "index-unit-output-path" : "/Smith.build/Debug/Smith.build/Objects-normal/arm64/SmithSettings.o",
+    "llvm-bc" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/SmithSettings.bc",
+    "object" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/SmithSettings.o",
+    "swift-dependencies" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/SmithSettings.swiftdeps",
+    "swiftmodule" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/SmithSettings~partial.swiftmodule"
+  },
+  "/Users/yousef/Desktop/Smith/Smith/SmithApp.swift" : {
+    "const-values" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/SmithApp.swiftconstvalues",
+    "dependencies" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/SmithApp.d",
+    "diagnostics" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/SmithApp.dia",
+    "index-unit-output-path" : "/Smith.build/Debug/Smith.build/Objects-normal/arm64/SmithApp.o",
+    "llvm-bc" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/SmithApp.bc",
+    "object" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/SmithApp.o",
+    "swift-dependencies" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/SmithApp.swiftdeps",
+    "swiftmodule" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/SmithApp~partial.swiftmodule"
+  },
+  "/Users/yousef/Desktop/Smith/Smith/Views/ChatTabView.swift" : {
+    "const-values" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/ChatTabView.swiftconstvalues",
+    "dependencies" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/ChatTabView.d",
+    "diagnostics" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/ChatTabView.dia",
+    "index-unit-output-path" : "/Smith.build/Debug/Smith.build/Objects-normal/arm64/ChatTabView.o",
+    "llvm-bc" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/ChatTabView.bc",
+    "object" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/ChatTabView.o",
+    "swift-dependencies" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/ChatTabView.swiftdeps",
+    "swiftmodule" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/ChatTabView~partial.swiftmodule"
+  },
+  "/Users/yousef/Desktop/Smith/Smith/Views/SettingsView.swift" : {
+    "const-values" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/SettingsView.swiftconstvalues",
+    "dependencies" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/SettingsView.d",
+    "diagnostics" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/SettingsView.dia",
+    "index-unit-output-path" : "/Smith.build/Debug/Smith.build/Objects-normal/arm64/SettingsView.o",
+    "llvm-bc" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/SettingsView.bc",
+    "object" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/SettingsView.o",
+    "swift-dependencies" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/SettingsView.swiftdeps",
+    "swiftmodule" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/SettingsView~partial.swiftmodule"
+  },
+  "/Users/yousef/Desktop/Smith/Smith/Views/SmithSidebarView.swift" : {
+    "const-values" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/SmithSidebarView.swiftconstvalues",
+    "dependencies" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/SmithSidebarView.d",
+    "diagnostics" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/SmithSidebarView.dia",
+    "index-unit-output-path" : "/Smith.build/Debug/Smith.build/Objects-normal/arm64/SmithSidebarView.o",
+    "llvm-bc" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/SmithSidebarView.bc",
+    "object" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/SmithSidebarView.o",
+    "swift-dependencies" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/SmithSidebarView.swiftdeps",
+    "swiftmodule" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/SmithSidebarView~partial.swiftmodule"
+  },
+  "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "const-values" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftconstvalues",
+    "dependencies" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/GeneratedAssetSymbols.d",
+    "diagnostics" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/GeneratedAssetSymbols.dia",
+    "index-unit-output-path" : "/Smith.build/Debug/Smith.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "swift-dependencies" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftdeps",
+    "swiftmodule" : "/Users/yousef/Desktop/Smith/build/Build/Intermediates.noindex/Smith.build/Debug/Smith.build/Objects-normal/arm64/GeneratedAssetSymbols~partial.swiftmodule"
+  }
+}

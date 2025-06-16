@@ -118,7 +118,7 @@ struct CPUView: View {
                     
                     Spacer()
                     
-                    Button("Ask about specific process") {
+                    Button("Ask about processes") {
                         askAboutProcesses()
                     }
                     .buttonStyle(.bordered)
@@ -136,6 +136,17 @@ struct CPUView: View {
             }
         }
         .background(.black)
+        .onAppear {
+            // Start monitoring when view appears
+            Task {
+                try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 second delay
+                cpuMonitor.startMonitoring()
+            }
+        }
+        .onDisappear {
+            // Stop monitoring when view disappears to save resources
+            cpuMonitor.stopMonitoring()
+        }
     }
     
     private var cpuUsageColor: Color {
@@ -160,8 +171,8 @@ struct CPUView: View {
     }
     
     private func askAboutProcesses() {
-        let processesInfo = cpuMonitor.processes.prefix(10).map { 
-            "\(process.name): \(String(format: "%.1f", process.cpuUsage))%" 
+        let processesInfo = cpuMonitor.processes.prefix(10).map { process in
+            "\(process.name): \(String(format: "%.1f", process.cpuUsage))%"
         }.joined(separator: "\n")
         
         let question = "Why are my CPU usage levels at \(String(format: "%.1f", cpuMonitor.cpuUsage))%? Here are my top processes:\n\n\(processesInfo)\n\nWhat should I do to optimize performance?"

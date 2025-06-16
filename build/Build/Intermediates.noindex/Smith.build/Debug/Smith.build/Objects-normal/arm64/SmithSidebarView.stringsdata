@@ -1,0 +1,72 @@
+{
+  "source": "/Users/yousef/Desktop/Smith/Smith/Views/SmithSidebarView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "SMITH",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 79
+        }
+      },
+      {
+        "comment": "",
+        "key": "Conversations",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 24
+        }
+      },
+      {
+        "comment": "",
+        "key": "New Conversation",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 38
+        }
+      },
+      {
+        "comment": "",
+        "key": "New Conversation",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 107
+        }
+      },
+      {
+        "comment": "",
+        "key": "Smith Settings",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 133
+        }
+      },
+      {
+        "comment": "",
+        "key": "Start a Conversation",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 222
+        }
+      },
+      {
+        "comment": "",
+        "key": "Select a conversation from the sidebar or start a new one to chat with Smith",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 227
+        }
+      },
+      {
+        "comment": "",
+        "key": "New Conversation",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 232
+        }
+      }
+    ]
+  },
+  "version": 1
+}

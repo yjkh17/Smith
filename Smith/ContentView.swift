@@ -8,8 +8,12 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject private var smithAgent = SmithAgent()
+    
     var body: some View {
-        SmithSidebarView()
+        ChatView()
+            .environmentObject(smithAgent)
+            .background(.black)
     }
 }
 

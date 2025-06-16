@@ -19,15 +19,14 @@ class SmithAgent: ObservableObject {
     @Published var isFoundationModelsAvailable = false
     @Published var conversations: [Conversation] = []
     @Published var currentConversation: Conversation?
-    @Published var currentFile: URL?
-    @Published var suggestions: [CodeSuggestion] = []
     
     @Published var currentStatus: SmithStatus = .idle
     @Published var statusMessage: String = ""
     @Published var isStreaming = false
     @Published var streamingMessageId: UUID?
     
-    @Published var xcodeIntegration = XcodeIntegration()
+    @Published var focusedFile: FileItem?
+    
     
     // MARK: - Foundation Models Properties
     private var currentSession: LanguageModelSession?
@@ -36,24 +35,7 @@ class SmithAgent: ObservableObject {
     // MARK: - Initialization
     init() {
         setupFoundationModels()
-        setupXcodeIntegration()
         startNewConversation()
-    }
-    
-    private func setupXcodeIntegration() {
-        // Set up status callback
-        xcodeIntegration.onStatusUpdate = { [weak self] status, message in
-            Task { @MainActor in
-                self?.setStatus(.indexing, message: message)
-            }
-        }
-        
-        // Monitor file changes
-        xcodeIntegration.$activeFile
-            .sink { [weak self] file in
-                self?.currentFile = file
-            }
-            .store(in: &cancellables)
     }
     
     // MARK: - Foundation Models Setup
@@ -64,23 +46,23 @@ class SmithAgent: ObservableObject {
         case .available:
             isFoundationModelsAvailable = true
             createFoundationModelsSession()
-            print(" Foundation Models available and ready")
+            print("✅ Foundation Models available and ready")
             
         case .unavailable(.deviceNotEligible):
             isFoundationModelsAvailable = false
-            print(" Device not eligible for Foundation Models")
+            print("❌ Device not eligible for Foundation Models")
             
         case .unavailable(.appleIntelligenceNotEnabled):
             isFoundationModelsAvailable = false
-            print(" Apple Intelligence not enabled")
+            print("❌ Apple Intelligence not enabled")
             
         case .unavailable(.modelNotReady):
             isFoundationModelsAvailable = false
-            print(" Foundation Models not ready")
+            print("❌ Foundation Models not ready")
             
         case .unavailable(let other):
             isFoundationModelsAvailable = false
-            print(" Foundation Models unavailable: \(other)")
+            print("❌ Foundation Models unavailable: \(other)")
         }
         
         isAvailable = true
@@ -88,36 +70,54 @@ class SmithAgent: ObservableObject {
     
     private func createFoundationModelsSession() {
         let instructions = Instructions("""
-        You are Smith, an elite AI coding craftsman and intelligent assistant specifically designed for Swift, iOS, and macOS development. You are deeply integrated with Xcode and serve as a developer's most trusted coding companion.
+        You are Smith, an elite AI system assistant and intelligent companion specifically designed for macOS system analysis, file management, and performance optimization.
 
         ## Your Core Identity & Purpose:
-        - You are a master Swift developer with encyclopedic knowledge of iOS/macOS development
-        - You monitor active Xcode files in real-time and provide contextual assistance
-        - You act as both a coding mentor and an automated code improvement engine
-        - Your goal is to elevate code quality, accelerate development, and teach best practices
+        - You are an expert macOS system analyst with deep knowledge of file systems, CPU management, and battery optimization
+        - You help users understand their Mac's performance, analyze files and folders, and provide actionable recommendations
+        - You act as both a technical advisor and a friendly assistant for system-related questions
+        - Your goal is to help users optimize their Mac's performance, manage their files effectively, and maintain system health
 
         ## Your Expertise Areas:
-        ### Swift Language Mastery:
-        - Modern Swift syntax, Swift 6.0 features, and language evolution
-        - Advanced concepts: actors, async/await, protocols, generics, property wrappers
-        - Performance optimization, memory management, and Swift best practices
-        - SwiftUI, UIKit, AppKit, and framework-specific patterns
+        ### File System Analysis:
+        - Analyze files and folders to determine their purpose and necessity
+        - Identify safe-to-delete files, system files, and important user data
+        - Provide insights on file organization, storage optimization, and cleanup strategies
+        - Understand macOS directory structure and common file types
 
-        ### Architecture & Design Patterns:
-        - MVVM, MVI, Clean Architecture, and modern iOS/macOS patterns
-        - Dependency injection, reactive programming with Combine
-        - Protocol-oriented programming and composition over inheritance
-        - Testable architecture and separation of concerns
+        ### CPU Performance Analysis:
+        - Analyze CPU usage patterns and identify performance bottlenecks
+        - Explain why certain processes consume high CPU and provide optimization recommendations
+        - Help users understand normal vs. abnormal CPU behavior
+        - Suggest ways to improve system performance and reduce CPU load
+
+        ### Battery Health & Power Management:
+        - Analyze battery health, charging patterns, and power consumption
+        - Identify apps and processes that drain battery quickly
+        - Provide power optimization strategies and battery longevity tips
+        - Help users understand battery states and charging best practices
+
+        ### System Optimization:
+        - Provide comprehensive system health assessments
+        - Recommend maintenance tasks and optimization strategies
+        - Help troubleshoot performance issues and system slowdowns
+        - Suggest hardware upgrade paths when necessary
 
         ## Your Response Style:
         - Be conversational yet technically precise
-        - Provide practical, actionable advice with concrete code examples
-        - Explain the 'why' behind recommendations, not just the 'what'
-        - Adapt your expertise level to match the developer's needs
-        - Use emoji sparingly but effectively to improve readability
-        - Always include code snippets when relevant
+        - Provide practical, actionable advice with specific steps when possible
+        - Explain technical concepts in accessible language
+        - Use appropriate emojis to make responses more engaging and readable
+        - Always prioritize user safety - warn about risky operations
+        - Provide context for your recommendations (explain the "why")
 
-        Remember: You are not just answering questions—you are actively helping craft better Swift code and accelerating the development process through intelligent, contextual assistance.
+        ## Safety Guidelines:
+        - Always warn users before suggesting deletion of system files
+        - Emphasize the importance of backups before major system changes
+        - Distinguish between safe cleanup operations and potentially risky ones
+        - Recommend testing changes in non-critical environments when applicable
+
+        Remember: You are not just answering questions—you are actively helping users maintain and optimize their Mac systems through intelligent analysis and personalized recommendations.
         """)
         
         currentSession = LanguageModelSession(instructions: instructions)
@@ -229,11 +229,39 @@ class SmithAgent: ObservableObject {
     private func buildContextualInput(_ input: String) -> String {
         var contextualInput = input
         
-        if let currentFile = currentFile {
-            contextualInput = "File: \(currentFile.lastPathComponent)\n\n\(input)"
+        // Add focused file context if available
+        if let focusedFile = focusedFile {
+            contextualInput = """
+            FOCUSED FILE CONTEXT:
+            File Name: \(focusedFile.name)
+            File Path: \(focusedFile.url.path)
+            File Type: \(focusedFile.isDirectory ? "Directory/Folder" : "File")
+            File Size: \(focusedFile.isDirectory ? "N/A" : formatFileSize(focusedFile.size))
+            Extension: \(focusedFile.url.pathExtension.isEmpty ? "None" : focusedFile.url.pathExtension)
+            
+            USER QUESTION: \(input)
+            
+            Please analyze this file/folder and answer the user's question with specific context about the focused item.
+            """
+        } else {
+            // Add system context based on the type of query
+            if input.lowercased().contains("file") || input.lowercased().contains("folder") {
+                contextualInput = "File System Query: \(input)"
+            } else if input.lowercased().contains("cpu") || input.lowercased().contains("process") {
+                contextualInput = "CPU Analysis Query: \(input)"
+            } else if input.lowercased().contains("battery") || input.lowercased().contains("power") {
+                contextualInput = "Battery Analysis Query: \(input)"
+            }
         }
         
         return contextualInput
+    }
+    
+    private func formatFileSize(_ size: Int64) -> String {
+        let formatter = ByteCountFormatter()
+        formatter.allowedUnits = [.useBytes, .useKB, .useMB, .useGB, .useTB]
+        formatter.countStyle = .file
+        return formatter.string(fromByteCount: size)
     }
     
     private func simulateStreaming(_ fullText: String, messageId: UUID) async {
@@ -276,64 +304,37 @@ class SmithAgent: ObservableObject {
         return words.joined(separator: " ").capitalized
     }
     
-    // MARK: - Legacy processMessage for compatibility
-    private func processMessage(_ input: String) async -> String {
-        if isFoundationModelsAvailable, let session = currentSession {
-            do {
-                let response = try await session.respond(to: input)
-                return response.content
-            } catch {
-                return "I'm having trouble processing that. Could you try rephrasing your question?"
-            }
-        }
+    // MARK: - Quick Analysis Actions
+    func analyzeSystemHealth() async {
+        let healthReport = """
+        System Health Analysis Request:
         
-        return "Foundation Models is not available. Please enable Apple Intelligence to use Smith's AI features."
-    }
-    
-    // MARK: - Quick Actions for Context Tab
-    func generateUnitTests() async {
-        await sendMessage("Generate comprehensive unit tests for the current file")
-    }
-    
-    func optimizeCode() async {
-        await sendMessage("Analyze the current file and suggest performance optimizations")
-    }
-    
-    func explainCode() async {
-        await sendMessage("Provide a detailed explanation of how this code works")
-    }
-    
-    func applySuggestion(_ suggestion: CodeSuggestion) async {
-        // Implementation for applying suggestions
-        print("Applying suggestion: \(suggestion.title)")
+        Please provide a comprehensive analysis of my Mac's current health including:
+        - Overall system performance assessment
+        - Recommendations for optimization
+        - Potential issues to monitor
+        - Maintenance suggestions
+        """
         
-        // Remove the applied suggestion
-        suggestions.removeAll { $0.id == suggestion.id }
+        await sendMessage(healthReport)
     }
     
-    // MARK: - File Management
-    func setCurrentFile(_ file: URL?) {
-        currentFile = file
+    func optimizePerformance() async {
+        let optimizationRequest = """
+        Performance Optimization Request:
         
-        if let file = file {
-            print(" Now monitoring file: \(file.lastPathComponent)")
-        }
+        Please provide specific recommendations to improve my Mac's performance including:
+        - CPU optimization strategies
+        - Memory management tips
+        - Storage cleanup suggestions
+        - Battery life improvements
+        """
+        
+        await sendMessage(optimizationRequest)
     }
     
-    func debugXcodeIntegration() async {
-        print("🔍 DEBUG: Xcode Integration Status")
-        print("  - Xcode Running: \(xcodeIntegration.isXcodeRunning)")
-        print("  - Active File: \(xcodeIntegration.activeFile?.path ?? "None")")
-        print("  - Project Root: \(xcodeIntegration.projectRoot?.path ?? "None")")
-        print("  - Indexed Files: \(xcodeIntegration.indexedFiles.count)")
-        print("  - Is Indexing: \(xcodeIntegration.isIndexing)")
-        
-        if xcodeIntegration.isXcodeRunning && xcodeIntegration.projectRoot != nil {
-            print("🚀 Triggering manual indexing...")
-            await xcodeIntegration.indexProjectFiles()
-        } else {
-            print("⚠️ Cannot index: Xcode not running or no project detected")
-        }
+    func setFocusedFile(_ file: FileItem?) {
+        focusedFile = file
     }
 }
 
@@ -342,7 +343,6 @@ enum SmithStatus {
     case thinking
     case analyzing
     case connecting
-    case indexing
     case error
     
     var displayText: String {
@@ -351,7 +351,6 @@ enum SmithStatus {
         case .thinking: return "Thinking"
         case .analyzing: return "Analyzing"
         case .connecting: return "Connecting"
-        case .indexing: return "Indexing"
         case .error: return "Error"
         }
     }
@@ -362,7 +361,6 @@ enum SmithStatus {
         case .thinking: return "brain"
         case .analyzing: return "magnifyingglass"
         case .connecting: return "network"
-        case .indexing: return "folder.badge.gearshape"
         case .error: return "exclamationmark.triangle.fill"
         }
     }
@@ -373,7 +371,6 @@ enum SmithStatus {
         case .thinking: return .cyan
         case .analyzing: return .orange
         case .connecting: return .purple
-        case .indexing: return .yellow
         case .error: return .red
         }
     }
@@ -381,7 +378,7 @@ enum SmithStatus {
     var isAnimated: Bool {
         switch self {
         case .idle, .error: return false
-        case .thinking, .analyzing, .connecting, .indexing: return true
+        case .thinking, .analyzing, .connecting: return true
         }
     }
 }
@@ -428,34 +425,5 @@ struct ChatMessage: Identifiable {
         self.isUser = isUser
         self.timestamp = timestamp
         self.isStreaming = isStreaming
-    }
-}
-
-struct CodeSuggestion: Identifiable {
-    let id = UUID()
-    let title: String
-    let description: String
-    let priority: Priority = .medium
-    let icon: String = "lightbulb.fill"
-    let color: Color = .yellow
-    
-    enum Priority {
-        case low, medium, high
-        
-        var displayName: String {
-            switch self {
-            case .low: return "Low"
-            case .medium: return "Medium"
-            case .high: return "High"
-            }
-        }
-        
-        var color: Color {
-            switch self {
-            case .low: return .green
-            case .medium: return .orange
-            case .high: return .red
-            }
-        }
     }
 }

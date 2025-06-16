@@ -6,12 +6,13 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct DiskView: View {
     @StateObject private var fileManager = FileSystemManager()
     @EnvironmentObject private var smithAgent: SmithAgent
-    @State private var showingFilePicker = false
     @State private var selectedFileURL: URL?
+    @State private var expandedFolders: Set<URL> = []
     
     var body: some View {
         VStack(spacing: 0) {
@@ -59,12 +60,6 @@ struct DiskView: View {
                     .truncationMode(.middle)
                 
                 Spacer()
-                
-                // File picker button
-                Button("Select File") {
-                    showingFilePicker = true
-                }
-                .buttonStyle(.borderedProminent)
             }
             .padding()
             .background(.gray.opacity(0.1))
@@ -88,19 +83,15 @@ struct DiskView: View {
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                     } else {
-                        List(fileManager.items, selection: Binding<FileItem?>(
-                            get: { fileManager.selectedItem },
-                            set: { item in
-                                if let item = item {
+                        List(fileManager.items, id: \.id) { item in
+                            FileRowView(item: item, isSelected: fileManager.selectedItem?.id == item.id)
+                                .onTapGesture {
+                                    // Single click - select item and set as focused
                                     fileManager.selectItem(item)
-                                    if item.isDirectory {
-                                        fileManager.loadDirectory(item.url)
-                                    }
+                                    smithAgent.setFocusedFile(item)
                                 }
-                            }
-                        )) { item in
-                            FileRowView(item: item)
                                 .onTapGesture(count: 2) {
+                                    // Double click - expand folder or analyze file
                                     if item.isDirectory {
                                         fileManager.loadDirectory(item.url)
                                     } else {
@@ -153,11 +144,6 @@ struct DiskView: View {
                             
                             // Quick actions
                             VStack(spacing: 8) {
-                                Button("Ask: What does this file do?") {
-                                    askAboutFile(selectedItem)
-                                }
-                                .buttonStyle(.borderedProminent)
-                                
                                 Button("Ask: Is this file necessary?") {
                                     askAboutFileNecessity(selectedItem)
                                 }
@@ -179,7 +165,7 @@ struct DiskView: View {
                             Text("Select a file or folder")
                                 .foregroundColor(.gray)
                             
-                            Text("Double-click to open folders or ask questions about files")
+                            Text("Click to select, double-click to open folders or ask questions about files")
                                 .font(.caption)
                                 .foregroundColor(.gray)
                                 .multilineTextAlignment(.center)
@@ -192,29 +178,10 @@ struct DiskView: View {
             }
         }
         .background(.black)
-        .fileImporter(
-            isPresented: $showingFilePicker,
-            allowedContentTypes: [.item],
-            allowsMultipleSelection: false
-        ) { result in
-            switch result {
-            case .success(let urls):
-                if let url = urls.first {
-                    selectedFileURL = url
-                    let fileItem = FileItem(url: url)
-                    if let fileItem = fileItem {
-                        fileManager.selectItem(fileItem)
-                        askAboutFile(fileItem)
-                    }
-                }
-            case .failure(let error):
-                print("File selection failed: \(error)")
-            }
-        }
     }
     
     private func askAboutFile(_ item: FileItem) {
-        let question = "What does this file do?\n\nFile: \(item.name)\nPath: \(item.url.path)\nType: \(item.isDirectory ? "Directory" : "File")"
+        let question = "What does this file do?"
         
         Task {
             await smithAgent.sendMessage(question)
@@ -222,7 +189,7 @@ struct DiskView: View {
     }
     
     private func askAboutFileNecessity(_ item: FileItem) {
-        let question = "Is this file necessary and safe to delete?\n\nFile: \(item.name)\nPath: \(item.url.path)\nType: \(item.isDirectory ? "Directory" : "File")"
+        let question = "Is this file necessary and safe to delete?"
         
         Task {
             await smithAgent.sendMessage(question)
@@ -230,16 +197,17 @@ struct DiskView: View {
     }
     
     private func analyzeFile(_ item: FileItem) {
-        let analysis = fileManager.analyzeFile(item)
+        let question = "Please provide a detailed analysis of this file."
         
         Task {
-            await smithAgent.sendMessage("Please provide a detailed analysis of this file:\n\n\(analysis)")
+            await smithAgent.sendMessage(question)
         }
     }
 }
 
 struct FileRowView: View {
     let item: FileItem
+    let isSelected: Bool
     
     var body: some View {
         HStack {
@@ -268,6 +236,10 @@ struct FileRowView: View {
             }
         }
         .padding(.vertical, 2)
+        .background(
+            RoundedRectangle(cornerRadius: 6)
+                .fill(isSelected ? .cyan.opacity(0.2) : .clear)
+        )
     }
     
     private func formatFileSize(_ size: Int64) -> String {

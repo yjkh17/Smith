@@ -1,5 +1,5 @@
 //
-//  ChatTabView.swift
+//  ChatView.swift
 //  Smith - Your AI Coding Craftsman
 //
 //  Created by Yousef Jawdat on 14/06/2025.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ChatTabView: View {
+struct ChatView: View {
     @EnvironmentObject private var smithAgent: SmithAgent
     @State private var inputText = ""
     @FocusState private var isInputFocused: Bool
@@ -46,6 +46,44 @@ struct ChatTabView: View {
             
             Divider()
                 .overlay(.gray.opacity(0.5))
+            
+            if let focusedFile = smithAgent.focusedFile {
+                HStack(spacing: 8) {
+                    Image(systemName: "target")
+                        .foregroundColor(.cyan)
+                        .font(.caption)
+                    
+                    Text("Focused on:")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                    
+                    Image(systemName: focusedFile.icon)
+                        .foregroundColor(focusedFile.isDirectory ? .cyan : .white)
+                        .font(.caption)
+                    
+                    Text(focusedFile.name)
+                        .font(.caption)
+                        .foregroundColor(.white)
+                        .lineLimit(1)
+                    
+                    Spacer()
+                    
+                    Button {
+                        smithAgent.setFocusedFile(nil)
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(.gray)
+                            .font(.caption)
+                    }
+                    .buttonStyle(.plain)
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background(.gray.opacity(0.1))
+                
+                Divider()
+                    .overlay(.gray.opacity(0.5))
+            }
             
             HStack(spacing: 8) {
                 TextField("Ask Smith anything...", text: $inputText, axis: .vertical)
@@ -336,7 +374,7 @@ struct TypingIndicator: View {
 }
 
 #Preview {
-    ChatTabView()
+    ChatView()
         .environmentObject(SmithAgent())
         .background(.black)
 }

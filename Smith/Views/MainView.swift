@@ -9,115 +9,175 @@ import SwiftUI
 
 struct MainView: View {
     @StateObject private var smithAgent = SmithAgent()
-    @State private var selectedTab: MainTab = .chat
+    @State private var selectedSystemView: SystemView = .disk
     
     var body: some View {
-        NavigationSplitView {
-            // Sidebar with navigation
-            VStack(spacing: 0) {
-                // App Header
-                VStack(spacing: 8) {
-                    HStack {
-                        Image(systemName: "brain")
-                            .foregroundColor(.cyan)
-                            .font(.title)
-                        
-                        Text("SMITH")
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-                            .fontDesign(.monospaced)
-                    }
+        VStack(spacing: 0) {
+            // Header with navigation buttons
+            HStack {
+                // App branding
+                HStack(spacing: 8) {
+                    Image(systemName: "brain")
+                        .foregroundColor(.cyan)
+                        .font(.title2)
+                    
+                    Text("SMITH")
+                        .font(.title3)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                        .fontDesign(.monospaced)
                     
                     Text("AI System Assistant")
                         .font(.caption)
                         .foregroundColor(.gray)
                 }
-                .padding()
-                .background(.gray.opacity(0.1))
-                
-                Divider()
-                
-                // Navigation Tabs
-                List(MainTab.allCases, id: \.self, selection: $selectedTab) { tab in
-                    NavigationTabRow(tab: tab, isSelected: selectedTab == tab)
-                        .tag(tab)
-                }
-                .listStyle(.sidebar)
-                .scrollContentBackground(.hidden)
                 
                 Spacer()
                 
-                // Status Footer
-                VStack(spacing: 4) {
-                    HStack {
-                        Circle()
-                            .fill(smithAgent.isAvailable ? .green : .red)
-                            .frame(width: 8, height: 8)
-                        
-                        Text(smithAgent.isAvailable ? "AI Ready" : "AI Unavailable")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                        
-                        Spacer()
+                // System view selector buttons
+                HStack(spacing: 4) {
+                    ForEach(SystemView.allCases, id: \.self) { view in
+                        Button {
+                            selectedSystemView = view
+                        } label: {
+                            HStack(spacing: 6) {
+                                Image(systemName: view.icon)
+                                    .font(.system(size: 14, weight: .medium))
+                                
+                                Text(view.title)
+                                    .font(.system(size: 13, weight: .medium))
+                            }
+                            .foregroundColor(selectedSystemView == view ? .black : .white)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(selectedSystemView == view ? .cyan : .gray.opacity(0.2))
+                            )
+                        }
+                        .buttonStyle(.plain)
                     }
+                }
+                
+                Spacer()
+                
+                // Status indicator
+                HStack(spacing: 6) {
+                    Circle()
+                        .fill(smithAgent.isAvailable ? .green : .red)
+                        .frame(width: 8, height: 8)
+                    
+                    Text(smithAgent.isAvailable ? "AI Ready" : "AI Unavailable")
+                        .font(.caption)
+                        .foregroundColor(.gray)
                     
                     if smithAgent.isProcessing {
-                        HStack {
-                            ProgressView()
-                                .scaleEffect(0.7)
-                            Text("Processing...")
-                                .font(.caption)
-                                .foregroundColor(.gray)
-                            Spacer()
-                        }
+                        ProgressView()
+                            .scaleEffect(0.6)
                     }
                 }
-                .padding()
             }
-            .navigationTitle("Smith")
-            .navigationSplitViewColumnWidth(min: 200, ideal: 220)
-            .background(.black)
-        } detail: {
-            // Main Content Area
-            Group {
-                switch selectedTab {
-                case .chat:
-                    ChatTabView()
-                case .disk:
-                    DiskView()
-                case .cpu:
-                    CPUView()
-                case .battery:
-                    BatteryView()
+            .padding()
+            .background(.gray.opacity(0.1))
+            
+            Divider()
+            
+            // Main content area - two sections
+            HStack(spacing: 0) {
+                // Left section - System monitoring views
+                VStack(spacing: 0) {
+                    // Section header
+                    HStack {
+                        Image(systemName: selectedSystemView.icon)
+                            .foregroundColor(.cyan)
+                            .font(.headline)
+                        
+                        Text(selectedSystemView.title)
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.white)
+                        
+                        Spacer()
+                        
+                        Text(selectedSystemView.description)
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                    }
+                    .padding()
+                    .background(.gray.opacity(0.05))
+                    
+                    Divider()
+                    
+                    // System view content
+                    Group {
+                        switch selectedSystemView {
+                        case .disk:
+                            DiskView()
+                        case .cpu:
+                            CPUView()
+                        case .battery:
+                            BatteryView()
+                        }
+                    }
+                    .environmentObject(smithAgent)
                 }
+                .frame(minWidth: 400, maxWidth: .infinity)
+                .background(.black)
+                
+                Divider()
+                    .background(.gray.opacity(0.3))
+                
+                // Right section - Chat
+                VStack(spacing: 0) {
+                    // Chat header
+                    HStack {
+                        Image(systemName: "message.circle.fill")
+                            .foregroundColor(.cyan)
+                            .font(.headline)
+                        
+                        Text("AI Chat")
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.white)
+                        
+                        Spacer()
+                        
+                        Text("Ask questions about your system")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                    }
+                    .padding()
+                    .background(.gray.opacity(0.05))
+                    
+                    Divider()
+                    
+                    // Chat content
+                    ChatView()
+                        .environmentObject(smithAgent)
+                }
+                .frame(minWidth: 350, maxWidth: .infinity)
+                .background(.black)
             }
-            .environmentObject(smithAgent)
-            .navigationTitle(selectedTab.title)
-            .background(.black)
         }
-        .navigationSplitViewStyle(.balanced)
+        .background(.black)
     }
 }
 
-enum MainTab: String, CaseIterable {
-    case chat = "chat"
+enum SystemView: String, CaseIterable {
     case disk = "disk"
     case cpu = "cpu"
     case battery = "battery"
     
     var title: String {
         switch self {
-        case .chat: return "AI Chat"
-        case .disk: return "Disk Analysis"
-        case .cpu: return "CPU Monitor"
-        case .battery: return "Battery Monitor"
+        case .disk: return "Disk"
+        case .cpu: return "CPU"
+        case .battery: return "Battery"
         }
     }
     
     var icon: String {
         switch self {
-        case .chat: return "message.circle.fill"
         case .disk: return "externaldrive.fill"
         case .cpu: return "cpu.fill"
         case .battery: return "battery.100.circle.fill"
@@ -126,45 +186,10 @@ enum MainTab: String, CaseIterable {
     
     var description: String {
         switch self {
-        case .chat: return "Chat with AI assistant"
         case .disk: return "Browse and analyze files"
         case .cpu: return "Monitor CPU usage"
         case .battery: return "Monitor battery health"
         }
-    }
-}
-
-struct NavigationTabRow: View {
-    let tab: MainTab
-    let isSelected: Bool
-    
-    var body: some View {
-        HStack(spacing: 12) {
-            Image(systemName: tab.icon)
-                .foregroundColor(isSelected ? .cyan : .gray)
-                .font(.system(size: 16, weight: .medium))
-                .frame(width: 20)
-            
-            VStack(alignment: .leading, spacing: 2) {
-                Text(tab.title)
-                    .foregroundColor(isSelected ? .white : .gray)
-                    .fontWeight(isSelected ? .semibold : .regular)
-                
-                Text(tab.description)
-                    .font(.caption)
-                    .foregroundColor(.gray)
-                    .lineLimit(1)
-            }
-            
-            Spacer()
-        }
-        .padding(.vertical, 8)
-        .padding(.horizontal, 4)
-        .background(
-            RoundedRectangle(cornerRadius: 8)
-                .fill(isSelected ? .cyan.opacity(0.1) : .clear)
-        )
-        .contentShape(Rectangle())
     }
 }
 

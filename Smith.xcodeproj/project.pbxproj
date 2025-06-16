@@ -275,9 +275,7 @@
 				INFOPLIST_FILE = Smith/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Smith;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
-				INFOPLIST_KEY_NSAppleEventsUsageDescription = "Smith needs to communicate with Xcode to provide file monitoring, code insertion, and project integration features.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INFOPLIST_KEY_NSSystemAdministrationUsageDescription = "Smith needs to access System Events to monitor Xcode activity and provide seamless integration with your development workflow.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -311,9 +309,7 @@
 				INFOPLIST_FILE = Smith/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Smith;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
-				INFOPLIST_KEY_NSAppleEventsUsageDescription = "Smith needs to communicate with Xcode to provide file monitoring, code insertion, and project integration features.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INFOPLIST_KEY_NSSystemAdministrationUsageDescription = "Smith needs to access System Events to monitor Xcode activity and provide seamless integration with your development workflow.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",

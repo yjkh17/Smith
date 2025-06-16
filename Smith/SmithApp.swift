@@ -11,14 +11,15 @@ import SwiftUI
 struct SmithApp: App {
     var body: some Scene {
         WindowGroup {
-            SmithSidebarView()
-                .frame(minWidth: 400, maxWidth: .infinity, minHeight: 600, maxHeight: .infinity)
+            MainView()
+                .frame(minWidth: 800, maxWidth: .infinity, minHeight: 700, maxHeight: .infinity)
+                .background(.black)
         }
         .windowStyle(.titleBar)
         .windowToolbarStyle(.unified(showsTitle: true))
         .windowBackgroundDragBehavior(.enabled)
         .windowResizability(.contentSize)
-        .defaultSize(width: 1000, height: 700)
+        .defaultSize(width: 1200, height: 800)
         .commands {
             SmithCommands()
         }
@@ -32,62 +33,24 @@ struct SmithApp: App {
 
 struct SmithCommands: Commands {
     var body: some Commands {
-        CommandGroup(after: .newItem) {
-            Button("Analyze Current File") {
-                // TODO: Implement global action
-            }
-            .keyboardShortcut("a", modifiers: [.command, .shift])
-            
-            Button("Quick Code Review") {
-                // TODO: Implement global action
-            }
-            .keyboardShortcut("r", modifiers: [.command, .shift])
-            
-            Button("Generate Unit Tests") {
-                // TODO: Implement global action
-            }
-            .keyboardShortcut("t", modifiers: [.command, .shift])
-        }
-        
         CommandMenu("Smith") {
-            Button("Settings...") {
-                openSettingsWindow()
+            Button("New Conversation") {
+                // TODO: Add global action for new conversation
             }
-            .keyboardShortcut(",", modifiers: [.command])
+            .keyboardShortcut("n", modifiers: [.command])
+            
+            Button("Analyze System Health") {
+                // TODO: Add global action for system health analysis
+            }
+            .keyboardShortcut("h", modifiers: [.command, .shift])
             
             Divider()
-            
-            Button("Toggle Auto-Apply Mode") {
-                // TODO: Implement global action
-            }
-            .keyboardShortcut("m", modifiers: [.command, .option])
             
             Button("Show/Hide Smith") {
                 NSApp.activate(ignoringOtherApps: true)
             }
             .keyboardShortcut("k", modifiers: [.command])
         }
-    }
-    
-    private func openSettingsWindow() {
-        let settingsView = SettingsView()
-        let hostingController = NSHostingController(rootView: settingsView)
-        
-        let settingsWindow = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 700, height: 500),
-            styleMask: [.titled, .closable, .resizable],
-            backing: .buffered,
-            defer: false
-        )
-        
-        settingsWindow.title = "Smith Settings"
-        settingsWindow.contentViewController = hostingController
-        settingsWindow.center()
-        settingsWindow.setFrameAutosaveName("SmithSettingsWindow")
-        settingsWindow.makeKeyAndOrderFront(nil)
-        
-        // Make sure the window is visible
-        NSApp.activate(ignoringOtherApps: true)
     }
 }
 
@@ -108,6 +71,10 @@ struct SmithMenuBarView: View {
             Divider()
                 .overlay(.cyan.opacity(0.3))
             
+            Text("AI System Assistant")
+                .font(.caption)
+                .foregroundColor(.gray)
+            
             Button("Show Smith") {
                 NSApp.activate(ignoringOtherApps: true)
             }
@@ -120,7 +87,7 @@ struct SmithMenuBarView: View {
             .foregroundStyle(.secondary)
         }
         .padding()
-        .frame(width: 160)
+        .frame(width: 180)
         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
     }
 }
