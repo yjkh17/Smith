@@ -98,6 +98,35 @@ Smith maintains comprehensive knowledge about:
 - **16GB RAM** recommended for optimal AI performance
 - **Administrative Privileges** for deep system monitoring
 
+## 🏁 Getting Started
+
+### Prerequisites
+
+- **macOS 26.0 or later**
+- **Xcode 15 or later**
+
+### Build & Run
+
+1. Open `Smith.xcodeproj` in Xcode.
+2. Select the **Smith** target from the scheme menu.
+3. Click **Run** to build and launch the app.
+
+### LaunchAgent & CLI Options
+
+Smith can run in the background using a LaunchAgent. From the app's **Background Settings** you can install the agent which places
+`~/Library/LaunchAgents/com.motherofbrand.Smith.BackgroundMonitor.plist` on your Mac. The agent launches Smith with the following
+command‑line options:
+
+- `--background-monitor` &ndash; run the app headlessly for background monitoring
+- `--intensity=<minimal|medium|balanced|comprehensive>` &ndash; control monitoring frequency
+
+You can manually load or unload the agent at any time:
+
+```bash
+launchctl load ~/Library/LaunchAgents/com.motherofbrand.Smith.BackgroundMonitor.plist
+launchctl unload ~/Library/LaunchAgents/com.motherofbrand.Smith.BackgroundMonitor.plist
+```
+
 ## 🛠️ Architecture
 
 Smith is built with modern Apple technologies for comprehensive system awareness:
