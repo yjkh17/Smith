@@ -10,7 +10,6 @@ import SwiftUI
 import Combine
 import UserNotifications
 import IOKit
-import SystemConfiguration
 import ServiceManagement
 
 @MainActor
