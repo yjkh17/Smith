@@ -98,6 +98,9 @@ struct SmithApp: App {
     }
     
     private func setupApplication() {
+        // Request sensitive permissions
+        PermissionsManager.shared.requestPermissions()
+
         // Request notification permissions for background alerts
         Task {
             await requestNotificationPermissions()
@@ -708,7 +711,7 @@ struct SmithCommands: Commands {
         
         CommandGroup(replacing: .help) {
             Button("Smith Help") {
-                NotificationCenter.default.post(name: .smithSendMessage, object: "How can I use Smith effectively?")
+                NotificationCenter.default.post(name: .smithSendMessage, object: "What permissions does Smith require and how do I use it effectively?")
             }
         }
     }

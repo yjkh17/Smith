@@ -36,10 +36,14 @@
 	<string>Smith analyzes downloaded files for smart system recommendations and disk space optimization.</string>
 	<key>NSRemovableVolumesUsageDescription</key>
 	<string>Smith monitors external drives for comprehensive storage analysis and system health insights.</string>
-	<key>NSNetworkVolumesUsageDescription</key>
-	<string>Smith accesses network drives for complete system storage awareness and optimization.</string>
-	<key>NSAppleEventsUsageDescription</key>
-	<string>Smith&apos;s Intelligence Engine uses Apple Events to monitor running applications for smart workload detection and system optimization.</string>
+        <key>NSNetworkVolumesUsageDescription</key>
+        <string>Smith accesses network drives for complete system storage awareness and optimization.</string>
+        <key>NSMicrophoneUsageDescription</key>
+        <string>Smith uses the microphone for future voice command features.</string>
+        <key>NSCameraUsageDescription</key>
+        <string>Smith may access the camera for advanced diagnostics when enabled.</string>
+        <key>NSAppleEventsUsageDescription</key>
+        <string>Smith&apos;s Intelligence Engine uses Apple Events to monitor running applications for smart workload detection and system optimization.</string>
 	<key>NSPrivacyAccessedAPITypes</key>
 	<array>
 		<dict>
