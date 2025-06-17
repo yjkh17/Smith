@@ -106,6 +106,11 @@ Dependencies/
 # For more information about the recommended setup visit:
 # https://docs.fastlane.tools/best-practices/source-control/#source-control
 
+
+# Additional ignores
+**/.DS_Store
+**/xcuserdata/
+**/*.xcuserstate
 fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
