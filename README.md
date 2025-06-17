@@ -98,6 +98,18 @@ Smith maintains comprehensive knowledge about:
 - **Apple Silicon Mac** (M1/M2/M3/M4+)
 - **16GB RAM** recommended for optimal AI performance
 - **Administrative Privileges** for deep system monitoring
+- **Full Disk Access** so Smith can analyze system files
+- **Microphone & Camera Access** for future voice and diagnostic features
+
+### Required Permissions
+
+Smith requests several macOS permissions on first launch:
+
+- **Full Disk Access** – enables deep file and system monitoring
+- **Microphone** – allows upcoming voice command functionality
+- **Camera** – used for advanced diagnostics when enabled
+- **Notifications** – provides background alerts and status updates
+- **Accessibility** – monitors app behavior for optimization suggestions
 
 ## 🏁 Getting Started
 
