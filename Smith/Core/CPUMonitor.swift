@@ -359,7 +359,11 @@ class CPUMonitor: ObservableObject {
     
     nonisolated private func getRealisticTemperatureEstimate() -> Double {
         // Get actual CPU usage for better estimation
-        let currentUsage = getAccurateCPUUsage()
+        // Normalize overall usage to a 0-100% range since
+        // `getAccurateCPUUsage()` scales usage by the number of cores.
+        let rawUsage = getAccurateCPUUsage()
+        let normalizedUsage = rawUsage / Double(max(internalCoreCount, 1))
+        let currentUsage = max(0, min(100, normalizedUsage))
         
         // Base temperature ranges for different Mac models
         let baseIdleTemp: Double = 40.0  // More realistic idle temp
@@ -392,7 +396,7 @@ class CPUMonitor: ObservableObject {
             // Add thermal cycle and some randomness
             estimatedTemp += thermalCycle + Double.random(in: -2.0...2.0)
             
-            return max(35.0, min(105.0, estimatedTemp))
+            return max(35.0, min(100.0, estimatedTemp))
         }
         
         // Simple fallback without uptime variation
@@ -407,7 +411,7 @@ class CPUMonitor: ObservableObject {
         // Add some randomness for realism
         estimatedTemp += Double.random(in: -2.0...2.0)
         
-        return max(35.0, min(105.0, estimatedTemp))
+        return max(35.0, min(100.0, estimatedTemp))
     }
     
     nonisolated private func detectThermalThrottling() -> Bool {
