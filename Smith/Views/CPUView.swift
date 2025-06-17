@@ -12,12 +12,12 @@ struct CPUView: View {
     @EnvironmentObject private var smithAgent: SmithAgent
     
     var body: some View {
-        VStack(spacing: 0) {
-            // Header with CPU overview
-            VStack(spacing: 16) {
+        VStack(spacing: 4) {
+            // Ultra-Compact Header with CPU overview
+            VStack(spacing: 6) {
                 HStack {
                     Text("CPU Monitor")
-                        .font(.largeTitle)
+                        .font(.callout)
                         .fontWeight(.bold)
                         .foregroundColor(.white)
                     
@@ -31,120 +31,106 @@ struct CPUView: View {
                         }
                     }
                     .buttonStyle(.borderedProminent)
+                    .controlSize(.mini)
                 }
                 
-                // CPU Usage Gauge
-                HStack(spacing: 20) {
-                    VStack {
-                        ZStack {
-                            Circle()
-                                .stroke(.gray.opacity(0.3), lineWidth: 8)
-                                .frame(width: 120, height: 120)
-                            
-                            Circle()
-                                .trim(from: 0, to: cpuMonitor.cpuUsage / 100)
-                                .stroke(cpuUsageColor, lineWidth: 8)
-                                .frame(width: 120, height: 120)
-                                .rotationEffect(.degrees(-90))
-                                .animation(.easeInOut, value: cpuMonitor.cpuUsage)
-                            
-                            VStack {
-                                Text("\(Int(cpuMonitor.cpuUsage))%")
-                                    .font(.title2)
-                                    .fontWeight(.bold)
-                                    .foregroundColor(.white)
-                                
-                                Text("CPU")
-                                    .font(.caption)
-                                    .foregroundColor(.gray)
-                            }
-                        }
+                // Ultra-Compact CPU Usage Display
+                HStack(spacing: 8) {
+                    ZStack {
+                        Circle()
+                            .stroke(.gray.opacity(0.3), lineWidth: 3)
+                            .frame(width: 40, height: 40)
                         
-                        Text("Overall Usage")
-                            .font(.caption)
-                            .foregroundColor(.gray)
+                        Circle()
+                            .trim(from: 0, to: cpuMonitor.cpuUsage / 100)
+                            .stroke(cpuUsageColor, lineWidth: 3)
+                            .frame(width: 40, height: 40)
+                            .rotationEffect(.degrees(-90))
+                            .animation(.easeInOut, value: cpuMonitor.cpuUsage)
+                        
+                        VStack(spacing: 0) {
+                            Text("\(Int(cpuMonitor.cpuUsage))%")
+                                .font(.caption2)
+                                .fontWeight(.bold)
+                                .foregroundColor(.white)
+                        }
                     }
                     
-                    Spacer()
-                    
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: 2) {
                         HStack {
                             Circle()
                                 .fill(cpuUsageColor)
-                                .frame(width: 8, height: 8)
-                            Text("CPU Usage: \(String(format: "%.1f", cpuMonitor.cpuUsage))%")
-                                .foregroundColor(.white)
-                        }
-                        
-                        HStack {
-                            Circle()
-                                .fill(cpuMonitor.isMonitoring ? .green : .red)
-                                .frame(width: 8, height: 8)
-                            Text("Status: \(cpuMonitor.isMonitoring ? "Monitoring" : "Stopped")")
+                                .frame(width: 4, height: 4)
+                            Text("Usage: \(String(format: "%.1f", cpuMonitor.cpuUsage))%")
+                                .font(.caption2)
                                 .foregroundColor(.white)
                         }
                         
                         HStack {
                             Circle()
                                 .fill(.blue)
-                                .frame(width: 8, height: 8)
+                                .frame(width: 4, height: 4)
                             Text("Processes: \(cpuMonitor.processes.count)")
+                                .font(.caption2)
                                 .foregroundColor(.white)
                         }
                         
-                        Spacer()
-                        
-                        Button("Analyze High CPU Usage") {
+                        Button("Analyze CPU") {
                             analyzeHighCPU()
                         }
-                        .buttonStyle(.borderedProminent)
+                        .buttonStyle(.bordered)
+                        .controlSize(.mini)
                         .tint(.orange)
                     }
+                    
+                    Spacer()
                 }
             }
-            .padding()
+            .padding(8)
             .background(.gray.opacity(0.1))
             
-            Divider()
-            
-            // Process List
-            VStack(alignment: .leading, spacing: 0) {
+            // Ultra-Compact Process List
+            VStack(alignment: .leading, spacing: 2) {
                 HStack {
                     Text("Top Processes")
-                        .font(.headline)
+                        .font(.caption)
+                        .fontWeight(.medium)
                         .foregroundColor(.white)
-                        .padding(.horizontal)
-                        .padding(.top)
                     
                     Spacer()
                     
-                    Button("Ask about processes") {
+                    Button("Ask") {
                         askAboutProcesses()
                     }
                     .buttonStyle(.bordered)
-                    .padding(.horizontal)
-                    .padding(.top)
+                    .controlSize(.mini)
                 }
+                .padding(.horizontal, 8)
+                .padding(.top, 4)
                 
-                List(cpuMonitor.processes) { process in
-                    ProcessRowView(process: process) {
-                        askAboutSpecificProcess(process)
+                ScrollView {
+                    LazyVStack(spacing: 1) {
+                        ForEach(cpuMonitor.processes.prefix(5)) { process in
+                            CompactProcessRowView(process: process) {
+                                askAboutSpecificProcess(process)
+                            }
+                        }
                     }
+                    .padding(.horizontal, 8)
                 }
-                .listStyle(.plain)
-                .scrollContentBackground(.hidden)
+                .frame(maxHeight: 100)
             }
+            .background(.black.opacity(0.02))
         }
         .background(.black)
+        .frame(maxHeight: 220)
         .onAppear {
-            // Start monitoring when view appears
             Task {
-                try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 second delay
+                try? await Task.sleep(nanoseconds: 100_000_000)
                 cpuMonitor.startMonitoring()
             }
         }
         .onDisappear {
-            // Stop monitoring when view disappears to save resources
             cpuMonitor.stopMonitoring()
         }
     }
@@ -231,6 +217,57 @@ struct ProcessRowView: View {
             .frame(width: 80)
         }
         .padding(.vertical, 4)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            onTap()
+        }
+    }
+}
+
+struct CompactProcessRowView: View {
+    let process: ProcessInfo
+    let onTap: () -> Void
+    
+    var body: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 1) {
+                Text(process.displayName)
+                    .font(.caption2)
+                    .foregroundColor(.white)
+                    .lineLimit(1)
+                
+                Text("PID: \(process.pid)")
+                    .font(.caption2)
+                    .foregroundColor(.gray)
+            }
+            
+            Spacer()
+            
+            VStack(alignment: .trailing, spacing: 1) {
+                Text("\(String(format: "%.1f", process.cpuUsage))%")
+                    .font(.caption2)
+                    .foregroundColor(process.statusColor)
+                    .fontWeight(.semibold)
+                
+                // Compact CPU usage bar
+                GeometryReader { geometry in
+                    ZStack(alignment: .leading) {
+                        Rectangle()
+                            .fill(.gray.opacity(0.3))
+                            .frame(height: 2)
+                        
+                        Rectangle()
+                            .fill(process.statusColor)
+                            .frame(width: geometry.size.width * (process.cpuUsage / 100), height: 2)
+                    }
+                }
+                .frame(height: 2)
+            }
+            .frame(width: 60)
+        }
+        .padding(.vertical, 2)
+        .padding(.horizontal, 4)
+        .background(.gray.opacity(0.05), in: RoundedRectangle(cornerRadius: 4))
         .contentShape(Rectangle())
         .onTapGesture {
             onTap()

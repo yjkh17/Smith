@@ -27,6 +27,9 @@ class SmithAgent: ObservableObject {
     
     @Published var focusedFile: FileItem?
     
+    // MARK: - Intelligence Engine
+    @Published var intelligenceEngine = IntelligenceEngine()
+    
     
     // MARK: - Foundation Models Properties
     private var currentSession: LanguageModelSession?
@@ -229,9 +232,15 @@ class SmithAgent: ObservableObject {
     private func buildContextualInput(_ input: String) -> String {
         var contextualInput = input
         
+        // Add real-time system intelligence context
+        let systemContext = buildSystemIntelligenceContext()
+        
         // Add focused file context if available
         if let focusedFile = focusedFile {
             contextualInput = """
+            REAL-TIME SYSTEM CONTEXT:
+            \(systemContext)
+            
             FOCUSED FILE CONTEXT:
             File Name: \(focusedFile.name)
             File Path: \(focusedFile.url.path)
@@ -241,20 +250,59 @@ class SmithAgent: ObservableObject {
             
             USER QUESTION: \(input)
             
-            Please analyze this file/folder and answer the user's question with specific context about the focused item.
+            Please analyze this file/folder with the current system context and answer the user's question with specific insights.
             """
         } else {
-            // Add system context based on the type of query
-            if input.lowercased().contains("file") || input.lowercased().contains("folder") {
-                contextualInput = "File System Query: \(input)"
-            } else if input.lowercased().contains("cpu") || input.lowercased().contains("process") {
-                contextualInput = "CPU Analysis Query: \(input)"
-            } else if input.lowercased().contains("battery") || input.lowercased().contains("power") {
-                contextualInput = "Battery Analysis Query: \(input)"
-            }
+            // Add system context based on intelligence engine insights
+            contextualInput = """
+            REAL-TIME SYSTEM CONTEXT:
+            \(systemContext)
+            
+            USER QUESTION: \(input)
+            
+            Please provide an intelligent response based on the current system state and context above.
+            """
         }
         
         return contextualInput
+    }
+    
+    private func buildSystemIntelligenceContext() -> String {
+        var context = ""
+        
+        // Current workload
+        if intelligenceEngine.currentWorkload != .unknown {
+            context += "Current Workload: \(intelligenceEngine.currentWorkload.displayName)\n"
+        }
+        
+        // Performance score
+        context += "System Performance Score: \(Int(intelligenceEngine.performanceScore))/100\n"
+        
+        // Active insights
+        if !intelligenceEngine.currentInsights.isEmpty {
+            context += "Current Insights:\n"
+            for insight in intelligenceEngine.currentInsights.prefix(3) {
+                context += "- \(insight.title): \(insight.description)\n"
+            }
+        }
+        
+        // Active anomalies
+        if !intelligenceEngine.activeAnomalies.isEmpty {
+            context += "Active Issues:\n"
+            for anomaly in intelligenceEngine.activeAnomalies.prefix(2) {
+                context += "- \(anomaly.title): \(anomaly.description)\n"
+            }
+        }
+        
+        // Optimization suggestions
+        if !intelligenceEngine.optimizationSuggestions.isEmpty {
+            context += "Available Optimizations:\n"
+            for suggestion in intelligenceEngine.optimizationSuggestions.prefix(2) {
+                context += "- \(suggestion.title): \(suggestion.description)\n"
+            }
+        }
+        
+        return context
     }
     
     private func formatFileSize(_ size: Int64) -> String {
@@ -306,28 +354,36 @@ class SmithAgent: ObservableObject {
     
     // MARK: - Quick Analysis Actions
     func analyzeSystemHealth() async {
+        let intelligenceContext = buildSystemIntelligenceContext()
         let healthReport = """
         System Health Analysis Request:
         
+        Current System Intelligence:
+        \(intelligenceContext)
+        
         Please provide a comprehensive analysis of my Mac's current health including:
-        - Overall system performance assessment
-        - Recommendations for optimization
-        - Potential issues to monitor
-        - Maintenance suggestions
+        - Overall system performance assessment based on current workload
+        - Real-time optimization recommendations
+        - Analysis of current issues and anomalies
+        - Intelligent maintenance suggestions
         """
         
         await sendMessage(healthReport)
     }
     
     func optimizePerformance() async {
+        let intelligenceContext = buildSystemIntelligenceContext()
         let optimizationRequest = """
         Performance Optimization Request:
         
+        Current System Intelligence:
+        \(intelligenceContext)
+        
         Please provide specific recommendations to improve my Mac's performance including:
-        - CPU optimization strategies
-        - Memory management tips
-        - Storage cleanup suggestions
-        - Battery life improvements
+        - Workload-specific optimization strategies
+        - Real-time system improvements
+        - Context-aware resource management
+        - Intelligent performance tuning
         """
         
         await sendMessage(optimizationRequest)
@@ -335,6 +391,31 @@ class SmithAgent: ObservableObject {
     
     func setFocusedFile(_ file: FileItem?) {
         focusedFile = file
+    }
+    
+    // MARK: - Intelligence Engine Integration
+    func setSystemMonitors(cpu: CPUMonitor, battery: BatteryMonitor, memory: MemoryMonitor) {
+        intelligenceEngine.setMonitors(cpu: cpu, battery: battery, memory: memory)
+    }
+    
+    func getCurrentSystemInsights() -> [SystemInsight] {
+        return intelligenceEngine.currentInsights
+    }
+    
+    func getCurrentOptimizations() -> [OptimizationSuggestion] {
+        return intelligenceEngine.optimizationSuggestions
+    }
+    
+    func getCurrentAnomalies() -> [SystemAnomaly] {
+        return intelligenceEngine.activeAnomalies
+    }
+    
+    func getPerformanceScore() -> Double {
+        return intelligenceEngine.performanceScore
+    }
+    
+    func getCurrentWorkload() -> WorkloadType {
+        return intelligenceEngine.currentWorkload
     }
 }
 

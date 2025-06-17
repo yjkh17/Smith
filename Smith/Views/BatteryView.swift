@@ -12,12 +12,12 @@ struct BatteryView: View {
     @EnvironmentObject private var smithAgent: SmithAgent
     
     var body: some View {
-        VStack(spacing: 0) {
-            // Header with battery overview
-            VStack(spacing: 16) {
+        VStack(spacing: 4) {
+            // Ultra-Compact Header with battery overview
+            VStack(spacing: 6) {
                 HStack {
                     Text("Battery Monitor")
-                        .font(.largeTitle)
+                        .font(.callout)
                         .fontWeight(.bold)
                         .foregroundColor(.white)
                     
@@ -31,151 +31,112 @@ struct BatteryView: View {
                         }
                     }
                     .buttonStyle(.borderedProminent)
+                    .controlSize(.mini)
                 }
                 
-                // Battery Level Display
-                HStack(spacing: 30) {
-                    // Battery Gauge
-                    VStack {
-                        ZStack {
-                            // Battery outline
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(.gray, lineWidth: 3)
-                                .frame(width: 100, height: 60)
-                            
-                            // Battery level fill
-                            RoundedRectangle(cornerRadius: 6)
-                                .fill(batteryLevelColor)
-                                .frame(
-                                    width: 94 * (batteryMonitor.batteryLevel / 100),
-                                    height: 54
-                                )
-                                .animation(.easeInOut, value: batteryMonitor.batteryLevel)
-                                .clipped()
-                            
-                            // Battery percentage text
-                            Text("\(Int(batteryMonitor.batteryLevel))%")
-                                .font(.headline)
-                                .fontWeight(.bold)
-                                .foregroundColor(.white)
-                            
-                            // Battery tip
-                            RoundedRectangle(cornerRadius: 2)
-                                .fill(.gray)
-                                .frame(width: 4, height: 20)
-                                .offset(x: 54)
-                        }
+                // Ultra-Compact Battery Level Display
+                HStack(spacing: 10) {
+                    // Ultra-Compact Battery Gauge
+                    ZStack {
+                        // Battery outline
+                        RoundedRectangle(cornerRadius: 3)
+                            .stroke(.gray, lineWidth: 1.5)
+                            .frame(width: 40, height: 24)
                         
-                        Text("Battery Level")
-                            .font(.caption)
-                            .foregroundColor(.gray)
+                        // Battery level fill
+                        RoundedRectangle(cornerRadius: 2)
+                            .fill(batteryLevelColor)
+                            .frame(
+                                width: 36 * (batteryMonitor.batteryLevel / 100),
+                                height: 20
+                            )
+                            .animation(.easeInOut, value: batteryMonitor.batteryLevel)
+                            .clipped()
+                        
+                        // Battery percentage text
+                        Text("\(Int(batteryMonitor.batteryLevel))%")
+                            .font(.caption2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                        
+                        // Battery tip
+                        RoundedRectangle(cornerRadius: 1)
+                            .fill(.gray)
+                            .frame(width: 2, height: 8)
+                            .offset(x: 22)
                     }
                     
-                    Spacer()
-                    
-                    // Battery Info
-                    VStack(alignment: .leading, spacing: 8) {
+                    // Ultra-Compact Battery Info
+                    VStack(alignment: .leading, spacing: 2) {
                         HStack {
                             Image(systemName: batteryMonitor.isCharging ? "bolt.fill" : "battery")
                                 .foregroundColor(batteryMonitor.isCharging ? .yellow : batteryLevelColor)
+                                .font(.caption2)
                             Text("Status: \(batteryMonitor.batteryState.description)")
+                                .font(.caption2)
                                 .foregroundColor(.white)
                         }
                         
                         HStack {
-                            Image(systemName: "poweron")
-                                .foregroundColor(.green)
-                            Text("Charging: \(batteryMonitor.isCharging ? "Yes" : "No")")
-                                .foregroundColor(.white)
-                        }
-                        
-                        HStack {
-                            Image(systemName: "info.circle")
-                                .foregroundColor(.blue)
-                            Text("Sources: \(batteryMonitor.powerSources.count)")
-                                .foregroundColor(.white)
-                        }
-                        
-                        Spacer()
-                        
-                        VStack(spacing: 8) {
-                            Button("Analyze Battery Health") {
+                            Button("Health") {
                                 analyzeBatteryHealth()
                             }
-                            .buttonStyle(.borderedProminent)
+                            .buttonStyle(.bordered)
+                            .controlSize(.mini)
                             .tint(.green)
                             
-                            Button("Check High Energy Apps") {
+                            Button("Energy") {
                                 analyzeHighEnergyApps()
                             }
                             .buttonStyle(.bordered)
+                            .controlSize(.mini)
                         }
                     }
+                    
+                    Spacer()
                 }
             }
-            .padding()
+            .padding(8)
             .background(.gray.opacity(0.1))
             
-            Divider()
-            
-            // Power Sources and Tips
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    // Power Sources
+            // Ultra-Compact Power Sources and Tips
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 6) {
+                    // Ultra-Compact Power Sources
                     if !batteryMonitor.powerSources.isEmpty {
-                        VStack(alignment: .leading, spacing: 12) {
+                        VStack(alignment: .leading, spacing: 3) {
                             Text("Power Sources")
-                                .font(.headline)
+                                .font(.caption)
+                                .fontWeight(.medium)
                                 .foregroundColor(.white)
                             
-                            ForEach(batteryMonitor.powerSources, id: \.name) { source in
-                                PowerSourceRowView(source: source)
+                            ForEach(batteryMonitor.powerSources.prefix(2), id: \.name) { source in
+                                UltraCompactPowerSourceView(source: source)
                             }
                         }
-                        .padding(.horizontal)
+                        .padding(.horizontal, 8)
                     }
                     
-                    Divider()
-                    
-                    // Battery Tips
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("Battery Optimization Tips")
-                            .font(.headline)
+                    // Ultra-Compact Battery Tips
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text("Optimization Tips")
+                            .font(.caption)
+                            .fontWeight(.medium)
                             .foregroundColor(.white)
                         
-                        VStack(alignment: .leading, spacing: 8) {
-                            TipRowView(
-                                icon: "lightbulb",
-                                title: "Reduce Screen Brightness",
-                                description: "Lower brightness to extend battery life"
-                            )
-                            
-                            TipRowView(
-                                icon: "wifi.slash",
-                                title: "Disable Unused Connections",
-                                description: "Turn off WiFi/Bluetooth when not needed"
-                            )
-                            
-                            TipRowView(
-                                icon: "app.badge.minus",
-                                title: "Close Background Apps",
-                                description: "Quit applications you're not using"
-                            )
-                            
-                            TipRowView(
-                                icon: "moon",
-                                title: "Use Dark Mode",
-                                description: "Dark mode can save battery on some displays"
-                            )
+                        VStack(alignment: .leading, spacing: 2) {
+                            UltraCompactTipView(icon: "lightbulb", title: "Reduce Brightness")
+                            UltraCompactTipView(icon: "wifi.slash", title: "Disable Unused Connections")
+                            UltraCompactTipView(icon: "app.badge.minus", title: "Close Background Apps")
                         }
                     }
-                    .padding(.horizontal)
-                    
-                    Spacer(minLength: 20)
+                    .padding(.horizontal, 8)
                 }
             }
+            .frame(maxHeight: 80)
         }
         .background(.black)
+        .frame(maxHeight: 180)
     }
     
     private var batteryLevelColor: Color {
@@ -268,6 +229,116 @@ struct TipRowView: View {
             Spacer()
         }
         .padding(.vertical, 4)
+    }
+}
+
+struct CompactPowerSourceView: View {
+    let source: PowerSourceInfo
+    
+    var body: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 1) {
+                Text(source.name)
+                    .font(.caption)
+                    .foregroundColor(.white)
+                    .fontWeight(.medium)
+                
+                Text(source.type)
+                    .font(.caption2)
+                    .foregroundColor(.gray)
+            }
+            
+            Spacer()
+            
+            VStack(alignment: .trailing, spacing: 1) {
+                if source.maxCapacity > 0 {
+                    Text("\(source.currentCapacity)/\(source.maxCapacity)")
+                        .font(.caption2)
+                        .foregroundColor(.white)
+                }
+                
+                Text(source.batteryState.description)
+                    .font(.caption2)
+                    .foregroundColor(source.isCharging ? .green : .gray)
+            }
+        }
+        .padding(.vertical, 2)
+        .padding(.horizontal, 6)
+        .background(.gray.opacity(0.1))
+        .cornerRadius(4)
+    }
+}
+
+struct CompactTipView: View {
+    let icon: String
+    let title: String
+    
+    var body: some View {
+        HStack {
+            Image(systemName: icon)
+                .foregroundColor(.cyan)
+                .font(.caption)
+                .frame(width: 12)
+            
+            Text(title)
+                .font(.caption)
+                .foregroundColor(.white)
+                .fontWeight(.medium)
+            
+            Spacer()
+        }
+        .padding(.vertical, 2)
+    }
+}
+
+struct UltraCompactPowerSourceView: View {
+    let source: PowerSourceInfo
+    
+    var body: some View {
+        HStack {
+            Text(source.name)
+                .font(.caption2)
+                .foregroundColor(.white)
+                .fontWeight(.medium)
+            
+            Spacer()
+            
+            if source.maxCapacity > 0 {
+                Text("\(source.currentCapacity)/\(source.maxCapacity)")
+                    .font(.caption2)
+                    .foregroundColor(.white)
+            }
+            
+            Text(source.batteryState.description)
+                .font(.caption2)
+                .foregroundColor(source.isCharging ? .green : .gray)
+        }
+        .padding(.vertical, 1)
+        .padding(.horizontal, 4)
+        .background(.gray.opacity(0.1))
+        .cornerRadius(3)
+    }
+}
+
+struct UltraCompactTipView: View {
+    let icon: String
+    let title: String
+    
+    var body: some View {
+        HStack {
+            Image(systemName: icon)
+                .foregroundColor(.cyan)
+                .font(.caption2)
+                .frame(width: 10)
+            
+            Text(title)
+                .font(.caption2)
+                .foregroundColor(.white)
+                .fontWeight(.medium)
+            
+            Spacer()
+        }
+        .padding(.vertical, 1)
     }
 }
 

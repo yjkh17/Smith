@@ -1,6 +1,6 @@
 //
 //  SmithApp.swift
-//  Smith - Your AI Coding Craftsman
+//  Smith - Your AI System Assistant
 //
 //  Created by Yousef Jawdat on 14/06/2025.
 //
@@ -9,25 +9,56 @@ import SwiftUI
 
 @main
 struct SmithApp: App {
+    @StateObject private var smithAgent = SmithAgent()
+    
     var body: some Scene {
         WindowGroup {
             MainView()
-                .frame(minWidth: 800, maxWidth: .infinity, minHeight: 700, maxHeight: .infinity)
-                .background(.black)
+                .environmentObject(smithAgent)
+                .preferredColorScheme(.dark)
+                .background(.ultraThinMaterial)
+                .onReceive(NotificationCenter.default.publisher(for: .smithAnalyzeFile)) { notification in
+                    if let filePath = notification.object as? String {
+                        handleFileAnalysis(filePath)
+                    }
+                }
+                .onReceive(NotificationCenter.default.publisher(for: .smithShowCPU)) { _ in
+                    // Handle CPU view showing
+                }
+                .onReceive(NotificationCenter.default.publisher(for: .smithSendMessage)) { notification in
+                    if let message = notification.object as? String {
+                        Task {
+                            await smithAgent.sendMessage(message)
+                        }
+                    }
+                }
+                .onReceive(NotificationCenter.default.publisher(for: .smithShowChat)) { _ in
+                    // Focus on chat - implementation depends on your UI structure
+                }
+                .onReceive(NotificationCenter.default.publisher(for: .smithShowCleanup)) { _ in
+                    // Show cleanup suggestions
+                    Task {
+                        await smithAgent.sendMessage("Please provide system cleanup suggestions for my Mac.")
+                    }
+                }
         }
-        .windowStyle(.titleBar)
-        .windowToolbarStyle(.unified(showsTitle: true))
-        .windowBackgroundDragBehavior(.enabled)
-        .windowResizability(.contentSize)
-        .defaultSize(width: 1200, height: 800)
+        .windowStyle(.hiddenTitleBar)
+        .windowToolbarStyle(.unified)
         .commands {
             SmithCommands()
         }
-        
-        MenuBarExtra("Smith", systemImage: "brain") {
-            SmithMenuBarView()
+    }
+    
+    private func handleFileAnalysis(_ filePath: String) {
+        // Create FileItem from path and set as focused
+        if let url = URL(string: filePath),
+           let fileItem = FileItem(url: url) {
+            smithAgent.setFocusedFile(fileItem)
+            
+            Task {
+                await smithAgent.sendMessage("Please analyze this file and tell me what it does.")
+            }
         }
-        .menuBarExtraStyle(.window)
     }
 }
 
@@ -35,59 +66,37 @@ struct SmithCommands: Commands {
     var body: some Commands {
         CommandMenu("Smith") {
             Button("New Conversation") {
-                // TODO: Add global action for new conversation
+                NotificationCenter.default.post(name: .smithShowChat, object: nil)
             }
             .keyboardShortcut("n", modifiers: [.command])
             
             Button("Analyze System Health") {
-                // TODO: Add global action for system health analysis
+                NotificationCenter.default.post(name: .smithSendMessage, object: "Analyze my system health and performance")
             }
             .keyboardShortcut("h", modifiers: [.command, .shift])
             
+            Button("Quick CPU Check") {
+                NotificationCenter.default.post(name: .smithShowCPU, object: nil)
+            }
+            .keyboardShortcut("u", modifiers: [.command, .shift])
+            
+            Button("System Cleanup") {
+                NotificationCenter.default.post(name: .smithShowCleanup, object: nil)
+            }
+            .keyboardShortcut("k", modifiers: [.command, .shift])
+            
             Divider()
             
-            Button("Show/Hide Smith") {
+            Button("Toggle Main Window") {
                 NSApp.activate(ignoringOtherApps: true)
             }
-            .keyboardShortcut("k", modifiers: [.command])
+            .keyboardShortcut("s", modifiers: [.command, .option])
         }
-    }
-}
-
-struct SmithMenuBarView: View {
-    var body: some View {
-        VStack(spacing: 8) {
-            HStack {
-                Image(systemName: "brain")
-                    .foregroundColor(.cyan)
-                    .font(.title2)
-                Text("SMITH")
-                    .font(.headline)
-                    .fontWeight(.bold)
-                    .foregroundStyle(.primary)
-                    .fontDesign(.monospaced)
+        
+        CommandGroup(replacing: .help) {
+            Button("Smith Help") {
+                NotificationCenter.default.post(name: .smithSendMessage, object: "How can I use Smith effectively?")
             }
-            
-            Divider()
-                .overlay(.cyan.opacity(0.3))
-            
-            Text("AI System Assistant")
-                .font(.caption)
-                .foregroundColor(.gray)
-            
-            Button("Show Smith") {
-                NSApp.activate(ignoringOtherApps: true)
-            }
-            .buttonStyle(.borderedProminent)
-            
-            Button("Quit Smith") {
-                NSApplication.shared.terminate(nil)
-            }
-            .buttonStyle(.bordered)
-            .foregroundStyle(.secondary)
         }
-        .padding()
-        .frame(width: 180)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
     }
 }

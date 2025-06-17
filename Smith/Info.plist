@@ -1,5 +1,160 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-<dict/>
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIconFile</key>
+	<string></string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>2.0</string>
+	<key>CFBundleVersion</key>
+	<string>2</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+	<key>NSSupportsAutomaticGraphicsSwitching</key>
+	<true/>
+	<key>NSSystemAdministrationUsageDescription</key>
+	<string>Smith&apos;s Real-Time Intelligence Engine needs system administration access to monitor CPU, memory, and process performance for intelligent system analysis and optimization recommendations.</string>
+	<key>NSDesktopFolderUsageDescription</key>
+	<string>Smith&apos;s Intelligence Engine analyzes files on your desktop to provide contextual system insights and workload detection.</string>
+	<key>NSDocumentsFolderUsageDescription</key>
+	<string>Smith needs access to analyze documents for intelligent workload classification and system optimization.</string>
+	<key>NSDownloadsFolderUsageDescription</key>
+	<string>Smith analyzes downloaded files for smart system recommendations and disk space optimization.</string>
+	<key>NSRemovableVolumesUsageDescription</key>
+	<string>Smith monitors external drives for comprehensive storage analysis and system health insights.</string>
+	<key>NSNetworkVolumesUsageDescription</key>
+	<string>Smith accesses network drives for complete system storage awareness and optimization.</string>
+	<key>NSAppleEventsUsageDescription</key>
+	<string>Smith&apos;s Intelligence Engine uses Apple Events to monitor running applications for smart workload detection and system optimization.</string>
+	<key>NSPrivacyAccessedAPITypes</key>
+	<array>
+		<dict>
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategorySystemInformation</string>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<string>8FFB.1</string>
+			</array>
+		</dict>
+	</array>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.utilities</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>Smith URL Scheme</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>smith</string>
+			</array>
+			<key>CFBundleURLIconFile</key>
+			<string></string>
+		</dict>
+	</array>
+	<key>NSServices</key>
+	<array>
+		<dict>
+			<key>NSMenuItem</key>
+			<dict>
+				<key>default</key>
+				<string>Ask Smith About This File</string>
+			</dict>
+			<key>NSMessage</key>
+			<string>analyzeFileService</string>
+			<key>NSSendTypes</key>
+			<array>
+				<string>NSFilenamesPboardType</string>
+				<string>public.file-url</string>
+			</array>
+			<key>NSReturnTypes</key>
+			<array>
+				<string>NSStringPboardType</string>
+			</array>
+		</dict>
+		<dict>
+			<key>NSMenuItem</key>
+			<dict>
+				<key>default</key>
+				<string>Ask Smith</string>
+			</dict>
+			<key>NSMessage</key>
+			<string>askSmithService</string>
+			<key>NSSendTypes</key>
+			<array>
+				<string>NSStringPboardType</string>
+				<string>public.plain-text</string>
+			</array>
+			<key>NSReturnTypes</key>
+			<array>
+				<string>NSStringPboardType</string>
+			</array>
+		</dict>
+		<dict>
+			<key>NSMenuItem</key>
+			<dict>
+				<key>default</key>
+				<string>Analyze System Performance</string>
+			</dict>
+			<key>NSMessage</key>
+			<string>analyzeSystemPerformanceService</string>
+			<key>NSSendTypes</key>
+			<array>
+				<string>NSStringPboardType</string>
+			</array>
+			<key>NSReturnTypes</key>
+			<array>
+				<string>NSStringPboardType</string>
+			</array>
+		</dict>
+	</array>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>All Files</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+			<key>NSDocumentClass</key>
+			<string>NSDocument</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.item</string>
+			</array>
+		</dict>
+	</array>
+	<key>LSUIElement</key>
+	<false/>
+	<key>NSHighResolutionCapable</key>
+	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright © 2025 Mother of Brand. All rights reserved.</string>
+	<key>NSSupportsAutomaticTermination</key>
+	<false/>
+	<key>NSSupportsSuddenTermination</key>
+	<false/>
+	<key>NSAccessibilityUsageDescription</key>
+	<string>Smith&apos;s Intelligence Engine needs accessibility access to monitor application behavior for intelligent workload detection and system optimization.</string>
+</dict>
 </plist>

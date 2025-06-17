@@ -11,20 +11,21 @@ import UniformTypeIdentifiers
 struct DiskView: View {
     @StateObject private var fileManager = FileSystemManager()
     @EnvironmentObject private var smithAgent: SmithAgent
-    @State private var selectedFileURL: URL?
+    @State private var selectedFiltryeURL: URL?
     @State private var expandedFolders: Set<URL> = []
     
     var body: some View {
-        VStack(spacing: 0) {
-            // Header with navigation
+        VStack(spacing: 4) {
+            // Ultra-Compact Header with navigation
             HStack {
-                // Navigation buttons
-                HStack(spacing: 8) {
+                // Ultra-Compact Navigation buttons
+                HStack(spacing: 3) {
                     Button {
                         fileManager.navigateToParent()
                     } label: {
                         Image(systemName: "chevron.left")
                             .foregroundColor(.cyan)
+                            .font(.caption2)
                     }
                     .disabled(fileManager.currentPath == fileManager.currentPath.deletingLastPathComponent())
                     
@@ -33,6 +34,7 @@ struct DiskView: View {
                     } label: {
                         Image(systemName: "house")
                             .foregroundColor(.cyan)
+                            .font(.caption2)
                     }
                     
                     Button {
@@ -40,144 +42,123 @@ struct DiskView: View {
                     } label: {
                         Image(systemName: "macwindow")
                             .foregroundColor(.cyan)
-                    }
-                    
-                    Button {
-                        fileManager.navigateToDocuments()
-                    } label: {
-                        Image(systemName: "doc")
-                            .foregroundColor(.cyan)
+                            .font(.caption2)
                     }
                 }
                 
                 Spacer()
                 
-                // Current path
-                Text(fileManager.currentPath.path)
-                    .font(.caption)
+                // Ultra-Compact Current path
+                Text(fileManager.currentPath.lastPathComponent)
+                    .font(.caption2)
                     .foregroundColor(.gray)
                     .lineLimit(1)
                     .truncationMode(.middle)
-                
-                Spacer()
             }
-            .padding()
+            .padding(6)
             .background(.gray.opacity(0.1))
             
-            Divider()
-            
-            HStack(spacing: 0) {
-                // File browser
-                VStack(spacing: 0) {
+            // Ultra-Compact File browser with info panel
+            HStack(spacing: 4) {
+                // Ultra-Compact File list
+                VStack(spacing: 2) {
                     if fileManager.isLoading {
                         ProgressView("Loading...")
+                            .controlSize(.mini)
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                     } else if let errorMessage = fileManager.errorMessage {
                         VStack {
                             Image(systemName: "exclamationmark.triangle")
-                                .font(.largeTitle)
+                                .font(.callout)
                                 .foregroundColor(.red)
                             Text(errorMessage)
+                                .font(.caption2)
                                 .foregroundColor(.red)
                                 .multilineTextAlignment(.center)
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                     } else {
-                        List(fileManager.items, id: \.id) { item in
-                            FileRowView(item: item, isSelected: fileManager.selectedItem?.id == item.id)
-                                .onTapGesture {
-                                    // Single click - select item and set as focused
-                                    fileManager.selectItem(item)
-                                    smithAgent.setFocusedFile(item)
+                        ScrollView {
+                            LazyVStack(spacing: 1) {
+                                ForEach(fileManager.items.prefix(6), id: \.id) { item in
+                                    UltraCompactFileRowView(item: item, isSelected: fileManager.selectedItem?.id == item.id)
+                                        .onTapGesture {
+                                            fileManager.selectItem(item)
+                                            smithAgent.setFocusedFile(item)
+                                        }
+                                        .onTapGesture(count: 2) {
+                                            if item.isDirectory {
+                                                fileManager.loadDirectory(item.url)
+                                            } else {
+                                                askAboutFile(item)
+                                            }
+                                        }
                                 }
-                                .onTapGesture(count: 2) {
-                                    // Double click - expand folder or analyze file
-                                    if item.isDirectory {
-                                        fileManager.loadDirectory(item.url)
-                                    } else {
-                                        askAboutFile(item)
-                                    }
-                                }
+                            }
+                            .padding(.horizontal, 4)
                         }
-                        .listStyle(.sidebar)
-                        .scrollContentBackground(.hidden)
                     }
                 }
-                .frame(minWidth: 300)
+                .frame(maxHeight: 140)
                 
-                Divider()
-                
-                // File info panel
-                VStack(alignment: .leading, spacing: 16) {
+                // Ultra-Compact File info panel
+                VStack(alignment: .leading, spacing: 4) {
                     if let selectedItem = fileManager.selectedItem {
-                        VStack(alignment: .leading, spacing: 12) {
-                            // File icon and name
+                        VStack(alignment: .leading, spacing: 4) {
+                            // Ultra-Compact File icon and name
                             HStack {
                                 Image(systemName: selectedItem.icon)
-                                    .font(.largeTitle)
+                                    .font(.callout)
                                     .foregroundColor(.cyan)
                                 
-                                VStack(alignment: .leading) {
+                                VStack(alignment: .leading, spacing: 1) {
                                     Text(selectedItem.name)
-                                        .font(.headline)
+                                        .font(.caption2)
                                         .foregroundColor(.white)
+                                        .lineLimit(2)
                                     
                                     Text(selectedItem.isDirectory ? "Folder" : "File")
-                                        .font(.caption)
+                                        .font(.caption2)
                                         .foregroundColor(.gray)
                                 }
                             }
                             
-                            Divider()
-                            
-                            // File details
-                            Text("Details")
-                                .font(.headline)
-                                .foregroundColor(.white)
-                            
-                            Text(fileManager.getFileInfo(selectedItem))
-                                .font(.caption)
-                                .foregroundColor(.gray)
-                                .textSelection(.enabled)
-                            
-                            Divider()
-                            
-                            // Quick actions
-                            VStack(spacing: 8) {
-                                Button("Ask: Is this file necessary?") {
+                            // Ultra-Compact Quick actions
+                            VStack(spacing: 2) {
+                                Button("Necessary?") {
                                     askAboutFileNecessity(selectedItem)
                                 }
                                 .buttonStyle(.bordered)
+                                .controlSize(.mini)
                                 
-                                Button("Analyze File") {
+                                Button("Analyze") {
                                     analyzeFile(selectedItem)
                                 }
                                 .buttonStyle(.bordered)
+                                .controlSize(.mini)
                             }
                         }
-                        .padding()
+                        .padding(6)
                     } else {
                         VStack {
                             Image(systemName: "doc.questionmark")
-                                .font(.largeTitle)
+                                .font(.callout)
                                 .foregroundColor(.gray)
                             
-                            Text("Select a file or folder")
+                            Text("Select file")
+                                .font(.caption2)
                                 .foregroundColor(.gray)
-                            
-                            Text("Click to select, double-click to open folders or ask questions about files")
-                                .font(.caption)
-                                .foregroundColor(.gray)
-                                .multilineTextAlignment(.center)
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .padding(6)
                     }
                 }
-                .frame(minWidth: 250)
+                .frame(width: 100)
                 .background(.gray.opacity(0.05))
             }
         }
         .background(.black)
+        .frame(maxHeight: 200)
     }
     
     private func askAboutFile(_ item: FileItem) {
@@ -228,16 +209,93 @@ struct FileRowView: View {
             }
             
             Spacer()
-            
-            if let modDate = item.modificationDate {
-                Text(modDate, style: .relative)
-                    .font(.caption2)
-                    .foregroundColor(.gray)
-            }
         }
         .padding(.vertical, 2)
         .background(
             RoundedRectangle(cornerRadius: 6)
+                .fill(isSelected ? .cyan.opacity(0.2) : .clear)
+        )
+    }
+    
+    private func formatFileSize(_ size: Int64) -> String {
+        let formatter = ByteCountFormatter()
+        formatter.allowedUnits = [.useBytes, .useKB, .useMB, .useGB, .useTB]
+        formatter.countStyle = .file
+        return formatter.string(fromByteCount: size)
+    }
+}
+
+struct CompactFileRowView: View {
+    let item: FileItem
+    let isSelected: Bool
+    
+    var body: some View {
+        HStack {
+            Image(systemName: item.icon)
+                .foregroundColor(item.isDirectory ? .cyan : .white)
+                .font(.caption)
+                .frame(width: 12)
+            
+            VStack(alignment: .leading, spacing: 1) {
+                Text(item.name)
+                    .font(.caption)
+                    .foregroundColor(.white)
+                    .lineLimit(1)
+                
+                if !item.isDirectory {
+                    Text(formatFileSize(item.size))
+                        .font(.caption2)
+                        .foregroundColor(.gray)
+                }
+            }
+            
+            Spacer()
+        }
+        .padding(.vertical, 1)
+        .background(
+            RoundedRectangle(cornerRadius: 4)
+                .fill(isSelected ? .cyan.opacity(0.2) : .clear)
+        )
+    }
+    
+    private func formatFileSize(_ size: Int64) -> String {
+        let formatter = ByteCountFormatter()
+        formatter.allowedUnits = [.useBytes, .useKB, .useMB, .useGB, .useTB]
+        formatter.countStyle = .file
+        return formatter.string(fromByteCount: size)
+    }
+}
+
+struct UltraCompactFileRowView: View {
+    let item: FileItem
+    let isSelected: Bool
+    
+    var body: some View {
+        HStack {
+            Image(systemName: item.icon)
+                .foregroundColor(item.isDirectory ? .cyan : .white)
+                .font(.caption2)
+                .frame(width: 10)
+            
+            VStack(alignment: .leading, spacing: 0) {
+                Text(item.name)
+                    .font(.caption2)
+                    .foregroundColor(.white)
+                    .lineLimit(1)
+                
+                if !item.isDirectory {
+                    Text(formatFileSize(item.size))
+                        .font(.caption2)
+                        .foregroundColor(.gray)
+                }
+            }
+            
+            Spacer()
+        }
+        .padding(.vertical, 1)
+        .padding(.horizontal, 3)
+        .background(
+            RoundedRectangle(cornerRadius: 3)
                 .fill(isSelected ? .cyan.opacity(0.2) : .clear)
         )
     }

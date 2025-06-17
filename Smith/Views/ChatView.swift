@@ -8,119 +8,137 @@
 import SwiftUI
 
 struct ChatView: View {
-    @EnvironmentObject private var smithAgent: SmithAgent
-    @State private var inputText = ""
-    @FocusState private var isInputFocused: Bool
-    let conversation: Conversation?
-    
-    init(conversation: Conversation? = nil) {
-        self.conversation = conversation
-    }
+    @EnvironmentObject var smithAgent: SmithAgent
+    @State private var messageText = ""
+    @State private var isTyping = false
+    @FocusState private var isTextFieldFocused: Bool
     
     var body: some View {
         VStack(spacing: 0) {
-            // Messages
+            // Modern Chat Header
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Chat with Smith")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                    
+                    Text("Your AI coding assistant")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                }
+                
+                Spacer()
+                
+                // Connection Status with Modern Indicator
+                HStack(spacing: 8) {
+                    Circle()
+                        .fill(.green.gradient)
+                        .frame(width: 8, height: 8)
+                        .overlay(
+                            Circle()
+                                .stroke(.green, lineWidth: 1)
+                                .scaleEffect(1.5)
+                                .opacity(0.3)
+                                .animation(.easeInOut(duration: 1).repeatForever(autoreverses: true), value: smithAgent.isProcessing)
+                        )
+                    
+                    Text("Connected")
+                        .font(.caption)
+                        .foregroundColor(.green)
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(.green.opacity(0.1), in: Capsule())
+                .overlay(Capsule().stroke(.green.opacity(0.3), lineWidth: 1))
+            }
+            .padding()
+            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(.quaternary, lineWidth: 1)
+            )
+            .padding()
+            
+            // Messages List with Modern Styling
             ScrollViewReader { proxy in
                 ScrollView {
-                    LazyVStack(spacing: 12) {
-                        ForEach(conversation?.messages ?? smithAgent.messages) { message in
-                            MessageBubble(message: message)
+                    LazyVStack(spacing: 16) {
+                        ForEach(smithAgent.messages) { message in
+                            ModernMessageBubble(message: message)
                                 .id(message.id)
                         }
                         
                         if smithAgent.isProcessing {
-                            TypingIndicator()
+                            ModernTypingIndicator()
                         }
                     }
                     .padding()
                 }
-                .onChange(of: conversation?.messages.count ?? smithAgent.messages.count) { _, _ in
-                    let messages = conversation?.messages ?? smithAgent.messages
-                    if let lastMessage = messages.last {
-                        withAnimation(.easeOut(duration: 0.3)) {
+                .onChange(of: smithAgent.messages.count) {
+                    if let lastMessage = smithAgent.messages.last {
+                        withAnimation(.easeInOut(duration: 0.5)) {
                             proxy.scrollTo(lastMessage.id, anchor: .bottom)
                         }
                     }
                 }
             }
             
-            Divider()
-                .overlay(.gray.opacity(0.5))
-            
-            if let focusedFile = smithAgent.focusedFile {
-                HStack(spacing: 8) {
-                    Image(systemName: "target")
-                        .foregroundColor(.cyan)
-                        .font(.caption)
-                    
-                    Text("Focused on:")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                    
-                    Image(systemName: focusedFile.icon)
-                        .foregroundColor(focusedFile.isDirectory ? .cyan : .white)
-                        .font(.caption)
-                    
-                    Text(focusedFile.name)
-                        .font(.caption)
-                        .foregroundColor(.white)
-                        .lineLimit(1)
-                    
-                    Spacer()
-                    
-                    Button {
+            // Modern Message Input
+            VStack(spacing: 12) {
+                if let focusedFile = smithAgent.focusedFile {
+                    CompactFocusedFileCard(file: focusedFile) {
                         smithAgent.setFocusedFile(nil)
-                    } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(.gray)
-                            .font(.caption)
+                    }
+                }
+                
+                HStack(spacing: 12) {
+                    TextField("Message Smith...", text: $messageText, axis: .vertical)
+                        .textFieldStyle(.plain)
+                        .padding()
+                        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(.cyan.opacity(0.3), lineWidth: 1)
+                        )
+                        .focused($isTextFieldFocused)
+                        .onSubmit {
+                            sendMessage()
+                        }
+                    
+                    Button(action: sendMessage) {
+                        Image(systemName: smithAgent.isProcessing ? "stop.circle.fill" : "paperplane.fill")
+                            .font(.title2)
+                            .foregroundColor(smithAgent.isProcessing ? .red : .cyan)
                     }
                     .buttonStyle(.plain)
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(.gray.opacity(0.1))
-                
-                Divider()
-                    .overlay(.gray.opacity(0.5))
-            }
-            
-            HStack(spacing: 8) {
-                TextField("Ask Smith anything...", text: $inputText, axis: .vertical)
-                    .textFieldStyle(.plain)
-                    .lineLimit(1...3)
-                    .focused($isInputFocused)
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 12)
-                    .background(.gray.opacity(0.2), in: RoundedRectangle(cornerRadius: 16))
+                    .padding()
+                    .background(.ultraThinMaterial, in: Circle())
                     .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(.gray.opacity(0.3), lineWidth: 1)
+                        Circle()
+                            .stroke(smithAgent.isProcessing ? .red.opacity(0.5) : .cyan.opacity(0.5), lineWidth: 1)
                     )
-                    .onSubmit {
-                        sendMessage()
-                    }
-                
-                Button("Send") {
-                    sendMessage()
+                    .disabled(messageText.isEmpty && !smithAgent.isProcessing)
+                    .animation(.easeInOut(duration: 0.2), value: smithAgent.isProcessing)
                 }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
-                .frame(minWidth: 60, minHeight: 36)
-                .disabled(inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || smithAgent.isProcessing)
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 16)
-            .background(.gray.opacity(0.05))
+            .padding()
+            .background(.black.opacity(0.1))
+        }
+        .background(.black)
+        .onAppear {
+            isTextFieldFocused = true
         }
     }
     
     private func sendMessage() {
-        guard !inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        guard !messageText.isEmpty else {
+            // Stop processing if button is pressed while processing
+            return
+        }
         
-        let message = inputText
-        inputText = ""
+        let message = messageText
+        messageText = ""
         
         Task {
             await smithAgent.sendMessage(message)
@@ -128,248 +146,307 @@ struct ChatView: View {
     }
 }
 
-struct MessageBubble: View {
-    @EnvironmentObject private var smithAgent: SmithAgent
+struct ModernMessageBubble: View {
     let message: ChatMessage
-    
-    private var isCurrentResponse: Bool {
-        !message.isUser && smithAgent.streamingMessageId == message.id
-    }
     
     var body: some View {
         HStack {
             if message.isUser {
-                Spacer(minLength: 50)
+                Spacer()
             }
             
-            VStack(alignment: message.isUser ? .trailing : .leading, spacing: 4) {
-                MessageContentView(content: message.content, isUser: message.isUser)
-                
-                HStack {
-                    if !message.isUser && isCurrentResponse && (message.isStreaming || smithAgent.currentStatus != .idle) {
-                        StatusIndicatorBubble()
+            VStack(alignment: message.isUser ? .trailing : .leading, spacing: 8) {
+                HStack(spacing: 8) {
+                    if !message.isUser {
+                        Image(systemName: "brain.head.profile")
+                            .foregroundColor(.cyan)
+                            .font(.caption)
                     }
                     
-                    Spacer()
+                    Text(message.isUser ? "You" : "Smith")
+                        .font(.caption)
+                        .fontWeight(.medium)
+                        .foregroundColor(message.isUser ? .blue : .cyan)
                     
-                    Text(message.timestamp, style: .time)
-                        .font(.caption2)
-                        .foregroundColor(.gray)
+                    if message.isUser {
+                        Image(systemName: "person.circle.fill")
+                            .foregroundColor(.blue)
+                            .font(.caption)
+                    }
                 }
-                .frame(maxWidth: .infinity, alignment: message.isUser ? .trailing : .leading)
+                
+                Text(message.content)
+                    .font(.body)
+                    .foregroundColor(.white)
+                    .padding()
+                    .background(
+                        message.isUser ? .blue.opacity(0.2) : .cyan.opacity(0.1),
+                        in: RoundedRectangle(cornerRadius: 16)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(message.isUser ? .blue.opacity(0.3) : .cyan.opacity(0.3), lineWidth: 1)
+                    )
             }
+            .frame(maxWidth: 300, alignment: message.isUser ? .trailing : .leading)
             
             if !message.isUser {
-                Spacer(minLength: 50)
-            }
-        }
-    }
-}
-
-struct MessageContentView: View {
-    let content: String
-    let isUser: Bool
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            let parts = parseMessageContent(content)
-            
-            ForEach(Array(parts.enumerated()), id: \.offset) { index, part in
-                switch part {
-                case .text(let text):
-                    if !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                        Text(.init(text))
-                            .textSelection(.enabled)
-                            .padding(.horizontal, isUser ? 12 : 0)
-                            .padding(.vertical, isUser ? 8 : 0)
-                            .background(
-                                Group {
-                                    if isUser {
-                                        RoundedRectangle(cornerRadius: 16)
-                                            .fill(.blue)
-                                    } else {
-                                        Color.clear
-                                    }
-                                }
-                            )
-                            .foregroundColor(.white)
-                    }
-                    
-                case .code(let code, let language):
-                    CodeBlockView(code: code, language: language)
-                }
-            }
-        }
-    }
-}
-
-struct CodeBlockView: View {
-    let code: String
-    let language: String?
-    
-    @State private var showingCopyConfirmation = false
-    
-    var body: some View {
-        VStack(spacing: 0) {
-            HStack {
-                Text(language?.uppercased() ?? "CODE")
-                    .font(.caption2)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.black)
-                
                 Spacer()
-                
-                Button {
-                    copyToClipboard()
-                } label: {
-                    Image(systemName: showingCopyConfirmation ? "checkmark" : "doc.on.doc")
-                        .font(.caption)
-                        .foregroundColor(.black)
-                }
-                .buttonStyle(.plain)
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
-            .background(.gray.opacity(0.1))
-            
-            ScrollView(.horizontal, showsIndicators: false) {
-                Text(code)
-                    .font(.system(.caption, design: .monospaced))
-                    .foregroundColor(.white)
-                    .textSelection(.enabled)
-                    .padding(12)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            .background(.black.opacity(0.3))
         }
-        .background(.gray.opacity(0.2))
-        .cornerRadius(8)
-        .overlay(
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(.gray.opacity(0.3), lineWidth: 1)
-        )
-    }
-    
-    private func copyToClipboard() {
-        NSPasteboard.general.clearContents()
-        NSPasteboard.general.setString(code, forType: .string)
-        
-        showingCopyConfirmation = true
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            showingCopyConfirmation = false
-        }
+        .animation(.easeInOut(duration: 0.3), value: message.id)
     }
 }
 
-enum MessagePart {
-    case text(String)
-    case code(String, language: String?)
-}
-
-func parseMessageContent(_ content: String) -> [MessagePart] {
-    var parts: [MessagePart] = []
-    let lines = content.components(separatedBy: .newlines)
-    var currentText = ""
-    var inCodeBlock = false
-    var currentCode = ""
-    var currentLanguage: String?
-    
-    for line in lines {
-        if line.hasPrefix("```") {
-            if inCodeBlock {
-                if !currentCode.isEmpty {
-                    parts.append(.code(currentCode.trimmingCharacters(in: .newlines), language: currentLanguage))
-                }
-                currentCode = ""
-                currentLanguage = nil
-                inCodeBlock = false
-            } else {
-                if !currentText.isEmpty {
-                    parts.append(.text(currentText))
-                    currentText = ""
-                }
-                let language = String(line.dropFirst(3)).trimmingCharacters(in: .whitespacesAndNewlines)
-                currentLanguage = language.isEmpty ? nil : language
-                inCodeBlock = true
-            }
-        } else if inCodeBlock {
-            currentCode += line + "\n"
-        } else {
-            currentText += line + "\n"
-        }
-    }
-    
-    if !currentText.isEmpty {
-        parts.append(.text(currentText))
-    }
-    
-    if !currentCode.isEmpty {
-        parts.append(.code(currentCode.trimmingCharacters(in: .newlines), language: currentLanguage))
-    }
-    
-    return parts
-}
-
-struct StatusIndicatorBubble: View {
-    @EnvironmentObject private var smithAgent: SmithAgent
-    
-    var body: some View {
-        HStack(spacing: 4) {
-            Image(systemName: smithAgent.currentStatus.icon)
-                .foregroundColor(smithAgent.currentStatus.color)
-                .font(.caption2)
-            
-            Text(smithAgent.currentStatus.displayText)
-                .font(.caption2)
-                .fontWeight(.medium)
-                .foregroundColor(.white)
-            
-            if !smithAgent.statusMessage.isEmpty {
-                Text(smithAgent.statusMessage)
-                    .font(.caption2)
-                    .foregroundColor(.gray)
-                    .lineLimit(1)
-            }
-        }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 4)
-        .background(.gray.opacity(0.3), in: RoundedRectangle(cornerRadius: 8))
-        .opacity(smithAgent.currentStatus.isAnimated ? 1 : 0.7)
-        .animation(.easeInOut(duration: 0.3), value: smithAgent.currentStatus)
-    }
-}
-
-struct TypingIndicator: View {
-    @State private var animating = false
+struct ModernTypingIndicator: View {
+    @State private var dotScale1: CGFloat = 1.0
+    @State private var dotScale2: CGFloat = 1.0
+    @State private var dotScale3: CGFloat = 1.0
     
     var body: some View {
         HStack {
-            HStack(spacing: 4) {
-                ForEach(0..<3) { index in
-                    Circle()
-                        .fill(.cyan)
-                        .frame(width: 6, height: 6)
-                        .opacity(animating ? 1 : 0.3)
-                        .animation(
-                            .easeInOut(duration: 0.6)
-                            .repeatForever()
-                            .delay(Double(index) * 0.2),
-                            value: animating
-                        )
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 8) {
+                    Image(systemName: "brain.head.profile")
+                        .foregroundColor(.cyan)
+                        .font(.caption)
+                    
+                    Text("Smith")
+                        .font(.caption)
+                        .fontWeight(.medium)
+                        .foregroundColor(.cyan)
                 }
+                
+                HStack(spacing: 4) {
+                    ForEach(0..<3) { index in
+                        Circle()
+                            .fill(.cyan)
+                            .frame(width: 8, height: 8)
+                            .scaleEffect(index == 0 ? dotScale1 : (index == 1 ? dotScale2 : dotScale3))
+                    }
+                }
+                .padding()
+                .background(.cyan.opacity(0.1), in: RoundedRectangle(cornerRadius: 16))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(.cyan.opacity(0.3), lineWidth: 1)
+                )
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(.gray.opacity(0.2))
-            )
+            .frame(maxWidth: 300, alignment: .leading)
             
             Spacer()
         }
         .onAppear {
-            animating = true
+            startTypingAnimation()
         }
+    }
+    
+    private func startTypingAnimation() {
+        withAnimation(.easeInOut(duration: 0.6).repeatForever()) {
+            dotScale1 = 1.5
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            withAnimation(.easeInOut(duration: 0.6).repeatForever()) {
+                dotScale2 = 1.5
+            }
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+            withAnimation(.easeInOut(duration: 0.6).repeatForever()) {
+                dotScale3 = 1.5
+            }
+        }
+    }
+}
+
+struct FocusedFileCard: View {
+    let file: FileItem
+    let onRemove: () -> Void
+    
+    var body: some View {
+        HStack {
+            Image(systemName: file.icon)
+                .foregroundColor(.orange)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Focused File")
+                    .font(.caption)
+                    .foregroundColor(.gray)
+                
+                Text(file.name)
+                    .font(.caption)
+                    .fontWeight(.medium)
+                    .foregroundColor(.white)
+                    .lineLimit(1)
+            }
+            
+            Spacer()
+            
+            Button(action: onRemove) {
+                Image(systemName: "xmark.circle.fill")
+                    .foregroundColor(.gray)
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(8)
+        .background(.orange.opacity(0.1), in: RoundedRectangle(cornerRadius: 8))
+        .overlay(
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(.orange.opacity(0.3), lineWidth: 1)
+        )
+    }
+}
+
+// MARK: - Optimized Chat Components
+struct OptimizedMessageBubble: View {
+    let message: ChatMessage
+    
+    var body: some View {
+        HStack(alignment: .top, spacing: 8) {
+            if message.isUser {
+                Spacer(minLength: 40)
+            }
+            
+            VStack(alignment: message.isUser ? .trailing : .leading, spacing: 6) {
+                // Compact Message Header
+                HStack(spacing: 6) {
+                    if !message.isUser {
+                        Image(systemName: "brain.head.profile")
+                            .foregroundColor(.cyan)
+                            .font(.caption2)
+                    }
+                    
+                    Text(message.isUser ? "You" : "Smith")
+                        .font(.caption2)
+                        .fontWeight(.medium)
+                        .foregroundColor(message.isUser ? .blue : .cyan)
+                    
+                    if message.isUser {
+                        Image(systemName: "person.circle.fill")
+                            .foregroundColor(.blue)
+                            .font(.caption2)
+                    }
+                }
+                
+                // Message Content
+                Text(message.content)
+                    .font(.subheadline)
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(
+                        message.isUser ? .blue.opacity(0.2) : .cyan.opacity(0.1),
+                        in: RoundedRectangle(cornerRadius: 14)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 14)
+                            .stroke(message.isUser ? .blue.opacity(0.3) : .cyan.opacity(0.3), lineWidth: 0.5)
+                    )
+            }
+            .frame(maxWidth: 280, alignment: message.isUser ? .trailing : .leading)
+            
+            if !message.isUser {
+                Spacer(minLength: 40)
+            }
+        }
+        .animation(.easeInOut(duration: 0.2), value: message.id)
+    }
+}
+
+struct CompactTypingIndicator: View {
+    @State private var animationPhase = 0
+    
+    var body: some View {
+        HStack(alignment: .top, spacing: 8) {
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(spacing: 6) {
+                    Image(systemName: "brain.head.profile")
+                        .foregroundColor(.cyan)
+                        .font(.caption2)
+                    
+                    Text("Smith")
+                        .font(.caption2)
+                        .fontWeight(.medium)
+                        .foregroundColor(.cyan)
+                }
+                
+                HStack(spacing: 3) {
+                    ForEach(0..<3) { index in
+                        Circle()
+                            .fill(.cyan)
+                            .frame(width: 6, height: 6)
+                            .scaleEffect(animationPhase == index ? 1.3 : 1.0)
+                            .animation(.easeInOut(duration: 0.4).repeatForever(), value: animationPhase)
+                    }
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(.cyan.opacity(0.1), in: RoundedRectangle(cornerRadius: 14))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 14)
+                        .stroke(.cyan.opacity(0.3), lineWidth: 0.5)
+                )
+            }
+            .frame(maxWidth: 280, alignment: .leading)
+            
+            Spacer(minLength: 40)
+        }
+        .onAppear {
+            startTypingAnimation()
+        }
+    }
+    
+    private func startTypingAnimation() {
+        Task { @MainActor in
+            while true {
+                for i in 0..<3 {
+                    animationPhase = i
+                    try? await Task.sleep(nanoseconds: 400_000_000) // 0.4 seconds
+                }
+            }
+        }
+    }
+}
+
+struct CompactFocusedFileCard: View {
+    let file: FileItem
+    let onRemove: () -> Void
+    
+    var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "doc.text.fill")
+                .foregroundColor(.orange)
+                .font(.caption)
+            
+            VStack(alignment: .leading, spacing: 1) {
+                Text("Focused File")
+                    .font(.caption2)
+                    .foregroundColor(.gray)
+                
+                Text(file.name)
+                    .font(.caption)
+                    .fontWeight(.medium)
+                    .foregroundColor(.white)
+                    .lineLimit(1)
+            }
+            
+            Spacer()
+            
+            Button(action: onRemove) {
+                Image(systemName: "xmark.circle.fill")
+                    .foregroundColor(.gray)
+                    .font(.caption)
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
+        .background(.orange.opacity(0.1), in: RoundedRectangle(cornerRadius: 8))
+        .overlay(
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(.orange.opacity(0.3), lineWidth: 0.5)
+        )
     }
 }
 
