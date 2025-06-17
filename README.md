@@ -12,6 +12,7 @@ Smith is an intelligent macOS system assistant that monitors, analyzes, and unde
 
 ### 🖥️ **Comprehensive System Monitoring**
 - **CPU Performance** - Real-time usage, temperature, core activity, and process monitoring
+  - Tracks usage across all logical cores, so overall percentages may exceed 100%
 - **Memory Management** - RAM usage, pressure, swap activity, and optimization
 - **Battery Health** - Power consumption, charging cycles, health metrics, and efficiency tips
 - **Storage Analysis** - Disk usage, file types, large files, and cleanup opportunities

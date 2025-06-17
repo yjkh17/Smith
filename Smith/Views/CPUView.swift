@@ -42,7 +42,7 @@ struct CPUView: View {
                             .frame(width: 40, height: 40)
                         
                         Circle()
-                            .trim(from: 0, to: cpuMonitor.cpuUsage / 100)
+                            .trim(from: 0, to: min(cpuMonitor.cpuUsage / 100, 1))
                             .stroke(cpuUsageColor, lineWidth: 3)
                             .frame(width: 40, height: 40)
                             .rotationEffect(.degrees(-90))

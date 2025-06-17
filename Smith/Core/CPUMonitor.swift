@@ -102,15 +102,16 @@ class CPUMonitor: ObservableObject {
     nonisolated private func getPhysicalCoreCount() -> Int {
         var size = MemoryLayout<Int>.size
         var coreCount: Int = 0
-        
-        let result = sysctlbyname("hw.physicalcpu", &coreCount, &size, nil, 0)
-        if result == 0 {
+
+        // Use logical cores for more accurate overall usage reporting
+        let logicalResult = sysctlbyname("hw.logicalcpu", &coreCount, &size, nil, 0)
+        if logicalResult == 0 {
             return coreCount
         }
-        
-        // Fallback to logical cores
-        let logicalResult = sysctlbyname("hw.logicalcpu", &coreCount, &size, nil, 0)
-        return logicalResult == 0 ? coreCount : 1
+
+        // Fallback to physical cores if logical count fails
+        let physicalResult = sysctlbyname("hw.physicalcpu", &coreCount, &size, nil, 0)
+        return physicalResult == 0 ? coreCount : 1
     }
     
     nonisolated private func getRealCPUUsageBackground() async -> Double {
@@ -186,12 +187,13 @@ class CPUMonitor: ObservableObject {
             if totalDelta > 0 {
                 let usedDelta = userDelta + systemDelta + niceDelta
                 let usage = (Double(usedDelta) / Double(totalDelta)) * 100.0
+                let scaledUsage = usage * Double(internalCoreCount)
                 
                 // Store current values for next calculation
                 previousCPUInfo = cpuInfo
                 previousTimestamp = currentTime
                 
-                return max(0, min(100, usage))
+                return max(0, min(100 * Double(internalCoreCount), scaledUsage))
             }
         }
         
