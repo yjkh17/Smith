@@ -444,6 +444,13 @@ struct QuickStatsView: View {
     @EnvironmentObject var smithAgent: SmithAgent
     @StateObject private var cpuMonitor = CPUMonitor()
     @StateObject private var batteryMonitor = BatteryMonitor()
+    @StateObject private var storageMonitor = StorageMonitor()
+
+    private var storageUsagePercentage: Int {
+        guard storageMonitor.totalSpace > 0 else { return 0 }
+        let pct = Double(storageMonitor.usedSpace) / Double(storageMonitor.totalSpace) * 100
+        return Int(max(0, min(100, pct)))
+    }
     
     var body: some View {
         VStack(spacing: 12) {
@@ -469,6 +476,13 @@ struct QuickStatsView: View {
                     title: "Battery",
                     value: "\(Int(batteryMonitor.batteryLevel))%",
                     color: batteryMonitor.batteryLevel < 20 ? .red : batteryMonitor.batteryLevel < 50 ? .orange : .green
+                )
+
+                QuickStatRow(
+                    icon: "internaldrive",
+                    title: "Storage",
+                    value: "\(Int(storageUsagePercentage))%",
+                    color: storageUsagePercentage > 90 ? .red : storageUsagePercentage > 75 ? .orange : .purple
                 )
                 
                 QuickStatRow(
@@ -507,10 +521,12 @@ struct QuickStatsView: View {
         .onAppear {
             cpuMonitor.startMonitoring()
             batteryMonitor.startMonitoring()
+            storageMonitor.startMonitoring()
         }
         .onDisappear {
             cpuMonitor.stopMonitoring()
             batteryMonitor.stopMonitoring()
+            storageMonitor.stopMonitoring()
         }
     }
 }
@@ -543,6 +559,13 @@ struct AppQuickStatsView: View {
     @EnvironmentObject var smithAgent: SmithAgent
     @StateObject private var cpuMonitor = CPUMonitor()
     @StateObject private var batteryMonitor = BatteryMonitor()
+    @StateObject private var storageMonitor = StorageMonitor()
+
+    private var storageUsagePercentage: Int {
+        guard storageMonitor.totalSpace > 0 else { return 0 }
+        let pct = Double(storageMonitor.usedSpace) / Double(storageMonitor.totalSpace) * 100
+        return Int(max(0, min(100, pct)))
+    }
     
     var body: some View {
         VStack(spacing: 12) {
@@ -568,6 +591,13 @@ struct AppQuickStatsView: View {
                     title: "Battery",
                     value: "\(Int(batteryMonitor.batteryLevel))%",
                     color: batteryMonitor.batteryLevel < 20 ? .red : batteryMonitor.batteryLevel < 50 ? .orange : .green
+                )
+
+                AppQuickStatRow(
+                    icon: "internaldrive",
+                    title: "Storage",
+                    value: "\(Int(storageUsagePercentage))%",
+                    color: storageUsagePercentage > 90 ? .red : storageUsagePercentage > 75 ? .orange : .purple
                 )
                 
                 AppQuickStatRow(
@@ -606,10 +636,12 @@ struct AppQuickStatsView: View {
         .onAppear {
             cpuMonitor.startMonitoring()
             batteryMonitor.startMonitoring()
+            storageMonitor.startMonitoring()
         }
         .onDisappear {
             cpuMonitor.stopMonitoring()
             batteryMonitor.stopMonitoring()
+            storageMonitor.stopMonitoring()
         }
     }
 }

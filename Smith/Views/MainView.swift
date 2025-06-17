@@ -12,6 +12,7 @@ struct MainView: View {
     @StateObject private var batteryMonitor = BatteryMonitor()
     @StateObject private var cpuMonitor = CPUMonitor()
     @StateObject private var memoryMonitor = MemoryMonitor()
+    @StateObject private var storageMonitor = StorageMonitor()
     @StateObject private var automationManager = SystemAutomationManager()
     @StateObject private var floatingPanelManager = FloatingPanelManager()
     @State private var selectedSystemView: SystemMonitorView = .cpu
@@ -32,6 +33,13 @@ struct MainView: View {
         if level < 50 { return .orange }
         return .green
     }
+
+    private var diskStatusColor: Color {
+        let usage = safeDiskUsage
+        if usage > 90 { return .red }
+        if usage > 75 { return .orange }
+        return .purple
+    }
     
     // Safe conversion helpers
     private var safeCPUUsage: Int {
@@ -44,6 +52,24 @@ struct MainView: View {
         let level = batteryMonitor.batteryLevel
         guard level.isFinite && !level.isNaN else { return 0 }
         return Int(max(0, min(100, level)))
+    }
+
+    private var safeDiskUsage: Int {
+        guard storageMonitor.totalSpace > 0 else { return 0 }
+        let percentage = Double(storageMonitor.usedSpace) / Double(storageMonitor.totalSpace) * 100
+        return Int(max(0, min(100, percentage)))
+    }
+
+    private var formattedUsedSpace: String {
+        ByteCountFormatter.string(fromByteCount: storageMonitor.usedSpace, countStyle: .file)
+    }
+
+    private var formattedTotalSpace: String {
+        ByteCountFormatter.string(fromByteCount: storageMonitor.totalSpace, countStyle: .file)
+    }
+
+    private var formattedAvailableSpace: String {
+        ByteCountFormatter.string(fromByteCount: storageMonitor.availableSpace, countStyle: .file)
     }
     
     private var automationStatusColor: Color {
@@ -138,8 +164,8 @@ struct MainView: View {
                         
                         CompactSystemCard(
                             icon: "internaldrive",
-                            value: "456GB",
-                            color: Color.purple,
+                            value: "\(safeDiskUsage)%",
+                            color: diskStatusColor,
                             isActive: selectedSystemView == .disk
                         ) {
                             selectedSystemView = .disk
@@ -223,6 +249,7 @@ struct MainView: View {
                                     .environmentObject(batteryMonitor)
                             case .disk:
                                 CompactDiskSection()
+                                    .environmentObject(storageMonitor)
                             case .automation:
                                 CompactAutomationSection()
                                     .environmentObject(automationManager)
@@ -392,6 +419,7 @@ struct MainView: View {
         cpuMonitor.startMonitoring()
         batteryMonitor.startMonitoring()
         memoryMonitor.startMonitoring()
+        storageMonitor.startMonitoring()
         
         // Setup integrations
         smithAgent.setSystemMonitors(cpu: cpuMonitor, battery: batteryMonitor, memory: memoryMonitor)
@@ -403,6 +431,7 @@ struct MainView: View {
         cpuMonitor.stopMonitoring()
         batteryMonitor.stopMonitoring()
         memoryMonitor.stopMonitoring()
+        storageMonitor.stopMonitoring()
     }
     
     private func setupIntegrations() {
@@ -877,6 +906,28 @@ struct CompactBatterySection: View {
 }
 
 struct CompactDiskSection: View {
+    @EnvironmentObject var storageMonitor: StorageMonitor
+
+    private var safeDiskUsage: Int {
+        guard storageMonitor.totalSpace > 0 else { return 0 }
+        let percentage = Double(storageMonitor.usedSpace) / Double(storageMonitor.totalSpace) * 100
+        return Int(max(0, min(100, percentage)))
+    }
+
+    private var ringProgress: Double { Double(safeDiskUsage) / 100 }
+
+    private var formattedUsedSpace: String {
+        ByteCountFormatter.string(fromByteCount: storageMonitor.usedSpace, countStyle: .file)
+    }
+
+    private var formattedTotalSpace: String {
+        ByteCountFormatter.string(fromByteCount: storageMonitor.totalSpace, countStyle: .file)
+    }
+
+    private var formattedAvailableSpace: String {
+        ByteCountFormatter.string(fromByteCount: storageMonitor.availableSpace, countStyle: .file)
+    }
+
     var body: some View {
         VStack(spacing: 8) {
             // Compact Storage Overview
@@ -886,41 +937,41 @@ struct CompactDiskSection: View {
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .foregroundColor(.white)
-                    
+
                     Spacer()
-                    
-                    Text("456GB / 1TB")
+
+                    Text("\(formattedUsedSpace) / \(formattedTotalSpace)")
                         .font(.caption)
                         .foregroundColor(.gray)
                 }
-                
+
                 // Compact Storage Ring
                 HStack(spacing: 8) {
                     ZStack {
                         Circle()
                             .stroke(.gray.opacity(0.2), lineWidth: 3)
                             .frame(width: 36, height: 36)
-                        
+
                         Circle()
-                            .trim(from: 0, to: 0.456)
+                            .trim(from: 0, to: ringProgress)
                             .stroke(.purple.gradient, style: StrokeStyle(lineWidth: 3, lineCap: .round))
                             .frame(width: 36, height: 36)
                             .rotationEffect(.degrees(-90))
-                            .animation(.easeInOut(duration: 1), value: 0.456)
-                        
-                        Text("46%")
+                            .animation(.easeInOut(duration: 1), value: ringProgress)
+
+                        Text("\(safeDiskUsage)%")
                             .font(.caption2)
                             .fontWeight(.bold)
                             .foregroundColor(.white)
                     }
-                    
+
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("456 GB used")
+                        Text("\(formattedUsedSpace) used")
                             .font(.caption)
                             .fontWeight(.medium)
                             .foregroundColor(.white)
-                        
-                        Text("544 GB available")
+
+                        Text("\(formattedAvailableSpace) available")
                             .font(.caption2)
                             .foregroundColor(.gray)
                     }
@@ -938,6 +989,7 @@ struct CompactDiskSection: View {
             // Compact Disk View with Reduced Padding
             VStack(spacing: 0) {
                 DiskView()
+                    .environmentObject(storageMonitor)
             }
             .frame(maxHeight: 240)
             .background(.black.opacity(0.02), in: RoundedRectangle(cornerRadius: 8))
