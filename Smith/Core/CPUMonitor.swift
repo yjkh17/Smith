@@ -277,62 +277,83 @@ class CPUMonitor: ObservableObject {
     }
     
     nonisolated private func getOSXCPUTempTemperature() -> Double {
-        // Try to use osx-cpu-temp if installed
-        let task = Process()
-        task.launchPath = "/opt/homebrew/bin/osx-cpu-temp"
-        task.arguments = []
-        
-        let pipe = Pipe()
-        task.standardOutput = pipe
-        task.standardError = Pipe()
-        
-        do {
-            try task.run()
-            task.waitUntilExit()
-            
-            if task.terminationStatus == 0 {
-                let data = pipe.fileHandleForReading.readDataToEndOfFile()
-                let output = String(data: data, encoding: .utf8) ?? ""
-                
-                // Parse output like "61.2°C"
-                let cleanOutput = output.trimmingCharacters(in: .whitespacesAndNewlines)
-                if let tempValue = Double(cleanOutput.replacingOccurrences(of: "°C", with: "")) {
-                    return tempValue
+        // Try to use osx-cpu-temp if installed in common Homebrew locations
+        let possiblePaths = [
+            "/opt/homebrew/bin/osx-cpu-temp",
+            "/usr/local/bin/osx-cpu-temp",
+            "/usr/bin/osx-cpu-temp"
+        ]
+
+        for path in possiblePaths {
+            guard FileManager.default.isExecutableFile(atPath: path) else { continue }
+
+            let task = Process()
+            task.launchPath = path
+            task.arguments = []
+
+            let pipe = Pipe()
+            task.standardOutput = pipe
+            task.standardError = Pipe()
+
+            do {
+                try task.run()
+                task.waitUntilExit()
+
+                if task.terminationStatus == 0 {
+                    let data = pipe.fileHandleForReading.readDataToEndOfFile()
+                    let output = String(data: data, encoding: .utf8) ?? ""
+
+                    // Parse output like "61.2°C"
+                    let cleanOutput = output.trimmingCharacters(in: .whitespacesAndNewlines)
+                    if let tempValue = Double(cleanOutput.replacingOccurrences(of: "°C", with: "")) {
+                        return tempValue
+                    }
                 }
+            } catch {
+                // Try next path
+                continue
             }
-        } catch {
-            // Tool not available, continue to next method
         }
-        
+
         return 0.0
     }
     
     nonisolated private func getIStatsTemperature() -> Double {
-        // Try istats command line tool
-        let task = Process()
-        task.launchPath = "/usr/local/bin/istats"
-        task.arguments = ["cpu", "temp", "--value-only"]
-        
-        let pipe = Pipe()
-        task.standardOutput = pipe
-        task.standardError = Pipe()
-        
-        do {
-            try task.run()
-            task.waitUntilExit()
-            
-            if task.terminationStatus == 0 {
-                let data = pipe.fileHandleForReading.readDataToEndOfFile()
-                let output = String(data: data, encoding: .utf8) ?? ""
-                
-                if let tempValue = Double(output.trimmingCharacters(in: .whitespacesAndNewlines)) {
-                    return tempValue
+        // Try istats command line tool from common Homebrew locations
+        let possiblePaths = [
+            "/opt/homebrew/bin/istats",
+            "/usr/local/bin/istats"
+        ]
+
+        for path in possiblePaths {
+            guard FileManager.default.isExecutableFile(atPath: path) else { continue }
+
+            let task = Process()
+            task.launchPath = path
+            task.arguments = ["cpu", "temp", "--value-only"]
+
+            let pipe = Pipe()
+            task.standardOutput = pipe
+            task.standardError = Pipe()
+
+            do {
+                try task.run()
+                task.waitUntilExit()
+
+                if task.terminationStatus == 0 {
+                    let data = pipe.fileHandleForReading.readDataToEndOfFile()
+                    let output = String(data: data, encoding: .utf8) ?? ""
+
+                    if let tempValue = Double(output.trimmingCharacters(in: .whitespacesAndNewlines)) {
+                        return tempValue
+                    }
                 }
+            } catch {
+                // Try next path
+                continue
             }
-        } catch {
-            // Tool not available, continue to next method
         }
-        
+
         return 0.0
     }
     
