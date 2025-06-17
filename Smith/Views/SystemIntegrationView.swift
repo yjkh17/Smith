@@ -6,244 +6,354 @@
 //
 
 import SwiftUI
+import Combine
 
 struct SystemIntegrationView: View {
     @StateObject private var systemIntegration = SystemIntegration()
-    @State private var showingPermissionAlert = false
+    @State private var showingURLSchemeTest = false
+    @State private var testURLInput = "smith://analyze-file?path=/Users/example/file.txt"
+    @State private var testResult = ""
     
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(alignment: .leading, spacing: 20) {
             // Header
             HStack {
-                Image(systemName: "gearshape.2")
+                Image(systemName: "link.circle.fill")
+                    .foregroundColor(.blue)
                     .font(.title2)
-                    .foregroundColor(.cyan)
                 
-                Text("System Integration")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
+                VStack(alignment: .leading) {
+                    Text("System Integration")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                    
+                    Text("Services, URL schemes, and macOS integration")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
                 
                 Spacer()
-                
-                // Master toggle
-                Button(systemIntegration.isIntegrated ? "Remove Integration" : "Integrate with macOS") {
-                    toggleSystemIntegration()
-                }
-                .buttonStyle(.borderedProminent)
-                .tint(systemIntegration.isIntegrated ? .red : .cyan)
             }
-            .padding()
-            .background(.gray.opacity(0.1))
             
-            Divider()
-            
-            ScrollView {
-                LazyVStack(spacing: 16) {
-                    // Integration Status
-                    IntegrationStatusCard(isIntegrated: systemIntegration.isIntegrated)
+            // Services Status
+            GroupBox("Services Integration") {
+                VStack(alignment: .leading, spacing: 12) {
+                    ServiceStatusRow(title: "File Analysis Service", 
+                                   isEnabled: systemIntegration.isServicesEnabled,
+                                   description: "Right-click → Services → Analyze with Smith")
                     
-                    // Available Integrations
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("Available Integrations")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding(.horizontal)
+                    ServiceStatusRow(title: "Text Analysis Service", 
+                                   isEnabled: systemIntegration.isServicesEnabled,
+                                   description: "Analyze selected text in any app")
+                    
+                    ServiceStatusRow(title: "System Status Service", 
+                                   isEnabled: systemIntegration.isServicesEnabled,
+                                   description: "Quick system health check")
+                    
+                    HStack {
+                        Button(systemIntegration.isServicesEnabled ? "Disable Services" : "Enable Services") {
+                            systemIntegration.toggleServices()
+                        }
+                        .buttonStyle(.bordered)
                         
-                        ForEach(systemIntegration.availableIntegrations) { integration in
-                            IntegrationCard(
-                                integration: integration,
-                                isEnabled: systemIntegration.isIntegrated
-                            )
+                        if systemIntegration.isUpdatingServices {
+                            ProgressView()
+                                .scaleEffect(0.8)
                         }
                     }
-                    
-                    // Usage Examples
-                    UsageExamplesCard()
-                    
-                    // Troubleshooting
-                    TroubleshootingCard()
                 }
                 .padding()
             }
-        }
-        .background(.black)
-        .alert("System Integration", isPresented: $showingPermissionAlert) {
-            Button("OK") { }
-        } message: {
-            Text("Smith needs permission to integrate with macOS. Some features may require administrator privileges.")
-        }
-    }
-    
-    private func toggleSystemIntegration() {
-        if systemIntegration.isIntegrated {
-            systemIntegration.removeSystemIntegration()
-        } else {
-            systemIntegration.integrateWithSystem()
-            showingPermissionAlert = true
-        }
-    }
-}
-
-struct IntegrationStatusCard: View {
-    let isIntegrated: Bool
-    
-    var body: some View {
-        HStack {
-            Image(systemName: isIntegrated ? "checkmark.circle.fill" : "xmark.circle.fill")
-                .font(.title)
-                .foregroundColor(isIntegrated ? .green : .red)
             
-            VStack(alignment: .leading) {
-                Text(isIntegrated ? "System Integration Active" : "System Integration Inactive")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                
-                Text(isIntegrated ? 
-                     "Smith is integrated with macOS and available system-wide" :
-                     "Click 'Integrate with macOS' to enable system-wide access")
-                    .font(.caption)
-                    .foregroundColor(.gray)
+            // URL Scheme Status
+            GroupBox("URL Scheme Integration") {
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack {
+                        Image(systemName: systemIntegration.isURLSchemeEnabled ? "checkmark.circle.fill" : "xmark.circle.fill")
+                            .foregroundColor(systemIntegration.isURLSchemeEnabled ? .green : .red)
+                        
+                        VStack(alignment: .leading) {
+                            Text("smith:// URL Scheme")
+                                .fontWeight(.medium)
+                            
+                            Text("Allows external apps to interact with Smith")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        Spacer()
+                        
+                        Text(systemIntegration.isURLSchemeEnabled ? "Active" : "Inactive")
+                            .font(.caption)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(systemIntegration.isURLSchemeEnabled ? Color.green.opacity(0.2) : Color.red.opacity(0.2))
+                            .cornerRadius(4)
+                    }
+                    
+                    // Supported URL patterns
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Supported URLs:")
+                            .font(.caption)
+                            .fontWeight(.medium)
+                            .foregroundColor(.secondary)
+                        
+                        Text("smith://analyze-file?path=<filepath>")
+                            .font(.caption)
+                            .fontDesign(.monospaced)
+                            .foregroundColor(.secondary)
+                        
+                        Text("smith://chat?message=<message>")
+                            .font(.caption)
+                            .fontDesign(.monospaced)
+                            .foregroundColor(.secondary)
+                        
+                        Text("smith://system-status")
+                            .font(.caption)
+                            .fontDesign(.monospaced)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    Button("Test URL Scheme") {
+                        showingURLSchemeTest = true
+                    }
+                    .buttonStyle(.bordered)
+                }
+                .padding()
+            }
+            
+            // AppleScript Integration
+            GroupBox("AppleScript Integration") {
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack {
+                        Image(systemName: systemIntegration.isAppleScriptEnabled ? "checkmark.circle.fill" : "xmark.circle.fill")
+                            .foregroundColor(systemIntegration.isAppleScriptEnabled ? .green : .red)
+                        
+                        VStack(alignment: .leading) {
+                            Text("AppleScript Dictionary")
+                                .fontWeight(.medium)
+                            
+                            Text("Complete automation support for power users")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        Spacer()
+                        
+                        Text(systemIntegration.isAppleScriptEnabled ? "Active" : "Inactive")
+                            .font(.caption)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(systemIntegration.isAppleScriptEnabled ? Color.green.opacity(0.2) : Color.red.opacity(0.2))
+                            .cornerRadius(4)
+                    }
+                    
+                    if systemIntegration.isAppleScriptEnabled {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Available Commands:")
+                                .font(.caption)
+                                .fontWeight(.medium)
+                                .foregroundColor(.secondary)
+                            
+                            Text("tell application \"Smith\" to get CPU usage")
+                                .font(.caption)
+                                .fontDesign(.monospaced)
+                                .foregroundColor(.secondary)
+                            
+                            Text("tell application \"Smith\" to analyze system health")
+                                .font(.caption)
+                                .fontDesign(.monospaced)
+                                .foregroundColor(.secondary)
+                            
+                            Text("tell application \"Smith\" to ask Smith \"optimize my system\"")
+                                .font(.caption)
+                                .fontDesign(.monospaced)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+                .padding()
+            }
+            
+            // Shortcuts Integration
+            GroupBox("Shortcuts Integration") {
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack {
+                        Image(systemName: systemIntegration.isShortcutsEnabled ? "checkmark.circle.fill" : "xmark.circle.fill")
+                            .foregroundColor(systemIntegration.isShortcutsEnabled ? .green : .red)
+                        
+                        VStack(alignment: .leading) {
+                            Text("Shortcuts App Support")
+                                .fontWeight(.medium)
+                            
+                            Text("Modern automation with the Shortcuts app")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        Spacer()
+                        
+                        if systemIntegration.isShortcutsEnabled {
+                            Text("Available")
+                                .font(.caption)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(Color.green.opacity(0.2))
+                                .cornerRadius(4)
+                        } else {
+                            Text("macOS 13+ Required")
+                                .font(.caption)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(Color.orange.opacity(0.2))
+                                .cornerRadius(4)
+                        }
+                    }
+                    
+                    if systemIntegration.isShortcutsEnabled {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Available Actions:")
+                                .font(.caption)
+                                .fontWeight(.medium)
+                                .foregroundColor(.secondary)
+                            
+                            Text("• Get System Statistics")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            
+                            Text("• Analyze System Health")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            
+                            Text("• Ask Smith AI")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            
+                            Text("• Enable Background Monitoring")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+                .padding()
             }
             
             Spacer()
         }
         .padding()
-        .background(.gray.opacity(0.1), in: RoundedRectangle(cornerRadius: 12))
-    }
-}
-
-struct IntegrationCard: View {
-    let integration: IntegrationType
-    let isEnabled: Bool
-    
-    var body: some View {
-        HStack(spacing: 16) {
-            Image(systemName: integration.icon)
-                .font(.title2)
-                .foregroundColor(isEnabled ? .cyan : .gray)
-                .frame(width: 30)
-            
-            VStack(alignment: .leading, spacing: 4) {
-                Text(integration.rawValue)
-                    .font(.headline)
-                    .foregroundColor(.white)
-                
-                Text(integration.description)
-                    .font(.caption)
-                    .foregroundColor(.gray)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            
-            Spacer()
-            
-            Image(systemName: isEnabled ? "checkmark.circle.fill" : "circle")
-                .foregroundColor(isEnabled ? .green : .gray)
+        .sheet(isPresented: $showingURLSchemeTest) {
+            URLSchemeTestView(testInput: $testURLInput, testResult: $testResult)
         }
-        .padding()
-        .background(.gray.opacity(0.05), in: RoundedRectangle(cornerRadius: 8))
     }
 }
 
-struct UsageExamplesCard: View {
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Usage Examples")
-                .font(.headline)
-                .foregroundColor(.white)
-            
-            VStack(alignment: .leading, spacing: 8) {
-                ExampleItem(
-                    title: "Finder Integration",
-                    description: "Right-click any file → Services → 'Ask Smith About This File'"
-                )
-                
-                ExampleItem(
-                    title: "Spotlight Access",
-                    description: "Press Cmd+Space, type 'Smith CPU Check' or 'Ask Smith'"
-                )
-                
-                ExampleItem(
-                    title: "URL Commands",
-                    description: "Use smith://cpu or smith://chat URLs in scripts"
-                )
-                
-                ExampleItem(
-                    title: "Text Selection",
-                    description: "Select text in any app → Services → 'Ask Smith'"
-                )
-            }
-        }
-        .padding()
-        .background(.gray.opacity(0.1), in: RoundedRectangle(cornerRadius: 12))
-    }
-}
-
-struct ExampleItem: View {
+struct ServiceStatusRow: View {
     let title: String
+    let isEnabled: Bool
     let description: String
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(title)
-                .font(.subheadline)
-                .fontWeight(.medium)
-                .foregroundColor(.cyan)
+        HStack {
+            Image(systemName: isEnabled ? "checkmark.circle.fill" : "circle")
+                .foregroundColor(isEnabled ? .green : .gray)
             
-            Text(description)
-                .font(.caption)
-                .foregroundColor(.gray)
+            VStack(alignment: .leading) {
+                Text(title)
+                    .fontWeight(.medium)
+                
+                Text(description)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            
+            Spacer()
         }
     }
 }
 
-struct TroubleshootingCard: View {
+struct URLSchemeTestView: View {
+    @Binding var testInput: String
+    @Binding var testResult: String
+    @Environment(\.dismiss) private var dismiss
+    @State private var isTesting = false
+    
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Troubleshooting")
-                .font(.headline)
-                .foregroundColor(.white)
+        VStack(spacing: 20) {
+            Text("Test URL Scheme")
+                .font(.title2)
+                .fontWeight(.bold)
             
             VStack(alignment: .leading, spacing: 8) {
-                TroubleshootingItem(
-                    issue: "Services not appearing",
-                    solution: "Restart your Mac or run 'sudo /System/Library/CoreServices/pbs -flush' in Terminal"
-                )
+                Text("Enter a smith:// URL to test:")
+                    .font(.headline)
                 
-                TroubleshootingItem(
-                    issue: "Spotlight shortcuts missing",
-                    solution: "Rebuild Spotlight index: System Preferences → Spotlight → Privacy"
-                )
+                TextField("smith://...", text: $testInput)
+                    .textFieldStyle(.roundedBorder)
+                    .fontDesign(.monospaced)
+            }
+            
+            Button("Test URL") {
+                testURL()
+            }
+            .buttonStyle(.borderedProminent)
+            .disabled(isTesting)
+            
+            if isTesting {
+                ProgressView("Testing...")
+            }
+            
+            if !testResult.isEmpty {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Result:")
+                        .font(.headline)
+                    
+                    Text(testResult)
+                        .font(.caption)
+                        .fontDesign(.monospaced)
+                        .padding()
+                        .background(Color.gray.opacity(0.1))
+                        .cornerRadius(8)
+                }
+            }
+            
+            Spacer()
+            
+            HStack {
+                Button("Cancel") {
+                    dismiss()
+                }
+                .buttonStyle(.bordered)
                 
-                TroubleshootingItem(
-                    issue: "Permission denied errors",
-                    solution: "Grant Smith full disk access in System Preferences → Security & Privacy"
-                )
+                Spacer()
             }
         }
         .padding()
-        .background(.gray.opacity(0.1), in: RoundedRectangle(cornerRadius: 12))
+        .frame(width: 500, height: 400)
     }
-}
-
-struct TroubleshootingItem: View {
-    let issue: String
-    let solution: String
     
-    var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text("Issue: \(issue)")
-                .font(.caption)
-                .fontWeight(.medium)
-                .foregroundColor(.orange)
+    private func testURL() {
+        isTesting = true
+        testResult = ""
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            guard let url = URL(string: testInput) else {
+                testResult = "Invalid URL format"
+                isTesting = false
+                return
+            }
             
-            Text("Solution: \(solution)")
-                .font(.caption)
-                .foregroundColor(.gray)
+            if NSWorkspace.shared.open(url) {
+                testResult = "URL opened successfully - check Smith for response"
+            } else {
+                testResult = "Failed to open URL - scheme may not be registered"
+            }
+            
+            isTesting = false
         }
     }
 }
 
 #Preview {
     SystemIntegrationView()
+        .frame(width: 600, height: 800)
 }

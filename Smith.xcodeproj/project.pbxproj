@@ -3,10 +3,21 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 90;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		CA546D9D2E01BF5E0087A36E /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA546D9C2E01BF5E0087A36E /* SystemConfiguration.framework */; };
+		CA546D9F2E01BF830087A36E /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA546D9E2E01BF830087A36E /* ServiceManagement.framework */; };
+		CA546DA22E01C2E60087A36E /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA546D9A2E01BF1E0087A36E /* IOKit.framework */; };
+		CA546DA62E01C3480087A36E /* FoundationModels.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA546DA52E01C3480087A36E /* FoundationModels.framework */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
+		CA546D9A2E01BF1E0087A36E /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+		CA546D9C2E01BF5E0087A36E /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		CA546D9E2E01BF830087A36E /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
+		CA546DA52E01C3480087A36E /* FoundationModels.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FoundationModels.framework; path = System/Library/Frameworks/FoundationModels.framework; sourceTree = SDKROOT; };
 		CA7A6EFD2DFE4696004DF457 /* Smith.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Smith.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -34,18 +45,32 @@
 /* Begin PBXFrameworksBuildPhase section */
 		CA7A6EFA2DFE4696004DF457 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
+				CA546D9F2E01BF830087A36E /* ServiceManagement.framework in Frameworks */,
+				CA546DA62E01C3480087A36E /* FoundationModels.framework in Frameworks */,
+				CA546D9D2E01BF5E0087A36E /* SystemConfiguration.framework in Frameworks */,
+				CA546DA22E01C2E60087A36E /* IOKit.framework in Frameworks */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CA546D992E01BF1E0087A36E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CA546DA52E01C3480087A36E /* FoundationModels.framework */,
+				CA546D9E2E01BF830087A36E /* ServiceManagement.framework */,
+				CA546D9C2E01BF5E0087A36E /* SystemConfiguration.framework */,
+				CA546D9A2E01BF1E0087A36E /* IOKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		CA7A6EF42DFE4695004DF457 = {
 			isa = PBXGroup;
 			children = (
 				CA7A6EFF2DFE4696004DF457 /* Smith */,
+				CA546D992E01BF1E0087A36E /* Frameworks */,
 				CA7A6EFE2DFE4696004DF457 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -71,14 +96,10 @@
 			);
 			buildRules = (
 			);
-			dependencies = (
-			);
 			fileSystemSynchronizedGroups = (
 				CA7A6EFF2DFE4696004DF457 /* Smith */,
 			);
 			name = Smith;
-			packageProductDependencies = (
-			);
 			productName = Smith;
 			productReference = CA7A6EFD2DFE4696004DF457 /* Smith.app */;
 			productType = "com.apple.product-type.application";
@@ -107,7 +128,7 @@
 			);
 			mainGroup = CA7A6EF42DFE4695004DF457;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
+			preferredProjectObjectVersion = 90;
 			productRefGroup = CA7A6EFE2DFE4696004DF457 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -120,25 +141,21 @@
 /* Begin PBXResourcesBuildPhase section */
 		CA7A6EFB2DFE4696004DF457 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		CA7A6EF92DFE4696004DF457 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		CA7A6F062DFE4696004DF457 /* Debug */ = {
+		CA7A6F062DFE4696004DF457 /* Debug configuration for PBXProject "Smith" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -202,7 +219,7 @@
 			};
 			name = Debug;
 		};
-		CA7A6F072DFE4696004DF457 /* Release */ = {
+		CA7A6F072DFE4696004DF457 /* Release configuration for PBXProject "Smith" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -258,7 +275,7 @@
 			};
 			name = Release;
 		};
-		CA7A6F092DFE4696004DF457 /* Debug */ = {
+		CA7A6F092DFE4696004DF457 /* Debug configuration for PBXNativeTarget "Smith" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -292,7 +309,7 @@
 			};
 			name = Debug;
 		};
-		CA7A6F0A2DFE4696004DF457 /* Release */ = {
+		CA7A6F0A2DFE4696004DF457 /* Release configuration for PBXNativeTarget "Smith" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -332,19 +349,17 @@
 		CA7A6EF82DFE4695004DF457 /* Build configuration list for PBXProject "Smith" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				CA7A6F062DFE4696004DF457 /* Debug */,
-				CA7A6F072DFE4696004DF457 /* Release */,
+				CA7A6F062DFE4696004DF457 /* Debug configuration for PBXProject "Smith" */,
+				CA7A6F072DFE4696004DF457 /* Release configuration for PBXProject "Smith" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		CA7A6F082DFE4696004DF457 /* Build configuration list for PBXNativeTarget "Smith" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				CA7A6F092DFE4696004DF457 /* Debug */,
-				CA7A6F0A2DFE4696004DF457 /* Release */,
+				CA7A6F092DFE4696004DF457 /* Debug configuration for PBXNativeTarget "Smith" */,
+				CA7A6F0A2DFE4696004DF457 /* Release configuration for PBXNativeTarget "Smith" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */

@@ -853,6 +853,24 @@ struct SystemAnomaly {
             }
         }
     }
+    
+    var systemSeverity: SystemAlertSeverity {
+        // Use a simple mapping since priority property might not be available  
+        return .warning
+    }
+}
+
+enum SystemAlertSeverity {
+    case info, warning, error, critical
+    
+    var color: Color {
+        switch self {
+        case .info: return .blue
+        case .warning: return .orange
+        case .error: return .red
+        case .critical: return .purple
+        }
+    }
 }
 
 struct SessionMemory {

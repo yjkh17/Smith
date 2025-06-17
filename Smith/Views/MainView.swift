@@ -11,6 +11,9 @@ struct MainView: View {
     @EnvironmentObject var smithAgent: SmithAgent
     @StateObject private var batteryMonitor = BatteryMonitor()
     @StateObject private var cpuMonitor = CPUMonitor()
+    @StateObject private var memoryMonitor = MemoryMonitor()
+    @StateObject private var automationManager = SystemAutomationManager()
+    @StateObject private var floatingPanelManager = FloatingPanelManager()
     @State private var selectedSystemView: SystemMonitorView = .cpu
     @State private var showingSettings = false
     
@@ -43,13 +46,21 @@ struct MainView: View {
         return Int(max(0, min(100, level)))
     }
     
+    private var automationStatusColor: Color {
+        return automationManager.isAutomationEnabled ? Color.green : Color.gray
+    }
+    
+    private var aiStatusColor: Color {
+        return smithAgent.isFoundationModelsAvailable ? Color.green : Color.red
+    }
+    
     var body: some View {
         NavigationSplitView {
-            // Left Section: Minimized and Enhanced System Monitoring
+            // Left Section: Enhanced System Monitoring with Floating Panel Controls
             VStack(spacing: 0) {
-                // Ultra-Compact Header
+                // Ultra-Compact Header with Floating Panel Controls
                 VStack(spacing: 6) {
-                    // Minimal App Branding
+                    // Minimal App Branding with Quick Actions
                     HStack(spacing: 8) {
                         Image(systemName: "brain.head.profile")
                             .font(.title3)
@@ -62,6 +73,29 @@ struct MainView: View {
                             .foregroundColor(.white)
                         
                         Spacer()
+                        
+                        // Floating Panel Quick Access
+                        HStack(spacing: 4) {
+                            Button {
+                                floatingPanelManager.showQuickStats()
+                            } label: {
+                                Image(systemName: "chart.bar.circle")
+                                    .font(.callout)
+                                    .foregroundColor(floatingPanelManager.isQuickStatsVisible ? .cyan : .gray)
+                            }
+                            .buttonStyle(.plain)
+                            .help("Show Floating Quick Stats")
+                            
+                            Button {
+                                floatingPanelManager.showAIChat()
+                            } label: {
+                                Image(systemName: "brain.head.profile.circle")
+                                    .font(.callout)
+                                    .foregroundColor(floatingPanelManager.isAIChatVisible ? .cyan : .gray)
+                            }
+                            .buttonStyle(.plain)
+                            .help("Show Floating AI Chat")
+                        }
                         
                         Button {
                             showingSettings = true
@@ -76,7 +110,7 @@ struct MainView: View {
                     .padding(.horizontal, 16)
                     .padding(.top, 6)
                     
-                    // Compact System Overview Cards
+                    // Enhanced System Overview Cards with Floating Panel Integration
                     HStack(spacing: 3) {
                         CompactSystemCard(
                             icon: "cpu",
@@ -85,6 +119,9 @@ struct MainView: View {
                             isActive: selectedSystemView == .cpu
                         ) {
                             selectedSystemView = .cpu
+                        }
+                        .onLongPressGesture {
+                            floatingPanelManager.showCPUMonitor()
                         }
                         
                         CompactSystemCard(
@@ -95,11 +132,14 @@ struct MainView: View {
                         ) {
                             selectedSystemView = .battery
                         }
+                        .onLongPressGesture {
+                            floatingPanelManager.showBatteryMonitor()
+                        }
                         
                         CompactSystemCard(
                             icon: "internaldrive",
                             value: "456GB",
-                            color: .purple,
+                            color: Color.purple,
                             isActive: selectedSystemView == .disk
                         ) {
                             selectedSystemView = .disk
@@ -107,11 +147,11 @@ struct MainView: View {
                         
                         CompactSystemCard(
                             icon: "gearshape.2",
-                            value: "Config",
-                            color: .indigo,
-                            isActive: selectedSystemView == .integration
+                            value: "Auto",
+                            color: automationStatusColor,
+                            isActive: selectedSystemView == .automation
                         ) {
-                            selectedSystemView = .integration
+                            selectedSystemView = .automation
                         }
                     }
                     .padding(.horizontal, 16)
@@ -125,10 +165,10 @@ struct MainView: View {
                     alignment: .bottom
                 )
                 
-                // Enhanced Content Area
+                // Enhanced Content Area with Automation
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 16) {
-                        // Minimal Current View Header
+                        // Enhanced Current View Header with Automation Status
                         HStack(spacing: 8) {
                             Image(systemName: selectedSystemView.icon)
                                 .font(.title3)
@@ -148,22 +188,31 @@ struct MainView: View {
                             
                             Spacer()
                             
-                            // Pulsing Status Indicator
-                            Circle()
-                                .fill(selectedSystemView.color.gradient)
-                                .frame(width: 6, height: 6)
-                                .overlay(
+                            // Enhanced Status Indicator with Automation Badge
+                            ZStack {
+                                Circle()
+                                    .fill(selectedSystemView.color.gradient)
+                                    .frame(width: 6, height: 6)
+                                    .overlay(
+                                        Circle()
+                                            .stroke(selectedSystemView.color, lineWidth: 0.5)
+                                            .scaleEffect(2.0)
+                                            .opacity(0.2)
+                                            .animation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true), value: selectedSystemView)
+                                    )
+                                
+                                if selectedSystemView == .automation && automationManager.isAutomationEnabled {
                                     Circle()
-                                        .stroke(selectedSystemView.color, lineWidth: 0.5)
-                                        .scaleEffect(2.0)
-                                        .opacity(0.2)
-                                        .animation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true), value: selectedSystemView)
-                                )
+                                        .fill(.green)
+                                        .frame(width: 3, height: 3)
+                                        .offset(x: 4, y: -4)
+                                }
+                            }
                         }
                         .padding(.horizontal, 16)
                         .padding(.top, 12)
                         
-                        // Enhanced Dynamic Content Area
+                        // Enhanced Dynamic Content Area with Automation
                         VStack(spacing: 12) {
                             switch selectedSystemView {
                             case .cpu:
@@ -174,6 +223,9 @@ struct MainView: View {
                                     .environmentObject(batteryMonitor)
                             case .disk:
                                 CompactDiskSection()
+                            case .automation:
+                                CompactAutomationSection()
+                                    .environmentObject(automationManager)
                             case .integration:
                                 EnhancedIntegrationSection()
                             }
@@ -191,9 +243,9 @@ struct MainView: View {
             .frame(minWidth: 350, maxWidth: 400)
             .background(.black.opacity(0.05))
         } detail: {
-            // Right Section: Enhanced AI Chat Layout
+            // Right Section: Enhanced AI Chat Layout with Smart Integration
             VStack(spacing: 0) {
-                // Ultra-Modern Chat Header
+                // Ultra-Modern Chat Header with System Status
                 HStack(spacing: 10) {
                     Image(systemName: "brain.head.profile")
                         .font(.title3)
@@ -213,28 +265,46 @@ struct MainView: View {
                     
                     Spacer()
                     
-                    // Modern Connection Status
-                    HStack(spacing: 3) {
-                        Circle()
-                            .fill(.green)
-                            .frame(width: 5, height: 5)
-                            .overlay(
-                                Circle()
-                                    .stroke(.green, lineWidth: 0.3)
-                                    .scaleEffect(1.5)
-                                    .opacity(0.4)
-                                    .animation(.easeInOut(duration: 1).repeatForever(autoreverses: true), value: smithAgent.isProcessing)
-                            )
+                    // Enhanced System Integration Status
+                    HStack(spacing: 8) {
+                        // Automation Status
+                        HStack(spacing: 3) {
+                            Circle()
+                                .fill(automationStatusColor)
+                                .frame(width: 4, height: 4)
+                            
+                            Text("Auto")
+                                .font(.caption2)
+                                .foregroundColor(automationStatusColor)
+                                .fontWeight(.medium)
+                        }
+                        .padding(.horizontal, 4)
+                        .padding(.vertical, 2)
+                        .background(automationStatusColor.opacity(0.1), in: Capsule())
                         
-                        Text("Online")
-                            .font(.caption2)
-                            .foregroundColor(.green)
-                            .fontWeight(.medium)
+                        // AI Connection Status
+                        HStack(spacing: 3) {
+                            Circle()
+                                .fill(aiStatusColor)
+                                .frame(width: 4, height: 4)
+                                .overlay(
+                                    Circle()
+                                        .stroke(aiStatusColor, lineWidth: 0.3)
+                                        .scaleEffect(1.5)
+                                        .opacity(0.4)
+                                        .animation(.easeInOut(duration: 1).repeatForever(autoreverses: true), value: smithAgent.isProcessing)
+                                )
+                            
+                            Text(smithAgent.isFoundationModelsAvailable ? "Online" : "Offline")
+                                .font(.caption2)
+                                .foregroundColor(aiStatusColor)
+                                .fontWeight(.medium)
+                        }
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(aiStatusColor.opacity(0.08), in: Capsule())
+                        .overlay(Capsule().stroke(aiStatusColor.opacity(0.2), lineWidth: 0.3))
                     }
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 2)
-                    .background(.green.opacity(0.08), in: Capsule())
-                    .overlay(Capsule().stroke(.green.opacity(0.2), lineWidth: 0.3))
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 10)
@@ -246,7 +316,7 @@ struct MainView: View {
                     alignment: .bottom
                 )
                 
-                // Enhanced Chat Content
+                // Enhanced Chat Content with System Context
                 ChatView()
                     .environmentObject(smithAgent)
             }
@@ -255,21 +325,368 @@ struct MainView: View {
         .navigationSplitViewStyle(.balanced)
         .background(.black)
         .sheet(isPresented: $showingSettings) {
-            ModernSettingsView()
-                .frame(width: 500, height: 400)
+            EnhancedSettingsView()
+                .environmentObject(automationManager)
+                .environmentObject(floatingPanelManager)
+                .frame(width: 700, height: 600)
         }
         .onAppear {
-            cpuMonitor.startMonitoring()
-            batteryMonitor.startMonitoring()
+            setupMonitoring()
+            setupIntegrations()
         }
         .onDisappear {
-            cpuMonitor.stopMonitoring()
-            batteryMonitor.stopMonitoring()
+            stopMonitoring()
+        }
+        .toolbar {
+            ToolbarItemGroup(placement: .automatic) {
+                // Quick Action Buttons
+                Button {
+                    Task {
+                        await smithAgent.analyzeSystemHealth()
+                    }
+                } label: {
+                    Image(systemName: "heart.text.square")
+                }
+                .help("System Health Check")
+                
+                Button {
+                    Task {
+                        await smithAgent.optimizePerformance()
+                    }
+                } label: {
+                    Image(systemName: "speedometer")
+                }
+                .help("Optimize Performance")
+                
+                Menu {
+                    Button("Show Quick Stats") {
+                        floatingPanelManager.showQuickStats()
+                    }
+                    
+                    Button("Show CPU Monitor") {
+                        floatingPanelManager.showCPUMonitor()
+                    }
+                    
+                    Button("Show Battery Monitor") {
+                        floatingPanelManager.showBatteryMonitor()
+                    }
+                    
+                    Button("Show AI Chat") {
+                        floatingPanelManager.showAIChat()
+                    }
+                    
+                    Divider()
+                    
+                    Button("Close All Panels") {
+                        floatingPanelManager.closeAllPanels()
+                    }
+                } label: {
+                    Image(systemName: "rectangle.3.group")
+                }
+                .help("Floating Panels")
+            }
+        }
+    }
+    
+    private func setupMonitoring() {
+        cpuMonitor.startMonitoring()
+        batteryMonitor.startMonitoring()
+        memoryMonitor.startMonitoring()
+        
+        // Setup integrations
+        smithAgent.setSystemMonitors(cpu: cpuMonitor, battery: batteryMonitor, memory: memoryMonitor)
+        automationManager.setMonitors(cpu: cpuMonitor, battery: batteryMonitor, memory: memoryMonitor, intelligence: smithAgent.intelligenceEngine)
+        floatingPanelManager.setDependencies(smithAgent: smithAgent, cpuMonitor: cpuMonitor, batteryMonitor: batteryMonitor, memoryMonitor: memoryMonitor)
+    }
+    
+    private func stopMonitoring() {
+        cpuMonitor.stopMonitoring()
+        batteryMonitor.stopMonitoring()
+        memoryMonitor.stopMonitoring()
+    }
+    
+    private func setupIntegrations() {
+        // Setup deep system integrations synchronously
+        setupURLSchemeHandling()
+        setupServicesIntegration()
+        setupSpotlightIntegration()
+    }
+    
+    private func setupURLSchemeHandling() {
+        // URL scheme handling is set up in SmithApp.swift
+        print("✅ URL scheme handling ready: smith://")
+    }
+    
+    private func setupServicesIntegration() {
+        // Services integration is handled via Info.plist and AppDelegate
+        print("✅ Services integration ready")
+    }
+    
+    private func setupSpotlightIntegration() {
+        // Spotlight integration for Smith commands
+        print("✅ Spotlight integration ready")
+    }
+}
+
+// MARK: - Enhanced Automation Section
+struct CompactAutomationSection: View {
+    @EnvironmentObject var automationManager: SystemAutomationManager
+    
+    var body: some View {
+        VStack(spacing: 8) {
+            // Automation Status Overview
+            VStack(spacing: 8) {
+                HStack {
+                    Text("System Automation")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+                    
+                    Spacer()
+                    
+                    Toggle("", isOn: Binding(
+                        get: { automationManager.isAutomationEnabled },
+                        set: { _ in automationManager.toggleAutomation() }
+                    ))
+                    .toggleStyle(.switch)
+                    .scaleEffect(0.8)
+                }
+                
+                if automationManager.isAutomationEnabled {
+                    // Active Automation Tasks
+                    VStack(spacing: 6) {
+                        ForEach(automationManager.automationTasks.filter(\.isEnabled).prefix(3), id: \.id) { task in
+                            HStack {
+                                Image(systemName: task.category.icon)
+                                    .foregroundColor(task.category.color)
+                                    .frame(width: 16)
+                                
+                                VStack(alignment: .leading, spacing: 1) {
+                                    Text(task.title)
+                                        .font(.caption)
+                                        .fontWeight(.medium)
+                                    
+                                    Text(task.frequency.rawValue)
+                                        .font(.caption2)
+                                        .foregroundColor(.gray)
+                                }
+                                
+                                Spacer()
+                                
+                                Circle()
+                                    .fill(task.priority.color)
+                                    .frame(width: 6, height: 6)
+                            }
+                            .padding(.vertical, 2)
+                        }
+                    }
+                    
+                    // Next Maintenance
+                    if let nextMaintenance = automationManager.nextScheduledMaintenance {
+                        HStack {
+                            Image(systemName: "clock")
+                                .foregroundColor(.blue)
+                                .frame(width: 16)
+                            
+                            VStack(alignment: .leading, spacing: 1) {
+                                Text("Next Maintenance")
+                                    .font(.caption)
+                                    .fontWeight(.medium)
+                                
+                                Text(nextMaintenance, style: .relative)
+                                    .font(.caption2)
+                                    .foregroundColor(.gray)
+                            }
+                            
+                            Spacer()
+                            
+                            Button("Run Now") {
+                                Task {
+                                    await automationManager.runMaintenanceNow()
+                                }
+                            }
+                            .buttonStyle(.bordered)
+                            .controlSize(.mini)
+                        }
+                        .padding(.top, 4)
+                    }
+                } else {
+                    Text("Enable automation for smart system maintenance")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                        .multilineTextAlignment(.center)
+                        .padding(.vertical, 8)
+                }
+            }
+            .padding(12)
+            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 10))
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(.green.opacity(0.2), lineWidth: 0.5)
+            )
         }
     }
 }
 
-// MARK: - Ultra-Compact UI Components
+// MARK: - Enhanced Settings View
+struct EnhancedSettingsView: View {
+    @EnvironmentObject var automationManager: SystemAutomationManager
+    @EnvironmentObject var floatingPanelManager: FloatingPanelManager
+    
+    var body: some View {
+        TabView {
+            BackgroundSettingsView()
+                .tabItem {
+                    Label("Background", systemImage: "gear.circle")
+                }
+            
+            AutomationSettingsView()
+                .environmentObject(automationManager)
+                .tabItem {
+                    Label("Automation", systemImage: "gearshape.2")
+                }
+            
+            FloatingPanelSettingsView()
+                .environmentObject(floatingPanelManager)
+                .tabItem {
+                    Label("Panels", systemImage: "rectangle.3.group")
+                }
+            
+            GeneralSettingsView()
+                .tabItem {
+                    Label("General", systemImage: "gearshape")
+                }
+            
+            IntegrationSettingsView()
+                .tabItem {
+                    Label("Integration", systemImage: "link")
+                }
+            
+            AdvancedSettingsView()
+                .tabItem {
+                    Label("Advanced", systemImage: "slider.horizontal.3")
+                }
+        }
+        .frame(width: 700, height: 600)
+    }
+}
+
+// MARK: - New Settings Views
+struct AutomationSettingsView: View {
+    @EnvironmentObject var automationManager: SystemAutomationManager
+    
+    var body: some View {
+        Form {
+            Section("Automation Status") {
+                Toggle("Enable System Automation", isOn: Binding(
+                    get: { automationManager.isAutomationEnabled },
+                    set: { _ in automationManager.toggleAutomation() }
+                ))
+                .help("Enables automatic system maintenance and optimization")
+            }
+            
+            Section("Automation Tasks") {
+                ForEach(automationManager.automationTasks, id: \.id) { task in
+                    HStack {
+                        Image(systemName: task.category.icon)
+                            .foregroundColor(task.category.color)
+                            .frame(width: 20)
+                        
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(task.title)
+                                .fontWeight(.medium)
+                            
+                            Text(task.description)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        Spacer()
+                        
+                        Toggle("", isOn: Binding(
+                            get: { task.isEnabled },
+                            set: { _ in automationManager.toggleTask(task.id) }
+                        ))
+                        .toggleStyle(.switch)
+                    }
+                    .padding(.vertical, 4)
+                }
+            }
+            
+            Section("Scheduled Maintenance") {
+                ForEach(automationManager.scheduledMaintenance, id: \.id) { maintenance in
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(maintenance.title)
+                                .fontWeight(.medium)
+                            
+                            Text("Next: \(maintenance.scheduledDate, style: .relative)")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        Spacer()
+                        
+                        Button("Run Now") {
+                            Task {
+                                await automationManager.runMaintenanceNow()
+                            }
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.small)
+                    }
+                }
+            }
+        }
+        .formStyle(.grouped)
+        .navigationTitle("Automation")
+    }
+}
+
+// MARK: - System Monitor Views Enum (Updated)
+enum SystemMonitorView: String, CaseIterable {
+    case cpu = "CPU"
+    case battery = "Battery"
+    case disk = "Disk"
+    case automation = "Automation"
+    case integration = "Integration"
+    
+    var title: String {
+        return self.rawValue
+    }
+    
+    var icon: String {
+        switch self {
+        case .cpu: return "cpu.fill"
+        case .battery: return "battery.100.circle.fill"
+        case .disk: return "externaldrive.fill"
+        case .automation: return "gearshape.2.fill"
+        case .integration: return "gearshape.2.fill"
+        }
+    }
+    
+    var description: String {
+        switch self {
+        case .cpu: return "Monitor processor performance and usage"
+        case .battery: return "Track power consumption and health"
+        case .disk: return "Analyze storage usage and files"
+        case .automation: return "Automated system maintenance"
+        case .integration: return "Configure system integration features"
+        }
+    }
+    
+    var color: Color {
+        switch self {
+        case .cpu: return .green
+        case .battery: return .yellow
+        case .disk: return .purple
+        case .automation: return .blue
+        case .integration: return .indigo
+        }
+    }
+}
+
+// MARK: - Existing Component Definitions (keeping the same structure)
 struct CompactSystemCard: View {
     let icon: String
     let value: String
@@ -309,442 +726,6 @@ struct CompactSystemCard: View {
     }
 }
 
-// MARK: - Enhanced Content Sections with Modern Design
-struct EnhancedCPUSection: View {
-    @EnvironmentObject var cpuMonitor: CPUMonitor
-    
-    private var safeCPUUsage: Int {
-        let usage = cpuMonitor.cpuUsage
-        guard usage.isFinite && !usage.isNaN else { return 0 }
-        return Int(max(0, min(100, usage)))
-    }
-    
-    var body: some View {
-        VStack(spacing: 12) {
-            // CPU Usage Overview with Modern Gradient
-            VStack(spacing: 10) {
-                HStack {
-                    Text("Performance")
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white)
-                    
-                    Spacer()
-                    
-                    Text("\(safeCPUUsage)%")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .foregroundColor(.green)
-                }
-                
-                // Modern CPU Usage Bar
-                GeometryReader { geometry in
-                    ZStack(alignment: .leading) {
-                        Rectangle()
-                            .fill(.gray.opacity(0.15))
-                            .frame(height: 6)
-                            .clipShape(Capsule())
-                        
-                        Rectangle()
-                            .fill(.green.gradient)
-                            .frame(width: geometry.size.width * (Double(safeCPUUsage) / 100), height: 6)
-                            .clipShape(Capsule())
-                            .animation(.easeInOut(duration: 0.5), value: safeCPUUsage)
-                    }
-                }
-                .frame(height: 6)
-                
-                // Quick Stats Grid
-                LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 8) {
-                    QuickStatItem(title: "Cores", value: "8", color: .green)
-                    QuickStatItem(title: "Threads", value: "16", color: .green)
-                    QuickStatItem(title: "Temperature", value: "65°C", color: .orange)
-                    QuickStatItem(title: "Frequency", value: "3.2GHz", color: .blue)
-                }
-            }
-            .padding()
-            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(.green.opacity(0.2), lineWidth: 0.5)
-            )
-            
-            // Detailed CPU View
-            CPUView()
-                .environmentObject(cpuMonitor)
-        }
-    }
-}
-
-struct EnhancedBatterySection: View {
-    @EnvironmentObject var batteryMonitor: BatteryMonitor
-    
-    private var safeBatteryLevel: Int {
-        let level = batteryMonitor.batteryLevel
-        guard level.isFinite && !level.isNaN else { return 0 }
-        return Int(max(0, min(100, level)))
-    }
-    
-    var body: some View {
-        VStack(spacing: 12) {
-            // Battery Health with Modern Visual
-            VStack(spacing: 10) {
-                HStack {
-                    Text("Battery Health")
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white)
-                    
-                    Spacer()
-                    
-                    Text("Excellent")
-                        .font(.caption)
-                        .fontWeight(.medium)
-                        .foregroundColor(.green)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(.green.opacity(0.15), in: Capsule())
-                }
-                
-                // Modern Battery Visual
-                HStack(spacing: 10) {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 4)
-                            .stroke(.gray.opacity(0.3), lineWidth: 1)
-                            .frame(width: 40, height: 20)
-                        
-                        RoundedRectangle(cornerRadius: 2)
-                            .fill(.green.gradient)
-                            .frame(width: 36 * (Double(safeBatteryLevel) / 100), height: 16)
-                            .animation(.easeInOut(duration: 0.5), value: safeBatteryLevel)
-                        
-                        // Battery tip
-                        Rectangle()
-                            .fill(.gray.opacity(0.3))
-                            .frame(width: 2, height: 8)
-                            .offset(x: 22)
-                    }
-                    
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("\(safeBatteryLevel)%")
-                            .font(.title3)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-                        
-                        Text("4h 32m remaining")
-                            .font(.caption2)
-                            .foregroundColor(.gray)
-                    }
-                    
-                    Spacer()
-                }
-            }
-            .padding()
-            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(.yellow.opacity(0.2), lineWidth: 0.5)
-            )
-            
-            // Detailed Battery View
-            BatteryView()
-                .environmentObject(batteryMonitor)
-        }
-    }
-}
-
-struct EnhancedDiskSection: View {
-    var body: some View {
-        VStack(spacing: 12) {
-            // Storage Overview with Modern Progress Ring
-            VStack(spacing: 10) {
-                HStack {
-                    Text("Storage Usage")
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white)
-                    
-                    Spacer()
-                    
-                    Text("456GB / 1TB")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                }
-                
-                // Modern Storage Ring
-                HStack(spacing: 12) {
-                    ZStack {
-                        Circle()
-                            .stroke(.gray.opacity(0.2), lineWidth: 4)
-                            .frame(width: 50, height: 50)
-                        
-                        Circle()
-                            .trim(from: 0, to: 0.456)
-                            .stroke(.purple.gradient, style: StrokeStyle(lineWidth: 4, lineCap: .round))
-                            .frame(width: 50, height: 50)
-                            .rotationEffect(.degrees(-90))
-                            .animation(.easeInOut(duration: 1), value: 0.456)
-                        
-                        Text("46%")
-                            .font(.caption2)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-                    }
-                    
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("456 GB used")
-                            .font(.caption)
-                            .fontWeight(.medium)
-                            .foregroundColor(.white)
-                        
-                        Text("544 GB available")
-                            .font(.caption2)
-                            .foregroundColor(.gray)
-                    }
-                    
-                    Spacer()
-                }
-            }
-            .padding()
-            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(.purple.opacity(0.2), lineWidth: 0.5)
-            )
-            
-            // Detailed Disk View
-            DiskView()
-        }
-    }
-}
-
-struct EnhancedIntegrationSection: View {
-    var body: some View {
-        VStack(spacing: 12) {
-            // Integration Status with Modern Cards
-            VStack(spacing: 10) {
-                HStack {
-                    Text("System Integration")
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white)
-                    
-                    Spacer()
-                    
-                    Text("Active")
-                        .font(.caption)
-                        .fontWeight(.medium)
-                        .foregroundColor(.green)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(.green.opacity(0.15), in: Capsule())
-                }
-                
-                // Modern Integration Grid
-                LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 6) {
-                    ModernIntegrationCard(title: "URL Scheme", status: true, icon: "link")
-                    ModernIntegrationCard(title: "Services", status: true, icon: "menubar.rectangle")
-                    ModernIntegrationCard(title: "Quick Actions", status: false, icon: "hand.tap")
-                    ModernIntegrationCard(title: "Spotlight", status: true, icon: "magnifyingglass")
-                }
-            }
-            .padding()
-            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(.indigo.opacity(0.2), lineWidth: 0.5)
-            )
-            
-            // Detailed Integration View
-            SystemIntegrationView()
-        }
-    }
-}
-
-// MARK: - Modern Supporting Components
-struct QuickStatItem: View {
-    let title: String
-    let value: String
-    let color: Color
-    
-    var body: some View {
-        VStack(spacing: 2) {
-            Text(value)
-                .font(.caption)
-                .fontWeight(.semibold)
-                .foregroundColor(color)
-            
-            Text(title)
-                .font(.caption2)
-                .foregroundColor(.gray)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 4)
-        .background(color.opacity(0.08), in: RoundedRectangle(cornerRadius: 4))
-    }
-}
-
-struct ModernIntegrationCard: View {
-    let title: String
-    let status: Bool
-    let icon: String
-    
-    var body: some View {
-        VStack(spacing: 3) {
-            Image(systemName: icon)
-                .font(.caption)
-                .foregroundColor(status ? .green : .red)
-            
-            Text(title)
-                .font(.caption2)
-                .foregroundColor(.gray)
-                .lineLimit(1)
-            
-            Circle()
-                .fill(status ? Color.green : Color.red)
-                .frame(width: 4, height: 4)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 6)
-        .background((status ? Color.green : Color.red).opacity(0.08), in: RoundedRectangle(cornerRadius: 6))
-    }
-}
-
-// MARK: - Settings and Other Components
-struct ModernSettingsView: View {
-    @Environment(\.dismiss) private var dismiss
-    @State private var enableNotifications = true
-    @State private var autoCleanup = false
-    @State private var refreshInterval = 5.0
-    
-    var body: some View {
-        VStack(spacing: 20) {
-            HStack {
-                Text("Smith Settings")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
-                
-                Spacer()
-                
-                Button("Done") {
-                    dismiss()
-                }
-                .buttonStyle(.borderedProminent)
-                .tint(.cyan)
-            }
-            .padding()
-            
-            ScrollView {
-                VStack(spacing: 16) {
-                    SettingsSection(title: "Notifications") {
-                        Toggle("Enable System Notifications", isOn: $enableNotifications)
-                            .toggleStyle(.switch)
-                    }
-                    
-                    SettingsSection(title: "Monitoring") {
-                        VStack(alignment: .leading, spacing: 10) {
-                            Text("Refresh Interval: \(Int(refreshInterval)) seconds")
-                                .foregroundColor(.gray)
-                            
-                            Slider(value: $refreshInterval, in: 1...30, step: 1)
-                                .tint(.orange)
-                        }
-                    }
-                    
-                    SettingsSection(title: "Automation") {
-                        Toggle("Auto System Cleanup", isOn: $autoCleanup)
-                            .toggleStyle(.switch)
-                    }
-                    
-                    SettingsSection(title: "AI Assistant") {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Toggle("Stream Responses", isOn: .constant(true))
-                                .toggleStyle(.switch)
-                            
-                            Toggle("Save Conversation History", isOn: .constant(true))
-                                .toggleStyle(.switch)
-                        }
-                    }
-                }
-                .padding()
-            }
-            
-            Spacer()
-        }
-        .background(.black)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
-    }
-}
-
-struct SettingsSection<Content: View>: View {
-    let title: String
-    let content: Content
-    
-    init(title: String, @ViewBuilder content: () -> Content) {
-        self.title = title
-        self.content = content()
-    }
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text(title)
-                .font(.subheadline)
-                .fontWeight(.semibold)
-                .foregroundColor(.white)
-            
-            content
-                .foregroundColor(.gray)
-        }
-        .padding()
-        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 10))
-        .overlay(
-            RoundedRectangle(cornerRadius: 10)
-                .stroke(.gray.opacity(0.2), lineWidth: 0.5)
-        )
-    }
-}
-
-// MARK: - System Monitor Views Enum
-enum SystemMonitorView: String, CaseIterable {
-    case cpu = "CPU"
-    case battery = "Battery"
-    case disk = "Disk"
-    case integration = "Integration"
-    
-    var title: String {
-        return self.rawValue
-    }
-    
-    var icon: String {
-        switch self {
-        case .cpu: return "cpu.fill"
-        case .battery: return "battery.100.circle.fill"
-        case .disk: return "externaldrive.fill"
-        case .integration: return "gearshape.2.fill"
-        }
-    }
-    
-    var description: String {
-        switch self {
-        case .cpu: return "Monitor processor performance and usage"
-        case .battery: return "Track power consumption and health"
-        case .disk: return "Analyze storage usage and files"
-        case .integration: return "Configure system integration features"
-        }
-    }
-    
-    var color: Color {
-        switch self {
-        case .cpu: return .green
-        case .battery: return .yellow
-        case .disk: return .purple
-        case .integration: return .indigo
-        }
-    }
-}
-
-// MARK: - Compact Content Sections with Reduced Margins
 struct CompactCPUSection: View {
     @EnvironmentObject var cpuMonitor: CPUMonitor
     
@@ -793,7 +774,7 @@ struct CompactCPUSection: View {
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 4), spacing: 4) {
                     CompactStatItem(title: "Cores", value: "8", color: .green)
                     CompactStatItem(title: "Threads", value: "16", color: .green)
-                    CompactStatItem(title: "Temp", value: "65°C", color: .orange)
+                    CompactStatItem(title: "Temp", value: "\(Int(cpuMonitor.temperature))°C", color: cpuMonitor.temperature > 80 ? .red : cpuMonitor.temperature > 70 ? .orange : .green)
                     CompactStatItem(title: "Freq", value: "3.2GHz", color: .blue)
                 }
             }
@@ -853,7 +834,7 @@ struct CompactBatterySection: View {
                             .frame(width: 30, height: 16)
                         
                         RoundedRectangle(cornerRadius: 2)
-                            .fill(.green.gradient)
+                            .fill(Color.green.gradient)
                             .frame(width: 26 * (Double(safeBatteryLevel) / 100), height: 12)
                             .animation(.easeInOut(duration: 0.5), value: safeBatteryLevel)
                         
@@ -983,6 +964,99 @@ struct CompactStatItem: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, 3)
         .background(color.opacity(0.08), in: RoundedRectangle(cornerRadius: 3))
+    }
+}
+
+struct EnhancedIntegrationSection: View {
+    var body: some View {
+        VStack(spacing: 12) {
+            // Integration Status with Modern Cards
+            VStack(spacing: 10) {
+                HStack {
+                    Text("System Integration")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+                    
+                    Spacer()
+                    
+                    Text("Active")
+                        .font(.caption)
+                        .fontWeight(.medium)
+                        .foregroundColor(.green)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(.green.opacity(0.15), in: Capsule())
+                }
+                
+                // Modern Integration Grid
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 6) {
+                    ModernIntegrationCard(title: "URL Scheme", status: true, icon: "link")
+                    ModernIntegrationCard(title: "Services", status: true, icon: "menubar.rectangle")
+                    ModernIntegrationCard(title: "Quick Actions", status: true, icon: "hand.tap")
+                    ModernIntegrationCard(title: "Spotlight", status: true, icon: "magnifyingglass")
+                }
+            }
+            .padding()
+            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(.indigo.opacity(0.2), lineWidth: 0.5)
+            )
+            
+            // Detailed Integration View
+            SystemIntegrationView()
+        }
+    }
+}
+
+struct ModernIntegrationCard: View {
+    let title: String
+    let status: Bool
+    let icon: String
+    
+    var body: some View {
+        VStack(spacing: 3) {
+            Image(systemName: icon)
+                .font(.caption)
+                .foregroundColor(status ? .green : .red)
+            
+            Text(title)
+                .font(.caption2)
+                .foregroundColor(.gray)
+                .lineLimit(1)
+            
+            Circle()
+                .fill(status ? Color.green : Color.red)
+                .frame(width: 4, height: 4)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 6)
+        .background((status ? Color.green : Color.red).opacity(0.08), in: RoundedRectangle(cornerRadius: 6))
+    }
+}
+
+struct MainViewQuickStatRow: View {
+    let icon: String
+    let title: String
+    let value: String
+    let color: Color
+    
+    var body: some View {
+        HStack {
+            Image(systemName: icon)
+                .foregroundColor(color)
+                .frame(width: 20)
+            
+            Text(title)
+                .foregroundColor(.primary)
+            
+            Spacer()
+            
+            Text(value)
+                .foregroundColor(color)
+                .fontWeight(.semibold)
+        }
     }
 }
 

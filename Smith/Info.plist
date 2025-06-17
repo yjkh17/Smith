@@ -53,6 +53,14 @@
 	</array>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.utilities</string>
+	
+	<!-- AppleScript Dictionary Support -->
+	<key>OSAScriptingDefinition</key>
+	<string>SmithScript.sdef</string>
+	<key>NSAppleScriptEnabled</key>
+	<true/>
+	
+	<!-- Enhanced URL Scheme Support -->
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -66,6 +74,8 @@
 			<string></string>
 		</dict>
 	</array>
+	
+	<!-- Enhanced Services Support -->
 	<key>NSServices</key>
 	<array>
 		<dict>
@@ -121,7 +131,30 @@
 				<string>NSStringPboardType</string>
 			</array>
 		</dict>
+		<dict>
+			<key>NSMenuItem</key>
+			<dict>
+				<key>default</key>
+				<string>Smith System Health Check</string>
+			</dict>
+			<key>NSMessage</key>
+			<string>analyzeSystemPerformanceService</string>
+			<key>NSSendTypes</key>
+			<array>
+				<string>NSStringPboardType</string>
+			</array>
+			<key>NSReturnTypes</key>
+			<array>
+				<string>NSStringPboardType</string>
+			</array>
+		</dict>
 	</array>
+	
+	<!-- Shortcuts Support -->
+	<key>NSSupportsShortcuts</key>
+	<true/>
+	
+	<!-- Document Types -->
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>

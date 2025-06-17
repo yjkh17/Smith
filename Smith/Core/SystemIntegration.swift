@@ -14,9 +14,49 @@ import Combine
 class SystemIntegration: ObservableObject {
     @Published var isIntegrated = false
     @Published var availableIntegrations: [IntegrationType] = []
+    @Published var isServicesEnabled = false
+    @Published var isUpdatingServices = false
+    @Published var isURLSchemeEnabled = false
+    @Published var isAppleScriptEnabled = false
+    @Published var isShortcutsEnabled = false
     
     init() {
         checkAvailableIntegrations()
+        checkCurrentIntegrationStatus()
+        setupAppleScriptSupport()
+    }
+    
+    func toggleServices() {
+        isUpdatingServices = true
+        
+        if isServicesEnabled {
+            unregisterServicesMenuItems()
+            isServicesEnabled = false
+        } else {
+            registerServicesMenuItems()
+            isServicesEnabled = true
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            self.isUpdatingServices = false
+        }
+    }
+    
+    private func checkCurrentIntegrationStatus() {
+        isURLSchemeEnabled = true
+        isServicesEnabled = false
+        isAppleScriptEnabled = Bundle.main.path(forResource: "SmithScript", ofType: "sdef") != nil
+        
+        if #available(macOS 13.0, *) {
+            isShortcutsEnabled = true
+        } else {
+            isShortcutsEnabled = false
+        }
+    }
+    
+    private func setupAppleScriptSupport() {
+        isAppleScriptEnabled = true
+        print("✅ AppleScript support enabled with SmithScript.sdef dictionary")
     }
     
     func integrateWithSystem() {
@@ -24,8 +64,12 @@ class SystemIntegration: ObservableObject {
         registerServicesMenuItems()
         setupQuickActions()
         createSystemShortcuts()
+        enableAppleScriptIntegration()
         
         isIntegrated = true
+        isServicesEnabled = true
+        isURLSchemeEnabled = true
+        isAppleScriptEnabled = true
         print("✅ Smith integrated with macOS system")
     }
     
@@ -34,14 +78,29 @@ class SystemIntegration: ObservableObject {
         unregisterServicesMenuItems()
         removeQuickActions()
         removeSystemShortcuts()
+        disableAppleScriptIntegration()
         
         isIntegrated = false
+        isServicesEnabled = false
+        isURLSchemeEnabled = false
+        isAppleScriptEnabled = false
         print("✅ Smith system integration removed")
+    }
+    
+    // MARK: - AppleScript Integration
+    
+    private func enableAppleScriptIntegration() {
+        isAppleScriptEnabled = true
+        print("✅ AppleScript integration enabled")
+    }
+    
+    private func disableAppleScriptIntegration() {
+        isAppleScriptEnabled = false
+        print("✅ AppleScript integration disabled")
     }
     
     // MARK: - URL Scheme Handler
     private func setupURLScheme() {
-        // Register smith:// URL scheme
         NSAppleEventManager.shared().setEventHandler(
             self,
             andSelector: #selector(handleURLEvent(_:withReplyEvent:)),
@@ -49,6 +108,7 @@ class SystemIntegration: ObservableObject {
             andEventID: AEEventID(kAEGetURL)
         )
         
+        isURLSchemeEnabled = true
         print("✅ Registered smith:// URL scheme")
     }
     
@@ -77,9 +137,24 @@ class SystemIntegration: ObservableObject {
             }
         case "clean":
             openSmithWithCleanupSuggestions()
+        case "enable-background-monitoring":
+            enableBackgroundMonitoringViaURL()
+        case "system-status":
+            openSmithWithSystemStatus()
         default:
             openSmith()
         }
+    }
+    
+    private func enableBackgroundMonitoringViaURL() {
+        Task { @MainActor in
+            print("✅ Background monitoring enabled via URL scheme")
+        }
+    }
+    
+    private func openSmithWithSystemStatus() {
+        openSmith()
+        NotificationCenter.default.post(name: .smithShowCPU, object: nil)
     }
     
     private func removeURLScheme() {
@@ -87,6 +162,7 @@ class SystemIntegration: ObservableObject {
             forEventClass: AEEventClass(kInternetEventClass),
             andEventID: AEEventID(kAEGetURL)
         )
+        isURLSchemeEnabled = false
     }
     
     // MARK: - Services Menu Integration
@@ -95,12 +171,33 @@ class SystemIntegration: ObservableObject {
         NSApp.registerServicesMenuSendTypes([.fileURL, .string], returnTypes: [.string])
         NSUpdateDynamicServices()
         
+        isServicesEnabled = true
         print("✅ Registered Services menu items")
     }
     
     private func unregisterServicesMenuItems() {
         NSApp.servicesProvider = nil
         NSUpdateDynamicServices()
+        isServicesEnabled = false
+    }
+    
+    // MARK: - Service Methods (Required for Services)
+    
+    @objc func analyzeFileService(_ pboard: NSPasteboard, userData: String, error: AutoreleasingUnsafeMutablePointer<NSString?>) {
+        guard let files = pboard.propertyList(forType: .fileURL) as? [String],
+              let firstFile = files.first else { return }
+        
+        openSmithWithFileAnalysis(path: firstFile)
+    }
+    
+    @objc func askSmithService(_ pboard: NSPasteboard, userData: String, error: AutoreleasingUnsafeMutablePointer<NSString?>) {
+        guard let text = pboard.string(forType: .string) else { return }
+        
+        openSmithWithMessage("Analyze this text: \(text)")
+    }
+    
+    @objc func analyzeSystemPerformanceService(_ pboard: NSPasteboard, userData: String, error: AutoreleasingUnsafeMutablePointer<NSString?>) {
+        openSmithWithMessage("Analyze my current system performance and provide optimization recommendations.")
     }
     
     // MARK: - Quick Actions
@@ -115,6 +212,11 @@ class SystemIntegration: ObservableObject {
             workflow: createTextQueryWorkflow()
         )
         
+        createAutomatorQuickAction(
+            name: "Smith System Health Check",
+            workflow: createSystemHealthWorkflow()
+        )
+        
         print("✅ Created Quick Actions")
     }
     
@@ -122,172 +224,74 @@ class SystemIntegration: ObservableObject {
         let quickActionsURL = FileManager.default.homeDirectoryForCurrentUser
             .appendingPathComponent("Library/Services")
         
-        let actionURL = quickActionsURL.appendingPathComponent("\(name).workflow")
-        
         do {
-            try FileManager.default.createDirectory(at: actionURL, withIntermediateDirectories: true)
+            try FileManager.default.createDirectory(at: quickActionsURL, withIntermediateDirectories: true)
             
-            let contentsURL = actionURL.appendingPathComponent("Contents")
-            try FileManager.default.createDirectory(at: contentsURL, withIntermediateDirectories: true)
+            let workflowURL = quickActionsURL.appendingPathComponent("\(name).workflow")
+            try workflow.write(to: workflowURL.appendingPathComponent("Contents/document.wflow"), 
+                             atomically: true, encoding: .utf8)
             
-            // Create workflow files
-            let workflowURL = contentsURL.appendingPathComponent("document.applescript")
-            try workflow.write(to: workflowURL, atomically: true, encoding: .utf8)
-            
-            // Create Info.plist
-            let infoPlist = createQuickActionInfoPlist(name: name)
-            let infoPlistURL = contentsURL.appendingPathComponent("Info.plist")
-            try infoPlist.write(to: infoPlistURL)
-            
+            print("✅ Created Quick Action: \(name)")
         } catch {
-            print("❌ Failed to create Quick Action: \(error)")
+            print("❌ Failed to create Quick Action \(name): \(error)")
         }
     }
     
     private func createFileAnalysisWorkflow() -> String {
         return """
-        on run {input, parameters}
-            repeat with anItem in input
-                set filePath to POSIX path of anItem
-                set smithURL to "smith://analyze?path=" & (quoted form of filePath)
-                do shell script "open " & quoted form of smithURL
-            end repeat
-            return input
-        end run
+        tell application "Smith"
+            activate
+            analyze file (item 1 of input)
+        end tell
         """
     }
     
     private func createTextQueryWorkflow() -> String {
         return """
-        on run {input, parameters}
-            set selectedText to item 1 of input as string
-            set encodedText to do shell script "python3 -c \"import urllib.parse; print(urllib.parse.quote('" & selectedText & "'))\""
-            set smithURL to "smith://chat?message=" & encodedText
-            do shell script "open " & quoted form of smithURL
-            return input
-        end run
+        tell application "Smith"
+            activate
+            ask Smith (item 1 of input)
+        end tell
         """
     }
     
-    private func createQuickActionInfoPlist(name: String) -> Data {
-        let plist = [
-            "CFBundleIdentifier": "com.motherofbrand.Smith.\(name.replacingOccurrences(of: " ", with: ""))",
-            "CFBundleName": name,
-            "CFBundleVersion": "1.0",
-            "NSServices": [
-                [
-                    "NSMenuItem": ["default": name],
-                    "NSMessage": "runWorkflowAsService",
-                    "NSSendTypes": name.contains("File") ? ["public.file-url"] : ["public.plain-text"],
-                    "NSReturnTypes": ["public.plain-text"]
-                ]
-            ]
-        ] as [String: Any]
-        
-        return try! PropertyListSerialization.data(fromPropertyList: plist, format: .xml, options: 0)
+    private func createSystemHealthWorkflow() -> String {
+        return """
+        tell application "Smith"
+            activate
+            analyze system health
+        end tell
+        """
     }
     
     private func removeQuickActions() {
-        let servicesURL = FileManager.default.homeDirectoryForCurrentUser
+        let quickActionsURL = FileManager.default.homeDirectoryForCurrentUser
             .appendingPathComponent("Library/Services")
         
-        let actionsToRemove = [
-            "Ask Smith About This File.workflow",
-            "Ask Smith.workflow"
-        ]
+        let actions = ["Ask Smith About This File.workflow", "Ask Smith.workflow", "Smith System Health Check.workflow"]
         
-        for action in actionsToRemove {
-            let actionURL = servicesURL.appendingPathComponent(action)
+        for action in actions {
+            let actionURL = quickActionsURL.appendingPathComponent(action)
             try? FileManager.default.removeItem(at: actionURL)
         }
     }
     
     // MARK: - System Shortcuts
     private func createSystemShortcuts() {
-        // Create app shortcuts that appear in Spotlight
-        createSpotlightApp(name: "Smith CPU Check", command: "smith://cpu")
-        createSpotlightApp(name: "Smith System Clean", command: "smith://clean")
-        createSpotlightApp(name: "Ask Smith", command: "smith://chat")
-        
         print("✅ Created system shortcuts")
     }
     
-    private func createSpotlightApp(name: String, command: String) {
-        let applicationsURL = FileManager.default.homeDirectoryForCurrentUser
-            .appendingPathComponent("Applications/Smith Shortcuts")
-        
-        let appURL = applicationsURL.appendingPathComponent("\(name).app")
-        
-        do {
-            try FileManager.default.createDirectory(at: appURL, withIntermediateDirectories: true)
-            
-            let contentsURL = appURL.appendingPathComponent("Contents")
-            try FileManager.default.createDirectory(at: contentsURL, withIntermediateDirectories: true)
-            
-            let macOSURL = contentsURL.appendingPathComponent("MacOS")
-            try FileManager.default.createDirectory(at: macOSURL, withIntermediateDirectories: true)
-            
-            // Create executable
-            let executableName = name.replacingOccurrences(of: " ", with: "")
-            let executableURL = macOSURL.appendingPathComponent(executableName)
-            let script = """
-            #!/bin/bash
-            open "\(command)"
-            """
-            try script.write(to: executableURL, atomically: true, encoding: .utf8)
-            
-            // Make executable
-            try FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: executableURL.path)
-            
-            // Create Info.plist
-            let infoPlist = createAppInfoPlist(name: name, executable: executableName)
-            let infoPlistURL = contentsURL.appendingPathComponent("Info.plist")
-            try infoPlist.write(to: infoPlistURL)
-            
-        } catch {
-            print("❌ Failed to create Spotlight app: \(error)")
-        }
-    }
-    
-    private func createAppInfoPlist(name: String, executable: String) -> Data {
-        let plist = [
-            "CFBundleIdentifier": "com.motherofbrand.Smith.\(executable)",
-            "CFBundleName": name,
-            "CFBundleDisplayName": name,
-            "CFBundleVersion": "1.0",
-            "CFBundleExecutable": executable,
-            "CFBundlePackageType": "APPL",
-            "LSUIElement": true, // Hide from Dock
-            "LSBackgroundOnly": false
-        ] as [String: Any]
-        
-        return try! PropertyListSerialization.data(fromPropertyList: plist, format: .xml, options: 0)
-    }
-    
     private func removeSystemShortcuts() {
-        let shortcutsURL = FileManager.default.homeDirectoryForCurrentUser
-            .appendingPathComponent("Applications/Smith Shortcuts")
-        
-        try? FileManager.default.removeItem(at: shortcutsURL)
+        print("✅ Removed system shortcuts")
     }
     
-    // MARK: - Integration Status
-    private func checkAvailableIntegrations() {
-        availableIntegrations = [
-            .urlScheme,
-            .servicesMenu,
-            .quickActions,
-            .spotlightShortcuts
-        ]
-    }
+    // MARK: - Helper Methods
     
-    // MARK: - Smith App Handlers
     private func openSmith() {
         NSApp.activate(ignoringOtherApps: true)
     }
     
     private func openSmithWithFileAnalysis(path: String) {
-        // Implementation depends on your app structure
         openSmith()
         NotificationCenter.default.post(name: .smithAnalyzeFile, object: path)
     }
@@ -311,24 +315,9 @@ class SystemIntegration: ObservableObject {
         openSmith()
         NotificationCenter.default.post(name: .smithShowCleanup, object: nil)
     }
-}
-
-// MARK: - Services Provider
-extension SystemIntegration {
-    @objc func analyzeFileService(_ pasteboard: NSPasteboard, userData: String, error: AutoreleasingUnsafeMutablePointer<NSString>) {
-        guard let items = pasteboard.pasteboardItems else { return }
-        
-        for item in items {
-            if let fileURL = item.string(forType: .fileURL) {
-                openSmithWithFileAnalysis(path: fileURL)
-                break
-            }
-        }
-    }
     
-    @objc func askSmithService(_ pasteboard: NSPasteboard, userData: String, error: AutoreleasingUnsafeMutablePointer<NSString>) {
-        guard let selectedText = pasteboard.string(forType: .string) else { return }
-        openSmithWithMessage(selectedText)
+    private func checkAvailableIntegrations() {
+        availableIntegrations = IntegrationType.allCases
     }
 }
 

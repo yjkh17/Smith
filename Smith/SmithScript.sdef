@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dictionary SYSTEM "file://localhost/System/Library/DTDs/sdef.dtd">
+<dictionary title="Smith Terminology">
+    <suite name="Smith Suite" code="Smth" description="Commands for interacting with Smith AI System Assistant">
+        
+        <!-- System Monitoring Commands -->
+        <command name="get CPU usage" code="SmthGCpu" description="Get current CPU usage percentage">
+            <result type="real" description="CPU usage percentage (0-100)"/>
+        </command>
+        
+        <command name="get memory usage" code="SmthGMem" description="Get current memory usage percentage">
+            <result type="real" description="Memory usage percentage (0-100)"/>
+        </command>
+        
+        <command name="get battery level" code="SmthGBat" description="Get current battery level percentage">
+            <result type="real" description="Battery level percentage (0-100)"/>
+        </command>
+        
+        <command name="get CPU temperature" code="SmthGTmp" description="Get current CPU temperature in Celsius">
+            <result type="real" description="CPU temperature in degrees Celsius"/>
+        </command>
+        
+        <command name="get disk usage" code="SmthGDsk" description="Get current disk usage percentage">
+            <result type="text" description="Disk usage percentage as formatted string"/>
+        </command>
+        
+        <!-- System Analysis Commands -->
+        <command name="analyze system health" code="SmthASys" description="Generate comprehensive system health analysis">
+            <result type="text" description="Detailed system health report"/>
+        </command>
+        
+        <command name="get top processes" code="SmthGPrc" description="Get list of top processes by memory usage">
+            <result type="text" description="Formatted list of top processes"/>
+        </command>
+        
+        <command name="generate system report" code="SmthGRpt" description="Generate comprehensive system report">
+            <result type="text" description="Complete system status report"/>
+        </command>
+        
+        <!-- AI Integration Commands -->
+        <command name="ask Smith" code="SmthAskQ" description="Send a query to Smith AI">
+            <direct-parameter type="text" description="The question or query to ask Smith"/>
+            <result type="text" description="Response or confirmation message"/>
+        </command>
+        
+        <!-- Background Monitoring Commands -->
+        <command name="enable background monitoring" code="SmthEBgM" description="Enable background system monitoring">
+            <result type="text" description="Confirmation message"/>
+        </command>
+        
+        <command name="disable background monitoring" code="SmthDBgM" description="Disable background system monitoring">
+            <result type="text" description="Confirmation message"/>
+        </command>
+        
+        <command name="set background intensity" code="SmthSBgI" description="Set background monitoring intensity level">
+            <direct-parameter type="text" description="Intensity level: minimal, balanced, or comprehensive"/>
+            <result type="text" description="Confirmation message"/>
+        </command>
+        
+    </suite>
+</dictionary>
