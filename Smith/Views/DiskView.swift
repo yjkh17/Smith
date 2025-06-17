@@ -11,7 +11,6 @@ import UniformTypeIdentifiers
 struct DiskView: View {
     @StateObject private var fileManager = FileSystemManager()
     @EnvironmentObject private var smithAgent: SmithAgent
-    @State private var selectedFiltryeURL: URL?
     @State private var expandedFolders: Set<URL> = []
     
     var body: some View {
