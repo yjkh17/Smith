@@ -70,7 +70,7 @@ struct MainView: View {
                             .font(.callout)
                             .fontWeight(.bold)
                             .fontDesign(.monospaced)
-                            .foregroundColor(.white)
+                            .foregroundColor(.primary)
                         
                         Spacer()
                         
@@ -102,7 +102,7 @@ struct MainView: View {
                         } label: {
                             Image(systemName: "gearshape")
                                 .font(.callout)
-                                .foregroundColor(.gray)
+                                .foregroundColor(.secondary)
                         }
                         .buttonStyle(.plain)
                         .help("Settings")
@@ -161,7 +161,7 @@ struct MainView: View {
                 .overlay(
                     Rectangle()
                         .frame(height: 0.5)
-                        .foregroundColor(.gray.opacity(0.2)),
+                        .foregroundColor(Color.secondary.opacity(0.2)),
                     alignment: .bottom
                 )
                 
@@ -178,11 +178,11 @@ struct MainView: View {
                                 Text(selectedSystemView.title)
                                     .font(.headline)
                                     .fontWeight(.semibold)
-                                    .foregroundColor(.white)
+                                    .foregroundColor(.primary)
                                 
                                 Text(selectedSystemView.description)
                                     .font(.caption2)
-                                    .foregroundColor(.gray)
+                                    .foregroundColor(.secondary)
                                     .lineLimit(1)
                             }
                             
@@ -238,10 +238,10 @@ struct MainView: View {
                             .frame(height: 20)
                     }
                 }
-                .background(.black.opacity(0.02))
+                .background(Color(.secondarySystemBackground))
             }
             .frame(minWidth: 350, maxWidth: 400)
-            .background(.black.opacity(0.05))
+            .background(Color(.secondarySystemBackground))
         } detail: {
             // Right Section: Enhanced AI Chat Layout with Smart Integration
             VStack(spacing: 0) {
@@ -256,11 +256,11 @@ struct MainView: View {
                             .font(.callout)
                             .fontWeight(.bold)
                             .fontDesign(.monospaced)
-                            .foregroundColor(.white)
+                            .foregroundColor(.primary)
                         
                         Text("Your intelligent assistant")
                             .font(.caption2)
-                            .foregroundColor(.gray)
+                            .foregroundColor(.secondary)
                     }
                     
                     Spacer()
@@ -312,7 +312,7 @@ struct MainView: View {
                 .overlay(
                     Rectangle()
                         .frame(height: 0.3)
-                        .foregroundColor(.gray.opacity(0.2)),
+                        .foregroundColor(Color.secondary.opacity(0.2)),
                     alignment: .bottom
                 )
                 
@@ -320,10 +320,10 @@ struct MainView: View {
                 ChatView()
                     .environmentObject(smithAgent)
             }
-            .background(.black)
+            .background(Color(.systemBackground))
         }
         .navigationSplitViewStyle(.balanced)
-        .background(.black)
+        .background(Color(.systemBackground))
         .sheet(isPresented: $showingSettings) {
             EnhancedSettingsView()
                 .environmentObject(automationManager)
@@ -440,7 +440,7 @@ struct CompactAutomationSection: View {
                     Text("System Automation")
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                        .foregroundColor(.white)
+                        .foregroundColor(.primary)
                     
                     Spacer()
                     
@@ -468,7 +468,7 @@ struct CompactAutomationSection: View {
                                     
                                     Text(task.frequency.rawValue)
                                         .font(.caption2)
-                                        .foregroundColor(.gray)
+                                        .foregroundColor(.secondary)
                                 }
                                 
                                 Spacer()
@@ -495,7 +495,7 @@ struct CompactAutomationSection: View {
                                 
                                 Text(nextMaintenance, style: .relative)
                                     .font(.caption2)
-                                    .foregroundColor(.gray)
+                                    .foregroundColor(.secondary)
                             }
                             
                             Spacer()
@@ -513,7 +513,7 @@ struct CompactAutomationSection: View {
                 } else {
                     Text("Enable automation for smart system maintenance")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
                         .padding(.vertical, 8)
                 }
@@ -704,7 +704,7 @@ struct CompactSystemCard: View {
                 Text(value)
                     .font(.caption2)
                     .fontWeight(.medium)
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
             }
@@ -717,7 +717,7 @@ struct CompactSystemCard: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 6)
-                    .stroke(isActive ? color.opacity(0.5) : .gray.opacity(0.1), lineWidth: isActive ? 1 : 0.5)
+                    .stroke(isActive ? color.opacity(0.5) : Color.secondary.opacity(0.1), lineWidth: isActive ? 1 : 0.5)
             )
             .scaleEffect(isActive ? 1.05 : 1.0)
             .animation(.easeInOut(duration: 0.15), value: isActive)
@@ -743,7 +743,7 @@ struct CompactCPUSection: View {
                     Text("Performance")
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                        .foregroundColor(.white)
+                        .foregroundColor(.primary)
                     
                     Spacer()
                     
@@ -757,7 +757,7 @@ struct CompactCPUSection: View {
                 GeometryReader { geometry in
                     ZStack(alignment: .leading) {
                         Rectangle()
-                            .fill(.gray.opacity(0.15))
+                            .fill(Color.secondary.opacity(0.15))
                             .frame(height: 4)
                             .clipShape(Capsule())
                         
@@ -791,7 +791,7 @@ struct CompactCPUSection: View {
                     .environmentObject(cpuMonitor)
             }
             .frame(maxHeight: 220)
-            .background(.black.opacity(0.02), in: RoundedRectangle(cornerRadius: 8))
+            .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 8))
         }
     }
 }
@@ -813,7 +813,7 @@ struct CompactBatterySection: View {
                     Text("Battery Health")
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                        .foregroundColor(.white)
+                        .foregroundColor(.primary)
                     
                     Spacer()
                     
@@ -830,7 +830,7 @@ struct CompactBatterySection: View {
                 HStack(spacing: 8) {
                     ZStack {
                         RoundedRectangle(cornerRadius: 3)
-                            .stroke(.gray.opacity(0.3), lineWidth: 1)
+                            .stroke(Color.secondary.opacity(0.3), lineWidth: 1)
                             .frame(width: 30, height: 16)
                         
                         RoundedRectangle(cornerRadius: 2)
@@ -839,7 +839,7 @@ struct CompactBatterySection: View {
                             .animation(.easeInOut(duration: 0.5), value: safeBatteryLevel)
                         
                         Rectangle()
-                            .fill(.gray.opacity(0.3))
+                            .fill(Color.secondary.opacity(0.3))
                             .frame(width: 2, height: 6)
                             .offset(x: 16)
                     }
@@ -848,11 +848,11 @@ struct CompactBatterySection: View {
                         Text("\(safeBatteryLevel)%")
                             .font(.callout)
                             .fontWeight(.bold)
-                            .foregroundColor(.white)
+                            .foregroundColor(.primary)
                         
                         Text("4h 32m remaining")
                             .font(.caption2)
-                            .foregroundColor(.gray)
+                            .foregroundColor(.secondary)
                     }
                     
                     Spacer()
@@ -871,7 +871,7 @@ struct CompactBatterySection: View {
                     .environmentObject(batteryMonitor)
             }
             .frame(maxHeight: 200)
-            .background(.black.opacity(0.02), in: RoundedRectangle(cornerRadius: 8))
+            .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 8))
         }
     }
 }
@@ -885,20 +885,20 @@ struct CompactDiskSection: View {
                     Text("Storage Usage")
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                        .foregroundColor(.white)
+                        .foregroundColor(.primary)
                     
                     Spacer()
                     
                     Text("456GB / 1TB")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(.secondary)
                 }
                 
                 // Compact Storage Ring
                 HStack(spacing: 8) {
                     ZStack {
                         Circle()
-                            .stroke(.gray.opacity(0.2), lineWidth: 3)
+                            .stroke(Color.secondary.opacity(0.2), lineWidth: 3)
                             .frame(width: 36, height: 36)
                         
                         Circle()
@@ -911,18 +911,18 @@ struct CompactDiskSection: View {
                         Text("46%")
                             .font(.caption2)
                             .fontWeight(.bold)
-                            .foregroundColor(.white)
+                            .foregroundColor(.primary)
                     }
                     
                     VStack(alignment: .leading, spacing: 2) {
                         Text("456 GB used")
                             .font(.caption)
                             .fontWeight(.medium)
-                            .foregroundColor(.white)
+                            .foregroundColor(.primary)
                         
                         Text("544 GB available")
                             .font(.caption2)
-                            .foregroundColor(.gray)
+                            .foregroundColor(.secondary)
                     }
                     
                     Spacer()
@@ -940,7 +940,7 @@ struct CompactDiskSection: View {
                 DiskView()
             }
             .frame(maxHeight: 240)
-            .background(.black.opacity(0.02), in: RoundedRectangle(cornerRadius: 8))
+            .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 8))
         }
     }
 }
@@ -959,7 +959,7 @@ struct CompactStatItem: View {
             
             Text(title)
                 .font(.caption2)
-                .foregroundColor(.gray)
+                .foregroundColor(.secondary)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 3)
@@ -976,7 +976,7 @@ struct EnhancedIntegrationSection: View {
                     Text("System Integration")
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                        .foregroundColor(.white)
+                        .foregroundColor(.primary)
                     
                     Spacer()
                     
@@ -1023,7 +1023,7 @@ struct ModernIntegrationCard: View {
             
             Text(title)
                 .font(.caption2)
-                .foregroundColor(.gray)
+                .foregroundColor(.secondary)
                 .lineLimit(1)
             
             Circle()

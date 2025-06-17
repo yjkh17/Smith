@@ -51,12 +51,12 @@ struct DiskView: View {
                 // Ultra-Compact Current path
                 Text(fileManager.currentPath.lastPathComponent)
                     .font(.caption2)
-                    .foregroundColor(.gray)
+                    .foregroundColor(.secondary)
                     .lineLimit(1)
                     .truncationMode(.middle)
             }
             .padding(6)
-            .background(.gray.opacity(0.1))
+            .background(Color(.secondarySystemBackground))
             
             // Ultra-Compact File browser with info panel
             HStack(spacing: 4) {
@@ -114,12 +114,12 @@ struct DiskView: View {
                                 VStack(alignment: .leading, spacing: 1) {
                                     Text(selectedItem.name)
                                         .font(.caption2)
-                                        .foregroundColor(.white)
+                                        .foregroundColor(.primary)
                                         .lineLimit(2)
                                     
                                     Text(selectedItem.isDirectory ? "Folder" : "File")
                                         .font(.caption2)
-                                        .foregroundColor(.gray)
+                                        .foregroundColor(.secondary)
                                 }
                             }
                             
@@ -154,10 +154,10 @@ struct DiskView: View {
                     }
                 }
                 .frame(width: 100)
-                .background(.gray.opacity(0.05))
+                .background(Color(.secondarySystemBackground))
             }
         }
-        .background(.black)
+        .background(Color(.systemBackground))
         .frame(maxHeight: 200)
     }
     
@@ -198,13 +198,13 @@ struct FileRowView: View {
             
             VStack(alignment: .leading) {
                 Text(item.name)
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
                     .lineLimit(1)
                 
                 if !item.isDirectory {
                     Text(formatFileSize(item.size))
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(.secondary)
                 }
             }
             
@@ -239,13 +239,13 @@ struct CompactFileRowView: View {
             VStack(alignment: .leading, spacing: 1) {
                 Text(item.name)
                     .font(.caption)
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
                     .lineLimit(1)
                 
                 if !item.isDirectory {
                     Text(formatFileSize(item.size))
                         .font(.caption2)
-                        .foregroundColor(.gray)
+                        .foregroundColor(.secondary)
                 }
             }
             
@@ -280,13 +280,13 @@ struct UltraCompactFileRowView: View {
             VStack(alignment: .leading, spacing: 0) {
                 Text(item.name)
                     .font(.caption2)
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
                     .lineLimit(1)
                 
                 if !item.isDirectory {
                     Text(formatFileSize(item.size))
                         .font(.caption2)
-                        .foregroundColor(.gray)
+                        .foregroundColor(.secondary)
                 }
             }
             

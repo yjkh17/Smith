@@ -21,11 +21,11 @@ struct ChatView: View {
                     Text("Chat with Smith")
                         .font(.title2)
                         .fontWeight(.bold)
-                        .foregroundColor(.white)
+                        .foregroundColor(.primary)
                     
                     Text("Your AI coding assistant")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(.secondary)
                 }
                 
                 Spacer()
@@ -123,9 +123,9 @@ struct ChatView: View {
                 }
             }
             .padding()
-            .background(.black.opacity(0.1))
+            .background(Color(.secondarySystemBackground))
         }
-        .background(.black)
+        .background(Color(.systemBackground))
         .onAppear {
             isTextFieldFocused = true
         }
@@ -177,7 +177,7 @@ struct ModernMessageBubble: View {
                 
                 Text(message.content)
                     .font(.body)
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
                     .padding()
                     .background(
                         message.isUser ? .blue.opacity(0.2) : .cyan.opacity(0.1),
@@ -272,12 +272,12 @@ struct FocusedFileCard: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text("Focused File")
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(.secondary)
                 
                 Text(file.name)
                     .font(.caption)
                     .fontWeight(.medium)
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
                     .lineLimit(1)
             }
             
@@ -285,7 +285,7 @@ struct FocusedFileCard: View {
             
             Button(action: onRemove) {
                 Image(systemName: "xmark.circle.fill")
-                    .foregroundColor(.gray)
+                    .foregroundColor(.secondary)
             }
             .buttonStyle(.plain)
         }
@@ -332,7 +332,7 @@ struct OptimizedMessageBubble: View {
                 // Message Content
                 Text(message.content)
                     .font(.subheadline)
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 8)
                     .background(
@@ -422,12 +422,12 @@ struct CompactFocusedFileCard: View {
             VStack(alignment: .leading, spacing: 1) {
                 Text("Focused File")
                     .font(.caption2)
-                    .foregroundColor(.gray)
+                    .foregroundColor(.secondary)
                 
                 Text(file.name)
                     .font(.caption)
                     .fontWeight(.medium)
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
                     .lineLimit(1)
             }
             
@@ -435,7 +435,7 @@ struct CompactFocusedFileCard: View {
             
             Button(action: onRemove) {
                 Image(systemName: "xmark.circle.fill")
-                    .foregroundColor(.gray)
+                    .foregroundColor(.secondary)
                     .font(.caption)
             }
             .buttonStyle(.plain)
@@ -453,5 +453,5 @@ struct CompactFocusedFileCard: View {
 #Preview {
     ChatView()
         .environmentObject(SmithAgent())
-        .background(.black)
+        .background(Color(.systemBackground))
 }
