@@ -80,8 +80,8 @@ struct IntegrationStatusRow: View {
                 .foregroundColor(status ? .green : .red)
                 .font(.caption)
                 .fontWeight(.medium)
-                .padding(.horizontal, 6)
-                .padding(.vertical, 2)
+                .padding(.horizontal, Spacing.small)
+                .padding(.vertical, Spacing.xsmall)
                 .background((status ? Color.green : Color.red).opacity(0.15), in: Capsule())
         }
     }

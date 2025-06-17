@@ -85,8 +85,8 @@ struct SystemIntegrationView: View {
                         
                         Text(systemIntegration.isURLSchemeEnabled ? "Active" : "Inactive")
                             .font(.caption)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
+                            .padding(.horizontal, Spacing.small)
+                            .padding(.vertical, Spacing.xsmall)
                             .background(systemIntegration.isURLSchemeEnabled ? Color.green.opacity(0.2) : Color.red.opacity(0.2))
                             .cornerRadius(4)
                     }
@@ -142,8 +142,8 @@ struct SystemIntegrationView: View {
                         
                         Text(systemIntegration.isAppleScriptEnabled ? "Active" : "Inactive")
                             .font(.caption)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
+                            .padding(.horizontal, Spacing.small)
+                            .padding(.vertical, Spacing.xsmall)
                             .background(systemIntegration.isAppleScriptEnabled ? Color.green.opacity(0.2) : Color.red.opacity(0.2))
                             .cornerRadius(4)
                     }
@@ -196,15 +196,15 @@ struct SystemIntegrationView: View {
                         if systemIntegration.isShortcutsEnabled {
                             Text("Available")
                                 .font(.caption)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 4)
+                                .padding(.horizontal, Spacing.small)
+                                .padding(.vertical, Spacing.xsmall)
                                 .background(Color.green.opacity(0.2))
                                 .cornerRadius(4)
                         } else {
                             Text("macOS 13+ Required")
                                 .font(.caption)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 4)
+                                .padding(.horizontal, Spacing.small)
+                                .padding(.vertical, Spacing.xsmall)
                                 .background(Color.orange.opacity(0.2))
                                 .cornerRadius(4)
                         }

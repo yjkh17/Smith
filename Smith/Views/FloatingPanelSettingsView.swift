@@ -37,7 +37,7 @@ struct FloatingPanelSettingsView: View {
                                 .buttonStyle(.bordered)
                                 .controlSize(.small)
                             }
-                            .padding(.vertical, 4)
+                            .padding(.vertical, Spacing.xsmall)
                         }
                     }
                     .padding()
