@@ -96,7 +96,7 @@ struct BatteryView: View {
                     Spacer()
                 }
             }
-            .padding(8)
+            .padding(Spacing.small)
             .background(.gray.opacity(0.1))
             
             // Ultra-Compact Power Sources and Tips
@@ -114,7 +114,7 @@ struct BatteryView: View {
                                 UltraCompactPowerSourceView(source: source)
                             }
                         }
-                        .padding(.horizontal, 8)
+                        .padding(.horizontal, Spacing.small)
                     }
                     
                     // Ultra-Compact Battery Tips
@@ -130,7 +130,7 @@ struct BatteryView: View {
                             UltraCompactTipView(icon: "app.badge.minus", title: "Close Background Apps")
                         }
                     }
-                    .padding(.horizontal, 8)
+                    .padding(.horizontal, Spacing.small)
                 }
             }
             .frame(maxHeight: 80)
@@ -198,8 +198,8 @@ struct PowerSourceRowView: View {
                     .foregroundColor(source.isCharging ? .green : .gray)
             }
         }
-        .padding(.vertical, 4)
-        .padding(.horizontal, 8)
+        .padding(.vertical, Spacing.xsmall)
+        .padding(.horizontal, Spacing.small)
         .background(.gray.opacity(0.1))
         .cornerRadius(8)
     }
@@ -228,7 +228,7 @@ struct TipRowView: View {
             
             Spacer()
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, Spacing.xsmall)
     }
 }
 
@@ -262,8 +262,8 @@ struct CompactPowerSourceView: View {
                     .foregroundColor(source.isCharging ? .green : .gray)
             }
         }
-        .padding(.vertical, 2)
-        .padding(.horizontal, 6)
+        .padding(.vertical, Spacing.xsmall)
+        .padding(.horizontal, Spacing.small)
         .background(.gray.opacity(0.1))
         .cornerRadius(4)
     }
@@ -287,7 +287,7 @@ struct CompactTipView: View {
             
             Spacer()
         }
-        .padding(.vertical, 2)
+        .padding(.vertical, Spacing.xsmall)
     }
 }
 
@@ -313,8 +313,8 @@ struct UltraCompactPowerSourceView: View {
                 .font(.caption2)
                 .foregroundColor(source.isCharging ? .green : .gray)
         }
-        .padding(.vertical, 1)
-        .padding(.horizontal, 4)
+        .padding(.vertical, Spacing.xsmall)
+        .padding(.horizontal, Spacing.xsmall)
         .background(.gray.opacity(0.1))
         .cornerRadius(3)
     }
@@ -338,7 +338,7 @@ struct UltraCompactTipView: View {
             
             Spacer()
         }
-        .padding(.vertical, 1)
+        .padding(.vertical, Spacing.xsmall)
     }
 }
 

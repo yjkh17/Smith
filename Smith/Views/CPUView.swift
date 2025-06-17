@@ -86,7 +86,7 @@ struct CPUView: View {
                     Spacer()
                 }
             }
-            .padding(8)
+            .padding(Spacing.small)
             .background(.gray.opacity(0.1))
             
             // Ultra-Compact Process List
@@ -105,8 +105,8 @@ struct CPUView: View {
                     .buttonStyle(.bordered)
                     .controlSize(.mini)
                 }
-                .padding(.horizontal, 8)
-                .padding(.top, 4)
+                .padding(.horizontal, Spacing.small)
+                .padding(.top, Spacing.xsmall)
                 
                 ScrollView {
                     LazyVStack(spacing: 1) {
@@ -116,7 +116,7 @@ struct CPUView: View {
                             }
                         }
                     }
-                    .padding(.horizontal, 8)
+                    .padding(.horizontal, Spacing.small)
                 }
                 .frame(maxHeight: 100)
             }
@@ -216,7 +216,7 @@ struct ProcessRowView: View {
             }
             .frame(width: 80)
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, Spacing.xsmall)
         .contentShape(Rectangle())
         .onTapGesture {
             onTap()
@@ -265,8 +265,8 @@ struct CompactProcessRowView: View {
             }
             .frame(width: 60)
         }
-        .padding(.vertical, 2)
-        .padding(.horizontal, 4)
+        .padding(.vertical, Spacing.xsmall)
+        .padding(.horizontal, Spacing.xsmall)
         .background(.gray.opacity(0.05), in: RoundedRectangle(cornerRadius: 4))
         .contentShape(Rectangle())
         .onTapGesture {

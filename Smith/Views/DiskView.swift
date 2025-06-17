@@ -54,7 +54,7 @@ struct DiskView: View {
                     .lineLimit(1)
                     .truncationMode(.middle)
             }
-            .padding(6)
+            .padding(Spacing.small)
             .background(.gray.opacity(0.1))
             
             // Ultra-Compact File browser with info panel
@@ -94,7 +94,7 @@ struct DiskView: View {
                                         }
                                 }
                             }
-                            .padding(.horizontal, 4)
+                            .padding(.horizontal, Spacing.xsmall)
                         }
                     }
                 }
@@ -137,7 +137,7 @@ struct DiskView: View {
                                 .controlSize(.mini)
                             }
                         }
-                        .padding(6)
+                        .padding(Spacing.small)
                     } else {
                         VStack {
                             Image(systemName: "doc.questionmark")
@@ -149,7 +149,7 @@ struct DiskView: View {
                                 .foregroundColor(.gray)
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .padding(6)
+                        .padding(Spacing.small)
                     }
                 }
                 .frame(width: 100)
@@ -209,7 +209,7 @@ struct FileRowView: View {
             
             Spacer()
         }
-        .padding(.vertical, 2)
+        .padding(.vertical, Spacing.xsmall)
         .background(
             RoundedRectangle(cornerRadius: 6)
                 .fill(isSelected ? .cyan.opacity(0.2) : .clear)
@@ -250,7 +250,7 @@ struct CompactFileRowView: View {
             
             Spacer()
         }
-        .padding(.vertical, 1)
+        .padding(.vertical, Spacing.xsmall)
         .background(
             RoundedRectangle(cornerRadius: 4)
                 .fill(isSelected ? .cyan.opacity(0.2) : .clear)
@@ -291,8 +291,8 @@ struct UltraCompactFileRowView: View {
             
             Spacer()
         }
-        .padding(.vertical, 1)
-        .padding(.horizontal, 3)
+        .padding(.vertical, Spacing.xsmall)
+        .padding(.horizontal, Spacing.xsmall)
         .background(
             RoundedRectangle(cornerRadius: 3)
                 .fill(isSelected ? .cyan.opacity(0.2) : .clear)

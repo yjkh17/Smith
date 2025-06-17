@@ -47,8 +47,8 @@ struct ChatView: View {
                         .font(.caption)
                         .foregroundColor(.green)
                 }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
+                .padding(.horizontal, Spacing.medium)
+                .padding(.vertical, Spacing.small)
                 .background(.green.opacity(0.1), in: Capsule())
                 .overlay(Capsule().stroke(.green.opacity(0.3), lineWidth: 1))
             }
@@ -289,7 +289,7 @@ struct FocusedFileCard: View {
             }
             .buttonStyle(.plain)
         }
-        .padding(8)
+        .padding(Spacing.small)
         .background(.orange.opacity(0.1), in: RoundedRectangle(cornerRadius: 8))
         .overlay(
             RoundedRectangle(cornerRadius: 8)
@@ -333,8 +333,8 @@ struct OptimizedMessageBubble: View {
                 Text(message.content)
                     .font(.subheadline)
                     .foregroundColor(.white)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
+                    .padding(.horizontal, Spacing.medium)
+                    .padding(.vertical, Spacing.small)
                     .background(
                         message.isUser ? .blue.opacity(0.2) : .cyan.opacity(0.1),
                         in: RoundedRectangle(cornerRadius: 14)
@@ -380,8 +380,8 @@ struct CompactTypingIndicator: View {
                             .animation(.easeInOut(duration: 0.4).repeatForever(), value: animationPhase)
                     }
                 }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
+                .padding(.horizontal, Spacing.medium)
+                .padding(.vertical, Spacing.small)
                 .background(.cyan.opacity(0.1), in: RoundedRectangle(cornerRadius: 14))
                 .overlay(
                     RoundedRectangle(cornerRadius: 14)
@@ -440,8 +440,8 @@ struct CompactFocusedFileCard: View {
             }
             .buttonStyle(.plain)
         }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 6)
+        .padding(.horizontal, Spacing.small)
+        .padding(.vertical, Spacing.small)
         .background(.orange.opacity(0.1), in: RoundedRectangle(cornerRadius: 8))
         .overlay(
             RoundedRectangle(cornerRadius: 8)

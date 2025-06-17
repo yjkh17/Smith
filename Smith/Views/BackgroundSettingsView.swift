@@ -46,7 +46,7 @@ struct BackgroundSettingsView: View {
                                                    showingUninstallConfirmation: $showingUninstallConfirmation)
                     }
                 }
-                .padding(.vertical, 8)
+                .padding(.vertical, Spacing.small)
             }
             
             if launchAgent.isLaunchAgentInstalled {
@@ -302,7 +302,7 @@ struct IntensitySelector: View {
                             .scaleEffect(0.8)
                     }
                 }
-                .padding(.vertical, 4)
+                .padding(.vertical, Spacing.xsmall)
             }
         }
     }
@@ -406,7 +406,7 @@ struct StatCard: View {
                 Spacer()
             }
         }
-        .padding(8)
+        .padding(Spacing.small)
         .background(color.opacity(0.1))
         .cornerRadius(6)
     }

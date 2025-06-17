@@ -107,8 +107,8 @@ struct MainView: View {
                         .buttonStyle(.plain)
                         .help("Settings")
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 6)
+                    .padding(.horizontal, Spacing.large)
+                    .padding(.top, Spacing.small)
                     
                     // Enhanced System Overview Cards with Floating Panel Integration
                     HStack(spacing: 3) {
@@ -154,8 +154,8 @@ struct MainView: View {
                             selectedSystemView = .automation
                         }
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 6)
+                    .padding(.horizontal, Spacing.large)
+                    .padding(.bottom, Spacing.small)
                 }
                 .background(.ultraThinMaterial)
                 .overlay(
@@ -209,8 +209,8 @@ struct MainView: View {
                                 }
                             }
                         }
-                        .padding(.horizontal, 16)
-                        .padding(.top, 12)
+                        .padding(.horizontal, Spacing.large)
+                        .padding(.top, Spacing.medium)
                         
                         // Enhanced Dynamic Content Area with Automation
                         VStack(spacing: 12) {
@@ -230,7 +230,7 @@ struct MainView: View {
                                 EnhancedIntegrationSection()
                             }
                         }
-                        .padding(.horizontal, 16)
+                        .padding(.horizontal, Spacing.large)
                         
                         // Bottom padding
                         Rectangle()
@@ -278,8 +278,8 @@ struct MainView: View {
                                 .foregroundColor(automationStatusColor)
                                 .fontWeight(.medium)
                         }
-                        .padding(.horizontal, 4)
-                        .padding(.vertical, 2)
+                        .padding(.horizontal, Spacing.xsmall)
+                        .padding(.vertical, Spacing.xsmall)
                         .background(automationStatusColor.opacity(0.1), in: Capsule())
                         
                         // AI Connection Status
@@ -300,14 +300,14 @@ struct MainView: View {
                                 .foregroundColor(aiStatusColor)
                                 .fontWeight(.medium)
                         }
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
+                        .padding(.horizontal, Spacing.small)
+                        .padding(.vertical, Spacing.xsmall)
                         .background(aiStatusColor.opacity(0.08), in: Capsule())
                         .overlay(Capsule().stroke(aiStatusColor.opacity(0.2), lineWidth: 0.3))
                     }
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 10)
+                .padding(.horizontal, Spacing.large)
+                .padding(.vertical, Spacing.small)
                 .background(.ultraThinMaterial)
                 .overlay(
                     Rectangle()
@@ -477,7 +477,7 @@ struct CompactAutomationSection: View {
                                     .fill(task.priority.color)
                                     .frame(width: 6, height: 6)
                             }
-                            .padding(.vertical, 2)
+                            .padding(.vertical, Spacing.xsmall)
                         }
                     }
                     
@@ -508,17 +508,17 @@ struct CompactAutomationSection: View {
                             .buttonStyle(.bordered)
                             .controlSize(.mini)
                         }
-                        .padding(.top, 4)
+                        .padding(.top, Spacing.xsmall)
                     }
                 } else {
                     Text("Enable automation for smart system maintenance")
                         .font(.caption)
                         .foregroundColor(.gray)
                         .multilineTextAlignment(.center)
-                        .padding(.vertical, 8)
+                        .padding(.vertical, Spacing.small)
                 }
             }
-            .padding(12)
+            .padding(Spacing.medium)
             .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 10))
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
@@ -609,7 +609,7 @@ struct AutomationSettingsView: View {
                         ))
                         .toggleStyle(.switch)
                     }
-                    .padding(.vertical, 4)
+                    .padding(.vertical, Spacing.xsmall)
                 }
             }
             
@@ -709,8 +709,8 @@ struct CompactSystemCard: View {
                     .minimumScaleFactor(0.8)
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 6)
-            .padding(.horizontal, 4)
+            .padding(.vertical, Spacing.small)
+            .padding(.horizontal, Spacing.xsmall)
             .background(
                 isActive ? color.opacity(0.15) : .clear,
                 in: RoundedRectangle(cornerRadius: 6)
@@ -778,7 +778,7 @@ struct CompactCPUSection: View {
                     CompactStatItem(title: "Freq", value: "3.2GHz", color: .blue)
                 }
             }
-            .padding(12)
+            .padding(Spacing.medium)
             .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 10))
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
@@ -821,8 +821,8 @@ struct CompactBatterySection: View {
                         .font(.caption)
                         .fontWeight(.medium)
                         .foregroundColor(.green)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
+                        .padding(.horizontal, Spacing.small)
+                        .padding(.vertical, Spacing.xsmall)
                         .background(.green.opacity(0.15), in: Capsule())
                 }
                 
@@ -858,7 +858,7 @@ struct CompactBatterySection: View {
                     Spacer()
                 }
             }
-            .padding(12)
+            .padding(Spacing.medium)
             .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 10))
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
@@ -928,7 +928,7 @@ struct CompactDiskSection: View {
                     Spacer()
                 }
             }
-            .padding(12)
+            .padding(Spacing.medium)
             .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 10))
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
@@ -962,7 +962,7 @@ struct CompactStatItem: View {
                 .foregroundColor(.gray)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 3)
+        .padding(.vertical, Spacing.xsmall)
         .background(color.opacity(0.08), in: RoundedRectangle(cornerRadius: 3))
     }
 }
@@ -984,8 +984,8 @@ struct EnhancedIntegrationSection: View {
                         .font(.caption)
                         .fontWeight(.medium)
                         .foregroundColor(.green)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
+                        .padding(.horizontal, Spacing.small)
+                        .padding(.vertical, Spacing.xsmall)
                         .background(.green.opacity(0.15), in: Capsule())
                 }
                 
@@ -1031,7 +1031,7 @@ struct ModernIntegrationCard: View {
                 .frame(width: 4, height: 4)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 6)
+        .padding(.vertical, Spacing.small)
         .background((status ? Color.green : Color.red).opacity(0.08), in: RoundedRectangle(cornerRadius: 6))
     }
 }
