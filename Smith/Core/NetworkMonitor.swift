@@ -8,7 +8,6 @@
 import Foundation
 import SwiftUI
 import Combine
-import SystemConfiguration
 import Network
 
 @MainActor
@@ -21,7 +20,6 @@ class NetworkMonitor: ObservableObject {
     @Published var latency: Double = 0.0
     @Published var isMonitoring = false
     
-    private var reachability: SCNetworkReachability?
     private var pathMonitor: NWPathMonitor?
     private var monitorQueue = DispatchQueue(label: "NetworkMonitor")
     private var timer: Timer?
@@ -61,22 +59,9 @@ class NetworkMonitor: ObservableObject {
     }
     
     init() {
-        setupReachability()
         setupPathMonitor()
     }
-    
-    private func setupReachability() {
-        var zeroAddress = sockaddr_in()
-        zeroAddress.sin_len = UInt8(MemoryLayout<sockaddr_in>.size)
-        zeroAddress.sin_family = sa_family_t(AF_INET)
-        
-        reachability = withUnsafePointer(to: &zeroAddress) {
-            $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
-                SCNetworkReachabilityCreateWithAddress(nil, $0)
-            }
-        }
-    }
-    
+
     private func setupPathMonitor() {
         pathMonitor = NWPathMonitor()
         
@@ -103,7 +88,9 @@ class NetworkMonitor: ObservableObject {
         }
         
         // Initial status update
-        updateReachabilityStatus()
+        if let path = pathMonitor?.currentPath {
+            updateNetworkStatus(path: path)
+        }
     }
     
     func stopMonitoring() {
@@ -163,19 +150,6 @@ class NetworkMonitor: ObservableObject {
         }
     }
     
-    private func updateReachabilityStatus() {
-        guard let reachability = reachability else { return }
-        
-        var flags = SCNetworkReachabilityFlags()
-        guard SCNetworkReachabilityGetFlags(reachability, &flags) else { return }
-        
-        let isReachable = flags.contains(.reachable)
-        let needsConnection = flags.contains(.connectionRequired)
-        let canConnectAutomatically = flags.contains(.connectionOnDemand) || flags.contains(.connectionOnTraffic)
-        let canConnectWithoutUserInteraction = canConnectAutomatically && !flags.contains(.interventionRequired)
-        
-        isConnected = isReachable && (!needsConnection || canConnectWithoutUserInteraction)
-    }
     
     private func performNetworkSpeedTest() async {
         guard isConnected else { return }
