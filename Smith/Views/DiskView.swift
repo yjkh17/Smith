@@ -11,7 +11,8 @@ import UniformTypeIdentifiers
 struct DiskView: View {
     @StateObject private var fileManager = FileSystemManager()
     @EnvironmentObject private var smithAgent: SmithAgent
-    @State private var selectedFiltryeURL: URL?
+    // Currently unused but kept for future file actions
+    @State private var selectedFileURL: URL?
     @State private var expandedFolders: Set<URL> = []
     
     var body: some View {
@@ -193,7 +194,7 @@ struct FileRowView: View {
     var body: some View {
         HStack {
             Image(systemName: item.icon)
-                .foregroundColor(item.isDirectory ? .cyan : .white)
+                .foregroundColor(item.isDirectory ? .cyan : .primary)
                 .frame(width: 20)
             
             VStack(alignment: .leading) {
@@ -232,7 +233,7 @@ struct CompactFileRowView: View {
     var body: some View {
         HStack {
             Image(systemName: item.icon)
-                .foregroundColor(item.isDirectory ? .cyan : .white)
+                .foregroundColor(item.isDirectory ? .cyan : .primary)
                 .font(.caption)
                 .frame(width: 12)
             
@@ -273,7 +274,7 @@ struct UltraCompactFileRowView: View {
     var body: some View {
         HStack {
             Image(systemName: item.icon)
-                .foregroundColor(item.isDirectory ? .cyan : .white)
+                .foregroundColor(item.isDirectory ? .cyan : .primary)
                 .font(.caption2)
                 .frame(width: 10)
             
