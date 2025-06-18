@@ -24,6 +24,8 @@ class IntelligenceEngine: ObservableObject {
     private weak var cpuMonitor: CPUMonitor?
     private weak var batteryMonitor: BatteryMonitor?
     private weak var memoryMonitor: MemoryMonitor?
+    private weak var networkMonitor: NetworkMonitor?
+    private weak var storageMonitor: StorageMonitor?
     
     // MARK: - Session Intelligence
     private var sessionStartTime: Date = Date()
@@ -46,10 +48,12 @@ class IntelligenceEngine: ObservableObject {
     }
     
     // MARK: - System Monitor Integration
-    func setMonitors(cpu: CPUMonitor, battery: BatteryMonitor, memory: MemoryMonitor) {
+    func setMonitors(cpu: CPUMonitor, battery: BatteryMonitor, memory: MemoryMonitor, network: NetworkMonitor, storage: StorageMonitor) {
         self.cpuMonitor = cpu
         self.batteryMonitor = battery
         self.memoryMonitor = memory
+        self.networkMonitor = network
+        self.storageMonitor = storage
     }
     
     // MARK: - Real-Time Analysis
@@ -97,7 +101,16 @@ class IntelligenceEngine: ObservableObject {
             batteryLevel: batteryMonitor?.batteryLevel ?? 0.0,
             batteryState: batteryMonitor?.batteryState ?? .unknown,
             powerUsage: batteryMonitor?.powerUsage ?? 0.0,
-            runningApplications: getRunningApplications()
+            runningApplications: getRunningApplications(),
+            networkIsConnected: networkMonitor?.isConnected ?? false,
+            networkConnectionType: networkMonitor?.connectionType ?? .unknown,
+            networkQuality: networkMonitor?.networkQuality ?? .unknown,
+            networkDownloadSpeed: networkMonitor?.downloadSpeed ?? 0.0,
+            networkUploadSpeed: networkMonitor?.uploadSpeed ?? 0.0,
+            networkLatency: networkMonitor?.latency ?? 0.0,
+            diskTotalSpace: storageMonitor?.totalSpace ?? 0,
+            diskUsedSpace: storageMonitor?.usedSpace ?? 0,
+            diskAvailableSpace: storageMonitor?.availableSpace ?? 0
         )
     }
     
@@ -647,6 +660,15 @@ struct SystemSnapshot {
     let batteryState: BatteryState
     let powerUsage: Double
     let runningApplications: [RunningApplication]
+    let networkIsConnected: Bool
+    let networkConnectionType: NetworkMonitor.ConnectionType
+    let networkQuality: NetworkMonitor.NetworkQuality
+    let networkDownloadSpeed: Double
+    let networkUploadSpeed: Double
+    let networkLatency: Double
+    let diskTotalSpace: Int64
+    let diskUsedSpace: Int64
+    let diskAvailableSpace: Int64
 }
 
 struct RunningApplication {

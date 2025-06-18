@@ -467,8 +467,8 @@ struct MainView: View {
         storageMonitor.startMonitoring()
         
         // Setup integrations
-        smithAgent.setSystemMonitors(cpu: cpuMonitor, battery: batteryMonitor, memory: memoryMonitor)
-        automationManager.setMonitors(cpu: cpuMonitor, battery: batteryMonitor, memory: memoryMonitor, intelligence: smithAgent.intelligenceEngine)
+        smithAgent.setSystemMonitors(cpu: cpuMonitor, battery: batteryMonitor, memory: memoryMonitor, network: networkMonitor, storage: storageMonitor)
+        automationManager.setMonitors(cpu: cpuMonitor, battery: batteryMonitor, memory: memoryMonitor, network: networkMonitor, storage: storageMonitor, intelligence: smithAgent.intelligenceEngine)
         floatingPanelManager.setDependencies(smithAgent: smithAgent, cpuMonitor: cpuMonitor, batteryMonitor: batteryMonitor, memoryMonitor: memoryMonitor)
     }
     
