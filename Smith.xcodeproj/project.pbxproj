@@ -9,14 +9,16 @@
 /* Begin PBXBuildFile section */
 		CA546D9F2E01BF830087A36E /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA546D9E2E01BF830087A36E /* ServiceManagement.framework */; };
 		CA546DA22E01C2E60087A36E /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA546D9A2E01BF1E0087A36E /* IOKit.framework */; };
-		CA546DA62E01C3480087A36E /* FoundationModels.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA546DA52E01C3480087A36E /* FoundationModels.framework */; };
+                CA546DA62E01C3480087A36E /* FoundationModels.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA546DA52E01C3480087A36E /* FoundationModels.framework */; };
+                C69803872A1445C5839D6433 /* AgentInstructions.txt in Resources */ = {isa = PBXBuildFile; fileRef = 741A95B8FE84403984D8C10F /* AgentInstructions.txt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		CA546D9A2E01BF1E0087A36E /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
-		CA546D9E2E01BF830087A36E /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
-		CA546DA52E01C3480087A36E /* FoundationModels.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FoundationModels.framework; path = System/Library/Frameworks/FoundationModels.framework; sourceTree = SDKROOT; };
-		CA7A6EFD2DFE4696004DF457 /* Smith.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Smith.app; sourceTree = BUILT_PRODUCTS_DIR; };
+                CA546D9A2E01BF1E0087A36E /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+                CA546D9E2E01BF830087A36E /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
+                CA546DA52E01C3480087A36E /* FoundationModels.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FoundationModels.framework; path = System/Library/Frameworks/FoundationModels.framework; sourceTree = SDKROOT; };
+                CA7A6EFD2DFE4696004DF457 /* Smith.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Smith.app; sourceTree = BUILT_PRODUCTS_DIR; };
+                741A95B8FE84403984D8C10F /* AgentInstructions.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Smith/AgentInstructions.txt; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -135,11 +137,12 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		CA7A6EFB2DFE4696004DF457 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			files = (
-			);
-		};
+                CA7A6EFB2DFE4696004DF457 /* Resources */ = {
+                        isa = PBXResourcesBuildPhase;
+                        files = (
+                                C69803872A1445C5839D6433 /* AgentInstructions.txt in Resources */,
+                        );
+                };
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
