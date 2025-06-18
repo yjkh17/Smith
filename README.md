@@ -18,6 +18,7 @@ Smith is an intelligent macOS system assistant that monitors, analyzes, and unde
 - **Storage Analysis** - Disk usage, file types, large files, and cleanup opportunities
 - **Network Activity** - Bandwidth usage, connections, and network health
 - **Network Name Detection** - Shows the currently connected network or SSID
+- **Current Location** - Determine your approximate location for context-aware insights
 - **Thermal Management** - Temperature monitoring and thermal throttling detection
 - **Process Intelligence** - Application behavior, resource consumption, and performance impact
 

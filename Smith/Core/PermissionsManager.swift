@@ -2,6 +2,7 @@ import Foundation
 import AVFoundation
 import Combine
 import Cocoa
+import CoreLocation
 
 /// Handles requesting sensitive permissions and tracking authorization status.
 @MainActor
@@ -11,14 +12,20 @@ class PermissionsManager: ObservableObject {
     @Published var microphoneAuthorized: Bool = false
     @Published var cameraAuthorized: Bool = false
     @Published var fullDiskAccessGranted: Bool = false
+    @Published var locationAuthorized: Bool = false
 
-    private init() {}
+    private let locationManager = CLLocationManager()
+
+    private init() {
+        locationManager.delegate = self
+    }
 
     /// Request all required permissions on first launch.
     func requestPermissions() {
         requestMicrophoneAccess()
         requestCameraAccess()
         checkFullDiskAccess()
+        requestLocationAccess()
     }
 
     private func requestMicrophoneAccess() {
@@ -43,6 +50,15 @@ class PermissionsManager: ObservableObject {
         }
     }
 
+    private func requestLocationAccess() {
+        let status = locationManager.authorizationStatus
+        if status == .notDetermined {
+            locationManager.requestWhenInUseAuthorization()
+        } else {
+            updateLocationAuthorization(status: status)
+        }
+    }
+
     /// There is no direct API for Full Disk Access. This method attempts to read
     /// a protected location to infer whether access has been granted.
     private func checkFullDiskAccess() {
@@ -52,6 +68,26 @@ class PermissionsManager: ObservableObject {
         fullDiskAccessGranted = canRead
         if !canRead {
             print("Full Disk Access not granted - certain monitoring features disabled")
+        }
+    }
+}
+
+extension PermissionsManager: CLLocationManagerDelegate {
+    nonisolated func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        Task { @MainActor in
+            updateLocationAuthorization(status: status)
+        }
+    }
+
+    private func updateLocationAuthorization(status: CLAuthorizationStatus) {
+        switch status {
+        case .authorizedAlways, .authorizedWhenInUse:
+            locationAuthorized = true
+        default:
+            locationAuthorized = false
+            if status != .notDetermined {
+                print("Location permission denied - disabling location features")
+            }
         }
     }
 }
