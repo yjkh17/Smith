@@ -79,7 +79,7 @@ class SmithAgent: ObservableObject {
 
         let instructionsText: String
         do {
-            instructionsText = try String(contentsOf: url)
+            instructionsText = try String(contentsOf: url, encoding: .utf8)
         } catch {
             print("❌ Failed to load AgentInstructions.txt: \(error)")
             return
