@@ -30,7 +30,6 @@ class IntelligenceEngine: ObservableObject {
     // MARK: - Session Intelligence
     private var sessionStartTime: Date = Date()
     private var workloadHistory: [WorkloadDetection] = []
-    private var performanceHistory: [PerformanceSnapshot] = []
     private var userInteractions: [UserInteraction] = []
     
     // MARK: - Real-Time Analysis Timer
@@ -739,15 +738,6 @@ struct WorkloadDetection {
     let timestamp: Date
     let workload: WorkloadType
     let confidence: Double
-}
-
-struct PerformanceSnapshot {
-    let timestamp: Date
-    let score: Double
-    let cpuScore: Double
-    let memoryScore: Double
-    let batteryScore: Double
-    let responsivenessScore: Double
 }
 
 struct UserInteraction {
