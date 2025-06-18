@@ -175,18 +175,25 @@ struct ModernMessageBubble: View {
                     }
                 }
                 
-                Text(message.content)
-                    .font(.body)
-                    .foregroundColor(.white)
-                    .padding()
-                    .background(
-                        message.isUser ? .blue.opacity(0.2) : .cyan.opacity(0.1),
-                        in: RoundedRectangle(cornerRadius: 16)
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(message.isUser ? .blue.opacity(0.3) : .cyan.opacity(0.3), lineWidth: 1)
-                    )
+                if message.isUser {
+                    Text(message.content)
+                        .font(.body)
+                        .foregroundColor(.white)
+                        .padding()
+                        .background(
+                            .blue.opacity(0.2),
+                            in: RoundedRectangle(cornerRadius: 16)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16)
+                                .stroke(.blue.opacity(0.3), lineWidth: 1)
+                        )
+                } else {
+                    Text(message.content)
+                        .font(.body)
+                        .foregroundColor(.white)
+                        .padding()
+                }
             }
             .frame(maxWidth: 300, alignment: message.isUser ? .trailing : .leading)
             
