@@ -104,6 +104,7 @@ class IntelligenceEngine: ObservableObject {
             runningApplications: getRunningApplications(),
             networkIsConnected: networkMonitor?.isConnected ?? false,
             networkConnectionType: networkMonitor?.connectionType ?? .unknown,
+            networkName: networkMonitor?.networkName ?? "",
             networkQuality: networkMonitor?.networkQuality ?? .unknown,
             networkDownloadSpeed: networkMonitor?.downloadSpeed ?? 0.0,
             networkUploadSpeed: networkMonitor?.uploadSpeed ?? 0.0,
@@ -662,6 +663,7 @@ struct SystemSnapshot {
     let runningApplications: [RunningApplication]
     let networkIsConnected: Bool
     let networkConnectionType: NetworkMonitor.ConnectionType
+    let networkName: String
     let networkQuality: NetworkMonitor.NetworkQuality
     let networkDownloadSpeed: Double
     let networkUploadSpeed: Double

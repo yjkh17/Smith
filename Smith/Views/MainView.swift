@@ -200,7 +200,7 @@ struct MainView: View {
 
                         CompactSystemCard(
                             icon: "wifi",
-                            value: networkMonitor.isConnected ? networkMonitor.connectionType.rawValue : "Off",
+                            value: networkMonitor.isConnected ? (networkMonitor.networkName.isEmpty ? networkMonitor.connectionType.rawValue : "\(networkMonitor.connectionType.rawValue) - \(networkMonitor.networkName)") : "Off",
                             color: networkStatusColor,
                             isActive: selectedSystemView == .network
                         ) {
