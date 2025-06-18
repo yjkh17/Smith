@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import Combine
 import Network
+import os.log
 
 @MainActor
 class NetworkMonitor: ObservableObject {
@@ -23,6 +24,10 @@ class NetworkMonitor: ObservableObject {
     private var pathMonitor: NWPathMonitor?
     private var monitorQueue = DispatchQueue(label: "NetworkMonitor")
     private var timer: Timer?
+    private let logger = Logger(subsystem: "com.motherofbrand.Smith", category: "NetworkMonitor")
+
+    private let testURLKey = "smith.networktest.url"
+    private let pingHostKey = "smith.networktest.pinghost"
     
     enum ConnectionType: String, CaseIterable {
         case wifi = "WiFi"
@@ -153,37 +158,73 @@ class NetworkMonitor: ObservableObject {
     
     private func performNetworkSpeedTest() async {
         guard isConnected else { return }
-        
-        let testURL = URL(string: "https://httpbin.org/bytes/1048576")! // 1MB test file
-        
+        let defaults = UserDefaults.standard
+        let testURLString = defaults.string(forKey: testURLKey) ?? "https://httpbin.org/bytes/1048576"
+
+        guard let testURL = URL(string: testURLString) else {
+            logger.error("Invalid network test URL: \(testURLString, privacy: .public)")
+            networkQuality = .unknown
+            return
+        }
+
+        let config = URLSessionConfiguration.ephemeral
+        config.timeoutIntervalForRequest = 5
+        let session = URLSession(configuration: config)
+
         do {
             let startTime = Date()
-            let (data, _) = try await URLSession.shared.data(from: testURL)
+            let (data, _) = try await session.data(from: testURL)
             let endTime = Date()
-            
+
             let duration = endTime.timeIntervalSince(startTime)
             let bytesDownloaded = Double(data.count)
             let mbps = (bytesDownloaded * 8) / (duration * 1_000_000) // Convert to Mbps
-            
+
             await MainActor.run {
                 self.downloadSpeed = mbps
-                self.updateLatency()
+                self.updateLatency(session: session)
             }
-            
+
         } catch {
-            print("Network speed test failed: \(error)")
+            logger.error("Network speed test failed: \(error.localizedDescription, privacy: .public)")
+            await MainActor.run {
+                self.networkQuality = .unknown
+                self.downloadSpeed = 0
+                self.latency = 0
+            }
         }
     }
-    
-    private func updateLatency() {
-        // Simple ping test to measure latency
-        let pingURL = URL(string: "https://8.8.8.8")!
+
+    private func updateLatency(session: URLSession? = nil) {
+        let defaults = UserDefaults.standard
+        let pingHost = defaults.string(forKey: pingHostKey) ?? "https://8.8.8.8"
+
+        guard let pingURL = URL(string: pingHost) else {
+            logger.error("Invalid ping host: \(pingHost, privacy: .public)")
+            latency = 0
+            return
+        }
+
+        let session = session ?? {
+            let config = URLSessionConfiguration.ephemeral
+            config.timeoutIntervalForRequest = 5
+            return URLSession(configuration: config)
+        }()
+
         let startTime = Date()
-        
-        URLSession.shared.dataTask(with: pingURL) { _, _, _ in
+
+        session.dataTask(with: pingURL) { _, _, error in
             let endTime = Date()
+            if error != nil {
+                self.logger.error("Ping request failed: \(error!.localizedDescription, privacy: .public)")
+                DispatchQueue.main.async {
+                    self.latency = 0
+                }
+                return
+            }
+
             let latencyMs = endTime.timeIntervalSince(startTime) * 1000
-            
+
             DispatchQueue.main.async {
                 self.latency = latencyMs
             }
