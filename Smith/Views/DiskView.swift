@@ -55,7 +55,7 @@ struct DiskView: View {
                     .truncationMode(.middle)
             }
             .padding(Spacing.small)
-            .background(.gray.opacity(0.1))
+            .background(Color.panelBackground)
             
             // Ultra-Compact File browser with info panel
             HStack(spacing: 4) {
@@ -113,7 +113,7 @@ struct DiskView: View {
                                 VStack(alignment: .leading, spacing: 1) {
                                     Text(selectedItem.name)
                                         .font(.caption2)
-                                        .foregroundColor(.white)
+                                        .foregroundColor(Color.primary)
                                         .lineLimit(2)
                                     
                                     Text(selectedItem.isDirectory ? "Folder" : "File")
@@ -153,7 +153,7 @@ struct DiskView: View {
                     }
                 }
                 .frame(width: 100)
-                .background(.gray.opacity(0.05))
+                .background(Color.secondary.opacity(0.05))
             }
         }
         .background(.black)
@@ -197,7 +197,7 @@ struct FileRowView: View {
             
             VStack(alignment: .leading) {
                 Text(item.name)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.primary)
                     .lineLimit(1)
                 
                 if !item.isDirectory {
@@ -238,7 +238,7 @@ struct CompactFileRowView: View {
             VStack(alignment: .leading, spacing: 1) {
                 Text(item.name)
                     .font(.caption)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.primary)
                     .lineLimit(1)
                 
                 if !item.isDirectory {
@@ -279,7 +279,7 @@ struct UltraCompactFileRowView: View {
             VStack(alignment: .leading, spacing: 0) {
                 Text(item.name)
                     .font(.caption2)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.primary)
                     .lineLimit(1)
                 
                 if !item.isDirectory {
