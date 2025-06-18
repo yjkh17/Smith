@@ -32,7 +32,9 @@
 	<string>Smith analyzes downloaded files for smart system recommendations and disk space optimization.</string>
         <key>NSAppleEventsUsageDescription</key>
         <string>Smith&apos;s Intelligence Engine uses Apple Events to monitor running applications for smart workload detection and system optimization.</string>
-	<key>NSPrivacyAccessedAPITypes</key>
+        <key>NSLocationUsageDescription</key>
+        <string>Smith uses your current location to provide context-aware system insights.</string>
+        <key>NSPrivacyAccessedAPITypes</key>
 	<array>
 		<dict>
 			<key>NSPrivacyAccessedAPIType</key>
