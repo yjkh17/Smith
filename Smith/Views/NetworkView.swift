@@ -35,7 +35,11 @@ struct NetworkView: View {
                     Text(networkMonitor.connectionType.rawValue)
                         .font(.caption2)
                         .foregroundColor(Color.primary)
-
+                    if !networkMonitor.networkName.isEmpty {
+                        Text("(\(networkMonitor.networkName))")
+                            .font(.caption2)
+                            .foregroundColor(Color.primary)
+                    }
                     Spacer()
 
                     Text(speedString(networkMonitor.downloadSpeed))

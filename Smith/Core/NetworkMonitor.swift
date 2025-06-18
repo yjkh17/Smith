@@ -10,11 +10,13 @@ import SwiftUI
 import Combine
 import Network
 import os.log
+import CoreWLAN
 
 @MainActor
 class NetworkMonitor: ObservableObject {
     @Published var isConnected = false
     @Published var connectionType: ConnectionType = .unknown
+    @Published var networkName: String = ""
     @Published var networkQuality: NetworkQuality = .unknown
     @Published var downloadSpeed: Double = 0.0
     @Published var uploadSpeed: Double = 0.0
@@ -107,7 +109,7 @@ class NetworkMonitor: ObservableObject {
     
     private func updateNetworkStatus(path: NWPath) {
         isConnected = path.status == .satisfied
-        
+
         // Determine connection type
         if path.usesInterfaceType(.wifi) {
             connectionType = .wifi
@@ -118,7 +120,10 @@ class NetworkMonitor: ObservableObject {
         } else {
             connectionType = .unknown
         }
-        
+
+        // Update network name
+        networkName = fetchNetworkName(for: path) ?? ""
+
         // Update network quality based on path properties
         updateNetworkQuality(path: path)
     }
@@ -230,12 +235,27 @@ class NetworkMonitor: ObservableObject {
             }
         }.resume()
     }
+
+    private func fetchNetworkName(for path: NWPath) -> String? {
+        if path.usesInterfaceType(.wifi) {
+            return CWWiFiClient.shared().interface()?.ssid()
+        }
+
+        if let interface = path.availableInterfaces.first(where: { path.usesInterfaceType($0.type) }) {
+            return interface.name
+        }
+
+        return nil
+    }
     
     func getNetworkAnalysis() -> String {
         var analysis = "🌐 Network Analysis:\n\n"
         
         analysis += "📊 Connection Status: \(isConnected ? "Connected" : "Disconnected")\n"
         analysis += "🔗 Connection Type: \(connectionType.rawValue)\n"
+        if !networkName.isEmpty {
+            analysis += "📶 Network Name: \(networkName)\n"
+        }
         analysis += "⭐ Network Quality: \(networkQuality.rawValue)\n"
         
         if isConnected {
