@@ -308,7 +308,7 @@ final class BackgroundMonitorService: ObservableObject {
 
 // MARK: - Background System Stats Model
 
-struct BackgroundSystemStats: Codable, Sendable {
+nonisolated struct BackgroundSystemStats: Codable, Sendable {
     let timestamp: Date
     let cpuUsage: Double
     let cpuTemperature: Double?
