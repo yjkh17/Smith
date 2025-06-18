@@ -156,7 +156,7 @@ struct DiskView: View {
                 .background(.gray.opacity(0.05))
             }
         }
-        .background(Color(.windowBackgroundColor))
+        .background(Color(nsColor: .windowBackgroundColor))
         .frame(maxHeight: 200)
     }
     

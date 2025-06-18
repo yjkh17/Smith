@@ -125,7 +125,7 @@ struct ChatView: View {
             .padding()
             .background(.black.opacity(0.1))
         }
-        .background(Color(.windowBackgroundColor))
+        .background(Color(nsColor: .windowBackgroundColor))
         .onAppear {
             isTextFieldFocused = true
         }
@@ -460,5 +460,5 @@ struct CompactFocusedFileCard: View {
 #Preview {
     ChatView()
         .environmentObject(SmithAgent())
-        .background(Color(.windowBackgroundColor))
+        .background(Color(nsColor: .windowBackgroundColor))
 }

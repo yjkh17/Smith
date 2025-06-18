@@ -13,7 +13,7 @@ struct ContentView: View {
     var body: some View {
         ChatView()
             .environmentObject(smithAgent)
-            .background(Color(.windowBackgroundColor))
+            .background(Color(nsColor: .windowBackgroundColor))
     }
 }
 

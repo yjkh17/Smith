@@ -122,7 +122,7 @@ struct CPUView: View {
             }
             .background(.black.opacity(0.02))
         }
-        .background(Color(.windowBackgroundColor))
+        .background(Color(nsColor: .windowBackgroundColor))
         .frame(maxHeight: 220)
         .onAppear {
             Task {

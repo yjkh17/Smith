@@ -98,7 +98,7 @@ struct MemoryView: View {
             }
             .frame(maxHeight: 80)
         }
-        .background(Color(.windowBackgroundColor))
+        .background(Color(nsColor: .windowBackgroundColor))
         .frame(maxHeight: 200)
         .onAppear { memoryMonitor.startMonitoring() }
         .onDisappear { memoryMonitor.stopMonitoring() }

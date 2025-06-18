@@ -390,10 +390,10 @@ struct MainView: View {
                 ChatView()
                     .environmentObject(smithAgent)
             }
-            .background(Color(.windowBackgroundColor))
+            .background(Color(nsColor: .windowBackgroundColor))
         }
         .navigationSplitViewStyle(.balanced)
-        .background(Color(.windowBackgroundColor))
+        .background(Color(nsColor: .windowBackgroundColor))
         .sheet(isPresented: $showingSettings) {
             EnhancedSettingsView()
                 .environmentObject(automationManager)

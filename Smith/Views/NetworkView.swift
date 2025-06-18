@@ -48,7 +48,7 @@ struct NetworkView: View {
 
             Spacer()
         }
-        .background(Color(.windowBackgroundColor))
+        .background(Color(nsColor: .windowBackgroundColor))
         .frame(maxHeight: 120)
         .onAppear { networkMonitor.startMonitoring() }
         .onDisappear { networkMonitor.stopMonitoring() }
