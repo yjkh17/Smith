@@ -311,7 +311,7 @@ struct URLSchemeTestView: View {
                         .font(.caption)
                         .fontDesign(.monospaced)
                         .padding()
-                        .background(Color.gray.opacity(0.1))
+                        .background(Color.panelBackground)
                         .cornerRadius(8)
                 }
             }

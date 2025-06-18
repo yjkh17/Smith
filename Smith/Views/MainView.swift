@@ -114,7 +114,7 @@ struct MainView: View {
                             .font(.callout)
                             .fontWeight(.bold)
                             .fontDesign(.monospaced)
-                            .foregroundColor(.white)
+                            .foregroundColor(Color.primary)
                         
                         Spacer()
                         
@@ -223,7 +223,7 @@ struct MainView: View {
                 .overlay(
                     Rectangle()
                         .frame(height: 0.5)
-                        .foregroundColor(.gray.opacity(0.2)),
+                        .foregroundColor(Color.secondary.opacity(0.2)),
                     alignment: .bottom
                 )
                 
@@ -240,7 +240,7 @@ struct MainView: View {
                                 Text(selectedSystemView.title)
                                     .font(.headline)
                                     .fontWeight(.semibold)
-                                    .foregroundColor(.white)
+                                    .foregroundColor(Color.primary)
                                 
                                 Text(selectedSystemView.description)
                                     .font(.caption2)
@@ -326,7 +326,7 @@ struct MainView: View {
                             .font(.callout)
                             .fontWeight(.bold)
                             .fontDesign(.monospaced)
-                            .foregroundColor(.white)
+                            .foregroundColor(Color.primary)
                         
                         Text("Your intelligent assistant")
                             .font(.caption2)
@@ -382,7 +382,7 @@ struct MainView: View {
                 .overlay(
                     Rectangle()
                         .frame(height: 0.3)
-                        .foregroundColor(.gray.opacity(0.2)),
+                        .foregroundColor(Color.secondary.opacity(0.2)),
                     alignment: .bottom
                 )
                 
@@ -515,7 +515,7 @@ struct CompactAutomationSection: View {
                     Text("System Automation")
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                        .foregroundColor(.white)
+                        .foregroundColor(Color.primary)
                     
                     Spacer()
                     
@@ -787,7 +787,7 @@ struct CompactSystemCard: View {
                 Text(value)
                     .font(.caption2)
                     .fontWeight(.medium)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.primary)
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
             }
@@ -800,7 +800,7 @@ struct CompactSystemCard: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 6)
-                    .stroke(isActive ? color.opacity(0.5) : .gray.opacity(0.1), lineWidth: isActive ? 1 : 0.5)
+                    .stroke(isActive ? color.opacity(0.5) : Color.secondary.opacity(0.1), lineWidth: isActive ? 1 : 0.5)
             )
             .scaleEffect(isActive ? 1.05 : 1.0)
             .animation(.easeInOut(duration: 0.15), value: isActive)
@@ -826,7 +826,7 @@ struct CompactCPUSection: View {
                     Text("Performance")
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                        .foregroundColor(.white)
+                        .foregroundColor(Color.primary)
                     
                     Spacer()
                     
@@ -896,7 +896,7 @@ struct CompactBatterySection: View {
                     Text("Battery Health")
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                        .foregroundColor(.white)
+                        .foregroundColor(Color.primary)
                     
                     Spacer()
                     
@@ -931,7 +931,7 @@ struct CompactBatterySection: View {
                         Text("\(safeBatteryLevel)%")
                             .font(.callout)
                             .fontWeight(.bold)
-                            .foregroundColor(.white)
+                            .foregroundColor(Color.primary)
                         
                         Text("4h 32m remaining")
                             .font(.caption2)
@@ -990,7 +990,7 @@ struct CompactDiskSection: View {
                     Text("Storage Usage")
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                        .foregroundColor(.white)
+                        .foregroundColor(Color.primary)
 
                     Spacer()
 
@@ -1003,7 +1003,7 @@ struct CompactDiskSection: View {
                 HStack(spacing: 8) {
                     ZStack {
                         Circle()
-                            .stroke(.gray.opacity(0.2), lineWidth: 3)
+                            .stroke(Color.secondary.opacity(0.2), lineWidth: 3)
                             .frame(width: 36, height: 36)
 
                         Circle()
@@ -1016,14 +1016,14 @@ struct CompactDiskSection: View {
                         Text("\(safeDiskUsage)%")
                             .font(.caption2)
                             .fontWeight(.bold)
-                            .foregroundColor(.white)
+                            .foregroundColor(Color.primary)
                     }
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text("\(formattedUsedSpace) used")
                             .font(.caption)
                             .fontWeight(.medium)
-                            .foregroundColor(.white)
+                            .foregroundColor(Color.primary)
 
                         Text("\(formattedAvailableSpace) available")
                             .font(.caption2)
@@ -1082,7 +1082,7 @@ struct EnhancedIntegrationSection: View {
                     Text("System Integration")
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                        .foregroundColor(.white)
+                        .foregroundColor(Color.primary)
                     
                     Spacer()
                     
