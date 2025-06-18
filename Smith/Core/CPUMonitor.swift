@@ -16,6 +16,11 @@ import IOKit.ps
 @MainActor
 class CPUMonitor: ObservableObject {
     @Published var cpuUsage: Double = 0.0
+    /// Average CPU load across all cores (0-100%)
+    var cpuLoadPercentage: Double {
+        guard coreCount > 0 else { return cpuUsage }
+        return cpuUsage / Double(coreCount)
+    }
     @Published var processes: [ProcessInfo] = []
     @Published var isMonitoring = false
     @Published var coreCount: Int = 0
@@ -725,6 +730,7 @@ class CPUMonitor: ObservableObject {
         
         report += "📊 Core Count: \(coreCount)\n"
         report += "📈 Current CPU Usage: \(String(format: "%.1f", cpuUsage))%\n"
+        report += "📉 CPU Load: \(String(format: "%.1f", cpuLoadPercentage))%\n"
         report += "🌡️ Temperature: \(temperature > 0 ? "\(String(format: "%.1f", temperature))°C" : "Not available")\n"
         report += "⚡ Throttling: \(isThrottling ? "Yes" : "No")\n"
         report += "🔄 Monitoring: \(isMonitoring ? "Active" : "Inactive")\n"
