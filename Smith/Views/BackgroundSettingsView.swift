@@ -370,7 +370,7 @@ struct BackgroundStatsView: View {
                     Spacer()
                 }
                 .padding()
-                .background(Color.gray.opacity(0.1))
+                .background(Color.panelBackground)
                 .cornerRadius(8)
             }
         }

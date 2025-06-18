@@ -21,7 +21,7 @@ struct ChatView: View {
                     Text("Chat with Smith")
                         .font(.title2)
                         .fontWeight(.bold)
-                        .foregroundColor(.white)
+                        .foregroundColor(Color.primary)
                     
                     Text("Your AI coding assistant")
                         .font(.caption)
@@ -178,7 +178,7 @@ struct ModernMessageBubble: View {
                 if message.isUser {
                     Text(message.content)
                         .font(.body)
-                        .foregroundColor(.white)
+                        .foregroundColor(Color.primary)
                         .padding()
                         .background(
                             .blue.opacity(0.2),
@@ -191,7 +191,7 @@ struct ModernMessageBubble: View {
                 } else {
                     Text(message.content)
                         .font(.body)
-                        .foregroundColor(.white)
+                        .foregroundColor(Color.primary)
                         .padding()
                 }
             }
@@ -284,7 +284,7 @@ struct FocusedFileCard: View {
                 Text(file.name)
                     .font(.caption)
                     .fontWeight(.medium)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.primary)
                     .lineLimit(1)
             }
             
@@ -339,7 +339,7 @@ struct OptimizedMessageBubble: View {
                 // Message Content
                 Text(message.content)
                     .font(.subheadline)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.primary)
                     .padding(.horizontal, Spacing.medium)
                     .padding(.vertical, Spacing.small)
                     .background(
@@ -434,7 +434,7 @@ struct CompactFocusedFileCard: View {
                 Text(file.name)
                     .font(.caption)
                     .fontWeight(.medium)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.primary)
                     .lineLimit(1)
             }
             

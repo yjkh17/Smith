@@ -363,7 +363,7 @@ struct FloatingCPUMonitorView: View {
                 GeometryReader { geometry in
                     ZStack(alignment: .leading) {
                         Rectangle()
-                            .fill(.gray.opacity(0.2))
+                            .fill(Color.secondary.opacity(0.2))
                             .frame(height: 8)
                             .clipShape(Capsule())
                         
@@ -391,7 +391,7 @@ struct FloatingCPUMonitorView: View {
                         }
                         .padding(.vertical, 4)
                         .frame(maxWidth: .infinity)
-                        .background(Color.gray.opacity(0.1), in: RoundedRectangle(cornerRadius: 4))
+                        .background(Color.panelBackground, in: RoundedRectangle(cornerRadius: 4))
                     }
                 }
             }
@@ -551,7 +551,7 @@ struct FloatingAIChatView: View {
                             } else {
                                 Text(message.content)
                                     .padding(8)
-                                    .background(.gray.opacity(0.2), in: RoundedRectangle(cornerRadius: 8))
+                                    .background(Color.secondary.opacity(0.2), in: RoundedRectangle(cornerRadius: 8))
                                     .foregroundColor(.primary)
                                 Spacer()
                             }

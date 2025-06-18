@@ -14,7 +14,7 @@ struct NetworkView: View {
                     Text("Network Monitor")
                         .font(.callout)
                         .fontWeight(.bold)
-                        .foregroundColor(.white)
+                        .foregroundColor(Color.primary)
                     Spacer()
                     Button(networkMonitor.isMonitoring ? "Stop" : "Start") {
                         if networkMonitor.isMonitoring {
@@ -34,17 +34,17 @@ struct NetworkView: View {
 
                     Text(networkMonitor.connectionType.rawValue)
                         .font(.caption2)
-                        .foregroundColor(.white)
+                        .foregroundColor(Color.primary)
 
                     Spacer()
 
                     Text(speedString(networkMonitor.downloadSpeed))
                         .font(.caption2)
-                        .foregroundColor(.white)
+                        .foregroundColor(Color.primary)
                 }
             }
             .padding(Spacing.small)
-            .background(.gray.opacity(0.1))
+            .background(Color.panelBackground)
 
             Spacer()
         }
