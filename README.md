@@ -126,8 +126,7 @@ Smith requests several macOS permissions on first launch:
 
 1. Open `Smith.xcodeproj` in **Xcode 15** or later.
 2. In the **Signing & Capabilities** tab for the **Smith** target, enable the **Apple Intelligence** capability. This adds the required `com.apple.developer.apple-intelligence` entitlements found in `Smith/Smith.entitlements`.
-3. Still in Signing & Capabilities, enable **Access WiFi Information** so the connected network name can be displayed. This adds the `com.apple.developer.networking.wifi-info` entitlement.
-4. Select the **Smith** scheme and click **Run** (or press <kbd>⌘R</kbd>) to build and launch the app.
+3. Select the **Smith** scheme and click **Run** (or press <kbd>⌘R</kbd>) to build and launch the app.
 
 ### Build & Run
 
