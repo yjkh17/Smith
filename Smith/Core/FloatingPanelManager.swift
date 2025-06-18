@@ -31,7 +31,7 @@ class FloatingPanelManager: ObservableObject {
     init() {
         setupDefaultPanels()
         loadUserPreferences()
-        restoreVisiblePanels()
+        // restoreVisiblePanels()
     }
     
     // MARK: - Setup
@@ -40,6 +40,8 @@ class FloatingPanelManager: ObservableObject {
         self.cpuMonitor = cpuMonitor
         self.batteryMonitor = batteryMonitor
         self.memoryMonitor = memoryMonitor
+        
+        restoreVisiblePanels()
     }
     
     private func setupDefaultPanels() {
@@ -101,6 +103,8 @@ class FloatingPanelManager: ObservableObject {
     }
 
     private func restoreVisiblePanels() {
+        guard smithAgent != nil else { return }
+        
         if isQuickStatsVisible { showPanel("quick-stats") }
         if isCPUMonitorVisible { showPanel("cpu-monitor") }
         if isBatteryMonitorVisible { showPanel("battery-monitor") }
@@ -127,19 +131,29 @@ class FloatingPanelManager: ObservableObject {
     
     // MARK: - Panel Management
     func showPanel(_ panelId: String) {
-        guard let panel = panels.first(where: { $0.id == panelId }) else { return }
+        guard let panel = panels.first(where: { $0.id == panelId }) else { 
+            print("Panel not found: \(panelId)")
+            return
+        }
         
-        if windowControllers[panelId] != nil {
+        guard smithAgent != nil else {
+            print("Dependencies not set, cannot show panel: \(panelId)")
+            return
+        }
+        
+        if let existingController = windowControllers[panelId] {
             // Panel already exists, bring to front
-            windowControllers[panelId]?.window?.makeKeyAndOrderFront(nil)
+            existingController.window?.makeKeyAndOrderFront(nil)
             return
         }
         
         let contentView = createContentView(for: panel)
-        let window = createWindow(for: panel, with: contentView)
+        let window = createWindow(for: panel, with: AnyView(contentView))
+        
         if let savedFrame = loadWindowFrame(for: panel.id) {
             window.setFrame(savedFrame, display: false)
         }
+        
         let windowController = NSWindowController(window: window)
         
         windowControllers[panelId] = windowController
@@ -150,10 +164,10 @@ class FloatingPanelManager: ObservableObject {
     }
 
     func hidePanel(_ panelId: String) {
-        if let _ = windowControllers[panelId] {
+        if let controller = windowControllers[panelId] {
             saveWindowFrame(for: panelId)
+            controller.close()
         }
-        windowControllers[panelId]?.close()
         windowControllers.removeValue(forKey: panelId)
         windowDelegates.removeValue(forKey: panelId)
         updatePanelVisibility(panelId, isVisible: false)
@@ -190,7 +204,7 @@ class FloatingPanelManager: ObservableObject {
     }
     
     // MARK: - Window Creation
-    private func createWindow(for panel: FloatingPanel, with contentView: any View) -> NSWindow {
+    private func createWindow(for panel: FloatingPanel, with contentView: AnyView) -> NSWindow {
         let window = NSWindow(
             contentRect: NSRect(origin: .zero, size: panel.defaultSize),
             styleMask: panel.isResizable ? [.titled, .closable, .miniaturizable, .resizable] : [.titled, .closable],
@@ -199,7 +213,7 @@ class FloatingPanelManager: ObservableObject {
         )
         
         window.title = panel.title
-        window.contentView = NSHostingView(rootView: AnyView(contentView))
+        window.contentView = NSHostingView(rootView: contentView)
         window.level = panel.level
         window.isReleasedWhenClosed = false
         window.center()
@@ -220,25 +234,44 @@ class FloatingPanelManager: ObservableObject {
     private func createContentView(for panel: FloatingPanel) -> some View {
         switch panel.id {
         case "quick-stats":
-            FloatingQuickStatsView()
-                .environmentObject(smithAgent ?? SmithAgent())
-                .environmentObject(cpuMonitor ?? CPUMonitor())
-                .environmentObject(batteryMonitor ?? BatteryMonitor())
+            if let agent = smithAgent, let cpu = cpuMonitor, let battery = batteryMonitor {
+                FloatingQuickStatsView()
+                    .environmentObject(agent)
+                    .environmentObject(cpu)
+                    .environmentObject(battery)
+            } else {
+                ErrorView(message: "Dependencies not available")
+            }
         case "cpu-monitor":
-            FloatingCPUMonitorView()
-                .environmentObject(cpuMonitor ?? CPUMonitor())
+            if let cpu = cpuMonitor {
+                FloatingCPUMonitorView()
+                    .environmentObject(cpu)
+            } else {
+                ErrorView(message: "CPU Monitor not available")
+            }
         case "battery-monitor":
-            FloatingBatteryMonitorView()
-                .environmentObject(batteryMonitor ?? BatteryMonitor())
+            if let battery = batteryMonitor {
+                FloatingBatteryMonitorView()
+                    .environmentObject(battery)
+            } else {
+                ErrorView(message: "Battery Monitor not available")
+            }
         case "ai-chat":
-            FloatingAIChatView()
-                .environmentObject(smithAgent ?? SmithAgent())
+            if let agent = smithAgent {
+                FloatingAIChatView()
+                    .environmentObject(agent)
+            } else {
+                ErrorView(message: "Smith Agent not available")
+            }
         case "system-alerts":
-            FloatingSystemAlertsView()
-                .environmentObject(smithAgent ?? SmithAgent())
+            if let agent = smithAgent {
+                FloatingSystemAlertsView()
+                    .environmentObject(agent)
+            } else {
+                ErrorView(message: "Smith Agent not available")
+            }
         default:
-            Text("Panel not found")
-                .frame(width: 200, height: 100)
+            ErrorView(message: "Panel not found: \(panel.id)")
         }
     }
     
@@ -303,6 +336,7 @@ class WindowDelegate: NSObject, NSWindowDelegate {
     init(panelManager: FloatingPanelManager, panelId: String) {
         self.panelManager = panelManager
         self.panelId = panelId
+        super.init()
     }
 
     func windowWillClose(_ notification: Notification) {
@@ -321,6 +355,36 @@ class WindowDelegate: NSObject, NSWindowDelegate {
         Task { @MainActor in
             panelManager?.saveWindowFrame(for: panelId)
         }
+    }
+}
+
+// MARK: - Error View
+struct ErrorView: View {
+    let message: String
+    
+    var body: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "exclamationmark.triangle")
+                .font(.largeTitle)
+                .foregroundColor(.orange)
+            
+            Text("Error")
+                .font(.headline)
+                .fontWeight(.semibold)
+            
+            Text(message)
+                .font(.body)
+                .multilineTextAlignment(.center)
+                .foregroundColor(.secondary)
+            
+            Button("Close") {
+                NSApp.keyWindow?.close()
+            }
+            .buttonStyle(.bordered)
+        }
+        .padding()
+        .frame(width: 250, height: 200)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
     }
 }
 
