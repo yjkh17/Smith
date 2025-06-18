@@ -257,7 +257,7 @@ class SmithApplication: NSApplication {
     @objc func setBackgroundIntensity(_ intensity: NSString) -> NSString {
         logger.info("AppleScript: setBackgroundIntensity called with: \(intensity)")
         
-        guard LaunchAgentManager.BackgroundIntensity(rawValue: intensity as String) != nil else {
+        guard BackgroundIntensity(rawValue: intensity as String) != nil else {
             return NSString(string: "Invalid intensity level. Use 'minimal', 'balanced', or 'comprehensive'.")
         }
         

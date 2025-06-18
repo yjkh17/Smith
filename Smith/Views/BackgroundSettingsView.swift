@@ -272,7 +272,7 @@ struct IntensitySelector: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            ForEach(LaunchAgentManager.BackgroundIntensity.allCases, id: \.rawValue) { intensity in
+            ForEach(BackgroundIntensity.allCases, id: \.rawValue) { intensity in
                 HStack {
                     Button {
                         changeIntensity(to: intensity)
@@ -307,7 +307,7 @@ struct IntensitySelector: View {
         }
     }
     
-    private func changeIntensity(to intensity: LaunchAgentManager.BackgroundIntensity) {
+    private func changeIntensity(to intensity: BackgroundIntensity) {
         guard intensity != launchAgent.backgroundIntensity else { return }
         
         isChanging = true

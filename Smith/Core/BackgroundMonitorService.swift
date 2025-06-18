@@ -40,7 +40,7 @@ final class BackgroundMonitorService: ObservableObject {
     private let batteryMonitor: BatteryMonitor
     
     // Background monitoring settings
-    private var intensity: LaunchAgentManager.BackgroundIntensity = .balanced
+    private var intensity: BackgroundIntensity = .balanced
     private var monitoringInterval: TimeInterval = 60
     
     // MARK: - Initialization
@@ -59,7 +59,7 @@ final class BackgroundMonitorService: ObservableObject {
     
     // MARK: - Public Methods
     
-    func startMonitoring(intensity: LaunchAgentManager.BackgroundIntensity = .balanced) {
+    func startMonitoring(intensity: BackgroundIntensity = .balanced) {
         guard !isRunning else { return }
         
         self.intensity = intensity
@@ -132,7 +132,7 @@ final class BackgroundMonitorService: ObservableObject {
             // Parse intensity argument
             if let intensityArg = arguments.first(where: { $0.hasPrefix("--intensity=") }),
                let intensityValue = intensityArg.split(separator: "=").last,
-               let intensity = LaunchAgentManager.BackgroundIntensity(rawValue: String(intensityValue)) {
+               let intensity = BackgroundIntensity(rawValue: String(intensityValue)) {
                 startMonitoring(intensity: intensity)
             } else {
                 startMonitoring(intensity: .balanced)
@@ -319,14 +319,14 @@ struct BackgroundSystemStats: Codable, Sendable {
     let isPluggedIn: Bool
     let intensityRawValue: String
     
-    var intensity: LaunchAgentManager.BackgroundIntensity {
-        return LaunchAgentManager.BackgroundIntensity(rawValue: intensityRawValue) ?? .balanced
+    var intensity: BackgroundIntensity {
+        return BackgroundIntensity(rawValue: intensityRawValue) ?? .balanced
     }
     
     init(timestamp: Date, cpuUsage: Double, cpuTemperature: Double?, 
          memoryUsage: Double, memoryPressure: String, batteryLevel: Double, 
          batteryHealth: Double, isPluggedIn: Bool, 
-         intensity: LaunchAgentManager.BackgroundIntensity) {
+         intensity: BackgroundIntensity) {
         self.timestamp = timestamp
         self.cpuUsage = cpuUsage
         self.cpuTemperature = cpuTemperature
