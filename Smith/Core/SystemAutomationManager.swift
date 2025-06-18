@@ -27,6 +27,8 @@ class SystemAutomationManager: ObservableObject {
     private var cpuMonitor: CPUMonitor?
     private var batteryMonitor: BatteryMonitor?
     private var memoryMonitor: MemoryMonitor?
+    private var networkMonitor: NetworkMonitor?
+    private var storageMonitor: StorageMonitor?
     private var intelligenceEngine: IntelligenceEngine?
     
     init() {
@@ -36,10 +38,12 @@ class SystemAutomationManager: ObservableObject {
     }
     
     // MARK: - Setup
-    func setMonitors(cpu: CPUMonitor, battery: BatteryMonitor, memory: MemoryMonitor, intelligence: IntelligenceEngine) {
+    func setMonitors(cpu: CPUMonitor, battery: BatteryMonitor, memory: MemoryMonitor, network: NetworkMonitor, storage: StorageMonitor, intelligence: IntelligenceEngine) {
         self.cpuMonitor = cpu
         self.batteryMonitor = battery
         self.memoryMonitor = memory
+        self.networkMonitor = network
+        self.storageMonitor = storage
         self.intelligenceEngine = intelligence
     }
     
