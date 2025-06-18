@@ -394,6 +394,7 @@ struct MainView: View {
         }
         .navigationSplitViewStyle(.balanced)
         .background(.black)
+        .dynamicTypeSize(.medium ... .accessibility3)
         .sheet(isPresented: $showingSettings) {
             EnhancedSettingsView()
                 .environmentObject(automationManager)

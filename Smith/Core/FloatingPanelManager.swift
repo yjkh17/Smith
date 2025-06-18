@@ -26,9 +26,12 @@ class FloatingPanelManager: ObservableObject {
     private var cpuMonitor: CPUMonitor?
     private var batteryMonitor: BatteryMonitor?
     private var memoryMonitor: MemoryMonitor?
-    
+    private let defaults = UserDefaults.standard
+
     init() {
         setupDefaultPanels()
+        loadUserPreferences()
+        restoreVisiblePanels()
     }
     
     // MARK: - Setup
@@ -88,6 +91,39 @@ class FloatingPanelManager: ObservableObject {
             )
         ]
     }
+
+    // MARK: - Preferences
+    private func loadUserPreferences() {
+        isQuickStatsVisible = defaults.bool(forKey: "smith.panel.quick-stats.visible")
+        isCPUMonitorVisible = defaults.bool(forKey: "smith.panel.cpu-monitor.visible")
+        isBatteryMonitorVisible = defaults.bool(forKey: "smith.panel.battery-monitor.visible")
+        isAIChatVisible = defaults.bool(forKey: "smith.panel.ai-chat.visible")
+    }
+
+    private func restoreVisiblePanels() {
+        if isQuickStatsVisible { showPanel("quick-stats") }
+        if isCPUMonitorVisible { showPanel("cpu-monitor") }
+        if isBatteryMonitorVisible { showPanel("battery-monitor") }
+        if isAIChatVisible { showPanel("ai-chat") }
+    }
+
+    private func saveVisibility(_ panelId: String, isVisible: Bool) {
+        defaults.set(isVisible, forKey: "smith.panel.\(panelId).visible")
+        defaults.synchronize()
+    }
+
+    private func saveWindowFrame(for panelId: String) {
+        guard let window = windowControllers[panelId]?.window else { return }
+        let frameString = NSStringFromRect(window.frame)
+        defaults.set(frameString, forKey: "smith.panel.\(panelId).frame")
+    }
+
+    private func loadWindowFrame(for panelId: String) -> NSRect? {
+        guard let frameString = defaults.string(forKey: "smith.panel.\(panelId).frame") else {
+            return nil
+        }
+        return NSRectFromString(frameString)
+    }
     
     // MARK: - Panel Management
     func showPanel(_ panelId: String) {
@@ -101,15 +137,22 @@ class FloatingPanelManager: ObservableObject {
         
         let contentView = createContentView(for: panel)
         let window = createWindow(for: panel, with: contentView)
+        if let savedFrame = loadWindowFrame(for: panel.id) {
+            window.setFrame(savedFrame, display: false)
+        }
         let windowController = NSWindowController(window: window)
         
         windowControllers[panelId] = windowController
         windowController.showWindow(nil)
-        
+
         updatePanelVisibility(panelId, isVisible: true)
+        saveWindowFrame(for: panelId)
     }
-    
+
     func hidePanel(_ panelId: String) {
+        if let _ = windowControllers[panelId] {
+            saveWindowFrame(for: panelId)
+        }
         windowControllers[panelId]?.close()
         windowControllers.removeValue(forKey: panelId)
         windowDelegates.removeValue(forKey: panelId)
@@ -143,6 +186,7 @@ class FloatingPanelManager: ObservableObject {
         default:
             break
         }
+        saveVisibility(panelId, isVisible: isVisible)
     }
     
     // MARK: - Window Creation
@@ -260,10 +304,22 @@ class WindowDelegate: NSObject, NSWindowDelegate {
         self.panelManager = panelManager
         self.panelId = panelId
     }
-    
+
     func windowWillClose(_ notification: Notification) {
         Task { @MainActor in
             panelManager?.hidePanel(panelId)
+        }
+    }
+
+    func windowDidMove(_ notification: Notification) {
+        Task { @MainActor in
+            panelManager?.saveWindowFrame(for: panelId)
+        }
+    }
+
+    func windowDidEndLiveResize(_ notification: Notification) {
+        Task { @MainActor in
+            panelManager?.saveWindowFrame(for: panelId)
         }
     }
 }

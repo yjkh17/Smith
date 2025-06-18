@@ -126,6 +126,7 @@ struct ChatView: View {
             .background(.black.opacity(0.1))
         }
         .background(.black)
+        .dynamicTypeSize(.medium ... .accessibility3)
         .onAppear {
             isTextFieldFocused = true
         }
@@ -338,8 +339,8 @@ struct OptimizedMessageBubble: View {
                 
                 // Message Content
                 Text(message.content)
-                    .font(.subheadline)
-                    .foregroundColor(Color.primary)
+                    .font(Font.body)
+                    .foregroundColor(.white)
                     .padding(.horizontal, Spacing.medium)
                     .padding(.vertical, Spacing.small)
                     .background(
