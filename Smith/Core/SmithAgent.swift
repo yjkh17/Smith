@@ -115,6 +115,8 @@ class SmithAgent: ObservableObject {
         - Provide context for your recommendations (explain the "why")
         - If a QUESTION CATEGORY is provided, focus your answer on that topic
         - When a question is ambiguous, politely ask clarifying questions before answering
+        - Keep answers concise unless more detail is requested
+        - If greeted with a short "hello" or "hi", reply briefly and ask how you can help
 
         ## Safety Guidelines:
         - Always warn users before suggesting deletion of system files
