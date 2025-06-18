@@ -17,38 +17,56 @@
                 CA546D9E2E01BF830087A36E /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
                 CA546DA52E01C3480087A36E /* FoundationModels.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FoundationModels.framework; path = System/Library/Frameworks/FoundationModels.framework; sourceTree = SDKROOT; };
                 CA7A6EFD2DFE4696004DF457 /* Smith.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Smith.app; sourceTree = BUILT_PRODUCTS_DIR; };
+                CAFEFEF93E7B8C8D0087AA09 /* SmithTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SmithTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		CA478DDD2DFEE78F00C1E19B /* Exceptions for "Smith" folder in "Smith" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = CA7A6EFC2DFE4696004DF457 /* Smith */;
-		};
+                CA478DDD2DFEE78F00C1E19B /* Exceptions for "Smith" folder in "Smith" target */ = {
+                        isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+                        membershipExceptions = (
+                                Info.plist,
+                        );
+                        target = CA7A6EFC2DFE4696004DF457 /* Smith */;
+                };
+                CAFEFEF83E7B8C8D0087AA08 /* Exceptions for "SmithTests" folder in "SmithTests" target */ = {
+                        isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+                        membershipExceptions = (
+                                Info.plist,
+                        );
+                        target = CAFEFEFE3E7B8C8D0087AA00 /* SmithTests */;
+                };
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		CA7A6EFF2DFE4696004DF457 /* Smith */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				CA478DDD2DFEE78F00C1E19B /* Exceptions for "Smith" folder in "Smith" target */,
-			);
-			path = Smith;
-			sourceTree = "<group>";
-		};
+                CA7A6EFF2DFE4696004DF457 /* Smith */ = {
+                        isa = PBXFileSystemSynchronizedRootGroup;
+                        exceptions = (
+                                CA478DDD2DFEE78F00C1E19B /* Exceptions for "Smith" folder in "Smith" target */,
+                        );
+                        path = Smith;
+                        sourceTree = "<group>";
+                };
+                CAFEFEF73E7B8C8D0087AA07 /* SmithTests */ = {
+                        isa = PBXFileSystemSynchronizedRootGroup;
+                        path = SmithTests;
+                        sourceTree = "<group>";
+                };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		CA7A6EFA2DFE4696004DF457 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			files = (
-				CA546D9F2E01BF830087A36E /* ServiceManagement.framework in Frameworks */,
-				CA546DA62E01C3480087A36E /* FoundationModels.framework in Frameworks */,
-				CA546DA22E01C2E60087A36E /* IOKit.framework in Frameworks */,
-			);
-		};
+                CA7A6EFA2DFE4696004DF457 /* Frameworks */ = {
+                        isa = PBXFrameworksBuildPhase;
+                        files = (
+                                CA546D9F2E01BF830087A36E /* ServiceManagement.framework in Frameworks */,
+                                CA546DA62E01C3480087A36E /* FoundationModels.framework in Frameworks */,
+                                CA546DA22E01C2E60087A36E /* IOKit.framework in Frameworks */,
+                        );
+                };
+                CAFEFEF53E7B8C8D0087AA05 /* Frameworks */ = {
+                        isa = PBXFrameworksBuildPhase;
+                        files = (
+                        );
+                };
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -64,42 +82,64 @@
 		};
 		CA7A6EF42DFE4695004DF457 = {
 			isa = PBXGroup;
-			children = (
-				CA7A6EFF2DFE4696004DF457 /* Smith */,
-				CA546D992E01BF1E0087A36E /* Frameworks */,
-				CA7A6EFE2DFE4696004DF457 /* Products */,
-			);
+                        children = (
+                                CA7A6EFF2DFE4696004DF457 /* Smith */,
+                                CAFEFEF73E7B8C8D0087AA07 /* SmithTests */,
+                                CA546D992E01BF1E0087A36E /* Frameworks */,
+                                CA7A6EFE2DFE4696004DF457 /* Products */,
+                        );
 			sourceTree = "<group>";
 		};
-		CA7A6EFE2DFE4696004DF457 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				CA7A6EFD2DFE4696004DF457 /* Smith.app */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
+                CA7A6EFE2DFE4696004DF457 /* Products */ = {
+                        isa = PBXGroup;
+                        children = (
+                                CA7A6EFD2DFE4696004DF457 /* Smith.app */,
+                                CAFEFEF93E7B8C8D0087AA09 /* SmithTests.xctest */,
+                        );
+                        name = Products;
+                        sourceTree = "<group>";
+                };
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		CA7A6EFC2DFE4696004DF457 /* Smith */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = CA7A6F082DFE4696004DF457 /* Build configuration list for PBXNativeTarget "Smith" */;
-			buildPhases = (
-				CA7A6EF92DFE4696004DF457 /* Sources */,
-				CA7A6EFA2DFE4696004DF457 /* Frameworks */,
-				CA7A6EFB2DFE4696004DF457 /* Resources */,
-			);
-			buildRules = (
-			);
-			fileSystemSynchronizedGroups = (
-				CA7A6EFF2DFE4696004DF457 /* Smith */,
-			);
-			name = Smith;
-			productName = Smith;
-			productReference = CA7A6EFD2DFE4696004DF457 /* Smith.app */;
-			productType = "com.apple.product-type.application";
-		};
+                CA7A6EFC2DFE4696004DF457 /* Smith */ = {
+                        isa = PBXNativeTarget;
+                        buildConfigurationList = CA7A6F082DFE4696004DF457 /* Build configuration list for PBXNativeTarget "Smith" */;
+                        buildPhases = (
+                                CA7A6EF92DFE4696004DF457 /* Sources */,
+                                CA7A6EFA2DFE4696004DF457 /* Frameworks */,
+                                CA7A6EFB2DFE4696004DF457 /* Resources */,
+                        );
+                        buildRules = (
+                        );
+                        fileSystemSynchronizedGroups = (
+                                CA7A6EFF2DFE4696004DF457 /* Smith */,
+                        );
+                        name = Smith;
+                        productName = Smith;
+                        productReference = CA7A6EFD2DFE4696004DF457 /* Smith.app */;
+                        productType = "com.apple.product-type.application";
+                };
+                CAFEFEFE3E7B8C8D0087AA00 /* SmithTests */ = {
+                        isa = PBXNativeTarget;
+                        buildConfigurationList = CAFEFEF33E7B8C8D0087AA03 /* Build configuration list for PBXNativeTarget "SmithTests" */;
+                        buildPhases = (
+                                CAFEFEF43E7B8C8D0087AA04 /* Sources */,
+                                CAFEFEF53E7B8C8D0087AA05 /* Frameworks */,
+                                CAFEFEF63E7B8C8D0087AA06 /* Resources */,
+                        );
+                        buildRules = (
+                        );
+                        dependencies = (
+                        );
+                        fileSystemSynchronizedGroups = (
+                                CAFEFEF73E7B8C8D0087AA07 /* SmithTests */,
+                        );
+                        name = SmithTests;
+                        productName = SmithTests;
+                        productReference = CAFEFEF93E7B8C8D0087AA09 /* SmithTests.xctest */;
+                        productType = "com.apple.product-type.bundle.unit-test";
+                };
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -109,11 +149,15 @@
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2600;
 				LastUpgradeCheck = 2600;
-				TargetAttributes = {
-					CA7A6EFC2DFE4696004DF457 = {
-						CreatedOnToolsVersion = 26.0;
-					};
-				};
+                                TargetAttributes = {
+                                        CA7A6EFC2DFE4696004DF457 = {
+                                                CreatedOnToolsVersion = 26.0;
+                                        };
+                                        CAFEFEFE3E7B8C8D0087AA00 = {
+                                                CreatedOnToolsVersion = 26.0;
+                                                TestTargetID = CA7A6EFC2DFE4696004DF457;
+                                        };
+                                };
 			};
 			buildConfigurationList = CA7A6EF82DFE4695004DF457 /* Build configuration list for PBXProject "Smith" */;
 			developmentRegion = en;
@@ -128,10 +172,11 @@
 			productRefGroup = CA7A6EFE2DFE4696004DF457 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
-			targets = (
-				CA7A6EFC2DFE4696004DF457 /* Smith */,
-			);
-		};
+                        targets = (
+                                CA7A6EFC2DFE4696004DF457 /* Smith */,
+                                CAFEFEFE3E7B8C8D0087AA00 /* SmithTests */,
+                        );
+                };
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -140,14 +185,24 @@
                         files = (
                         );
                 };
+                CAFEFEF63E7B8C8D0087AA06 /* Resources */ = {
+                        isa = PBXResourcesBuildPhase;
+                        files = (
+                        );
+                };
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		CA7A6EF92DFE4696004DF457 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			files = (
-			);
-		};
+                CA7A6EF92DFE4696004DF457 /* Sources */ = {
+                        isa = PBXSourcesBuildPhase;
+                        files = (
+                        );
+                };
+                CAFEFEF43E7B8C8D0087AA04 /* Sources */ = {
+                        isa = PBXSourcesBuildPhase;
+                        files = (
+                        );
+                };
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
@@ -305,9 +360,9 @@
 			};
 			name = Debug;
 		};
-		CA7A6F0A2DFE4696004DF457 /* Release configuration for PBXNativeTarget "Smith" */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
+                CA7A6F0A2DFE4696004DF457 /* Release configuration for PBXNativeTarget "Smith" */ = {
+                        isa = XCBuildConfiguration;
+                        buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Smith/Smith.entitlements;
@@ -337,8 +392,35 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
 			};
-			name = Release;
-		};
+                        name = Release;
+                };
+                CAFEFEF13E7B8C8D0087AA01 /* Debug configuration for PBXNativeTarget "SmithTests" */ = {
+                        isa = XCBuildConfiguration;
+                        buildSettings = {
+                                INFOPLIST_FILE = SmithTests/Info.plist;
+                                PRODUCT_NAME = "$(TARGET_NAME)";
+                                SWIFT_VERSION = 6.0;
+                                ENABLE_TESTING_SEARCH_PATHS = YES;
+                                LD_RUNPATH_SEARCH_PATHS = (
+                                        "$(inherited)",
+                                        "@loader_path/../Frameworks",
+                                );
+                        };
+                        name = Debug;
+                };
+                CAFEFEF23E7B8C8D0087AA02 /* Release configuration for PBXNativeTarget "SmithTests" */ = {
+                        isa = XCBuildConfiguration;
+                        buildSettings = {
+                                INFOPLIST_FILE = SmithTests/Info.plist;
+                                PRODUCT_NAME = "$(TARGET_NAME)";
+                                SWIFT_VERSION = 6.0;
+                                LD_RUNPATH_SEARCH_PATHS = (
+                                        "$(inherited)",
+                                        "@loader_path/../Frameworks",
+                                );
+                        };
+                        name = Release;
+                };
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -350,14 +432,22 @@
 			);
 			defaultConfigurationName = Release;
 		};
-		CA7A6F082DFE4696004DF457 /* Build configuration list for PBXNativeTarget "Smith" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				CA7A6F092DFE4696004DF457 /* Debug configuration for PBXNativeTarget "Smith" */,
-				CA7A6F0A2DFE4696004DF457 /* Release configuration for PBXNativeTarget "Smith" */,
-			);
-			defaultConfigurationName = Release;
-		};
+                CA7A6F082DFE4696004DF457 /* Build configuration list for PBXNativeTarget "Smith" */ = {
+                        isa = XCConfigurationList;
+                        buildConfigurations = (
+                                CA7A6F092DFE4696004DF457 /* Debug configuration for PBXNativeTarget "Smith" */,
+                                CA7A6F0A2DFE4696004DF457 /* Release configuration for PBXNativeTarget "Smith" */,
+                        );
+                        defaultConfigurationName = Release;
+                };
+                CAFEFEF33E7B8C8D0087AA03 /* Build configuration list for PBXNativeTarget "SmithTests" */ = {
+                        isa = XCConfigurationList;
+                        buildConfigurations = (
+                                CAFEFEF13E7B8C8D0087AA01 /* Debug configuration for PBXNativeTarget "SmithTests" */,
+                                CAFEFEF23E7B8C8D0087AA02 /* Release configuration for PBXNativeTarget "SmithTests" */,
+                        );
+                        defaultConfigurationName = Debug;
+                };
 /* End XCConfigurationList section */
 	};
 	rootObject = CA7A6EF52DFE4695004DF457 /* Project object */;

@@ -322,6 +322,27 @@ Help us build the most intelligent Mac assistant:
 - **User Experience** - Making complex data accessible and actionable
 - **Testing** - Comprehensive system monitoring validation
 
+## 🧪 Running Tests
+
+The project includes an `SmithTests` target with unit tests for core
+functionality. You can execute the tests from Xcode or the command line:
+
+### Xcode
+
+1. Open `Smith.xcodeproj` in Xcode.
+2. Select the **SmithTests** scheme.
+3. Press **⌘U** to run all tests.
+
+### Command line
+
+Run the test suite using `xcodebuild`:
+
+```bash
+xcodebuild test -project Smith.xcodeproj -scheme SmithTests -destination 'platform=macOS'
+```
+
+This requires Xcode 15 or later on macOS.
+
 ## 📜 License
 
 Smith is released under the MIT License. See LICENSE file for details.

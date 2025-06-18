@@ -396,7 +396,11 @@ class MemoryMonitor: ObservableObject {
         return analysis
     }
     
-    private func formatBytes(_ bytes: UInt64) -> String {
+    /// Format the given byte count using `ByteCountFormatter`.
+    ///
+    /// The method is internal to allow unit tests to verify the
+    /// output formatting.
+    func formatBytes(_ bytes: UInt64) -> String {
         let formatter = ByteCountFormatter()
         formatter.allowedUnits = [.useGB, .useMB]
         formatter.countStyle = .memory
