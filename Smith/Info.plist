@@ -6,8 +6,6 @@
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
-	<key>CFBundleIconFile</key>
-	<string></string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -26,22 +24,12 @@
 	<string>NSApplication</string>
 	<key>NSSupportsAutomaticGraphicsSwitching</key>
 	<true/>
-	<key>NSSystemAdministrationUsageDescription</key>
-	<string>Smith&apos;s Real-Time Intelligence Engine needs system administration access to monitor CPU, memory, and process performance for intelligent system analysis and optimization recommendations.</string>
 	<key>NSDesktopFolderUsageDescription</key>
 	<string>Smith&apos;s Intelligence Engine analyzes files on your desktop to provide contextual system insights and workload detection.</string>
 	<key>NSDocumentsFolderUsageDescription</key>
 	<string>Smith needs access to analyze documents for intelligent workload classification and system optimization.</string>
 	<key>NSDownloadsFolderUsageDescription</key>
 	<string>Smith analyzes downloaded files for smart system recommendations and disk space optimization.</string>
-	<key>NSRemovableVolumesUsageDescription</key>
-	<string>Smith monitors external drives for comprehensive storage analysis and system health insights.</string>
-        <key>NSNetworkVolumesUsageDescription</key>
-        <string>Smith accesses network drives for complete system storage awareness and optimization.</string>
-        <key>NSMicrophoneUsageDescription</key>
-        <string>Smith uses the microphone for future voice command features.</string>
-        <key>NSCameraUsageDescription</key>
-        <string>Smith may access the camera for advanced diagnostics when enabled.</string>
         <key>NSAppleEventsUsageDescription</key>
         <string>Smith&apos;s Intelligence Engine uses Apple Events to monitor running applications for smart workload detection and system optimization.</string>
 	<key>NSPrivacyAccessedAPITypes</key>
@@ -180,11 +168,6 @@
 	<false/>
 	<key>NSHighResolutionCapable</key>
 	<true/>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
-	</dict>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2025 Mother of Brand. All rights reserved.</string>
 	<key>NSSupportsAutomaticTermination</key>
