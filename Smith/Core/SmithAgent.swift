@@ -394,8 +394,8 @@ class SmithAgent: ObservableObject {
     }
     
     // MARK: - Intelligence Engine Integration
-    func setSystemMonitors(cpu: CPUMonitor, battery: BatteryMonitor, memory: MemoryMonitor) {
-        intelligenceEngine.setMonitors(cpu: cpu, battery: battery, memory: memory)
+    func setSystemMonitors(cpu: CPUMonitor, battery: BatteryMonitor, memory: MemoryMonitor, network: NetworkMonitor, storage: StorageMonitor) {
+        intelligenceEngine.setMonitors(cpu: cpu, battery: battery, memory: memory, network: network, storage: storage)
     }
     
     func getCurrentSystemInsights() -> [SystemInsight] {
