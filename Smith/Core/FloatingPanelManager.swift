@@ -112,7 +112,7 @@ class FloatingPanelManager: ObservableObject {
         defaults.synchronize()
     }
 
-    private func saveWindowFrame(for panelId: String) {
+    fileprivate func saveWindowFrame(for panelId: String) {
         guard let window = windowControllers[panelId]?.window else { return }
         let frameString = NSStringFromRect(window.frame)
         defaults.set(frameString, forKey: "smith.panel.\(panelId).frame")
