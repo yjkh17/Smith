@@ -38,12 +38,12 @@ struct CPUView: View {
                 HStack(spacing: 8) {
                     ZStack {
                         Circle()
-                            .stroke(.gray.opacity(0.3), lineWidth: 3)
+                            .stroke(.gray.opacity(0.3), lineWidth: BorderWidth.thick)
                             .frame(width: 40, height: 40)
                         
                         Circle()
                             .trim(from: 0, to: min(cpuMonitor.cpuUsage / 100, 1))
-                            .stroke(cpuUsageColor, lineWidth: 3)
+                            .stroke(cpuUsageColor, lineWidth: BorderWidth.thick)
                             .frame(width: 40, height: 40)
                             .rotationEffect(.degrees(-90))
                             .animation(.easeInOut, value: cpuMonitor.cpuUsage)
@@ -267,7 +267,10 @@ struct CompactProcessRowView: View {
         }
         .padding(.vertical, Spacing.xsmall)
         .padding(.horizontal, Spacing.xsmall)
-        .background(Color.secondary.opacity(0.05), in: RoundedRectangle(cornerRadius: 4))
+        .background(
+            Color.secondary.opacity(0.05),
+            in: RoundedRectangle(cornerRadius: CornerRadius.small)
+        )
         .contentShape(Rectangle())
         .onTapGesture {
             onTap()

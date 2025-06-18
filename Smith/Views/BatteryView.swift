@@ -39,12 +39,12 @@ struct BatteryView: View {
                     // Ultra-Compact Battery Gauge
                     ZStack {
                         // Battery outline
-                        RoundedRectangle(cornerRadius: 3)
-                            .stroke(.gray, lineWidth: 1.5)
+                        RoundedRectangle(cornerRadius: CornerRadius.xsmall)
+                            .stroke(.gray, lineWidth: BorderWidth.medium)
                             .frame(width: 40, height: 24)
                         
                         // Battery level fill
-                        RoundedRectangle(cornerRadius: 2)
+                        RoundedRectangle(cornerRadius: CornerRadius.tiny)
                             .fill(batteryLevelColor)
                             .frame(
                                 width: 36 * (batteryMonitor.batteryLevel / 100),
@@ -60,7 +60,7 @@ struct BatteryView: View {
                             .foregroundColor(Color.primary)
                         
                         // Battery tip
-                        RoundedRectangle(cornerRadius: 1)
+                        RoundedRectangle(cornerRadius: CornerRadius.micro)
                             .fill(.gray)
                             .frame(width: 2, height: 8)
                             .offset(x: 22)
@@ -201,7 +201,7 @@ struct PowerSourceRowView: View {
         .padding(.vertical, Spacing.xsmall)
         .padding(.horizontal, Spacing.small)
         .background(Color.panelBackground)
-        .cornerRadius(8)
+        .cornerRadius(CornerRadius.large)
     }
 }
 
@@ -265,7 +265,7 @@ struct CompactPowerSourceView: View {
         .padding(.vertical, Spacing.xsmall)
         .padding(.horizontal, Spacing.small)
         .background(Color.panelBackground)
-        .cornerRadius(4)
+        .cornerRadius(CornerRadius.small)
     }
 }
 
@@ -316,7 +316,7 @@ struct UltraCompactPowerSourceView: View {
         .padding(.vertical, Spacing.xsmall)
         .padding(.horizontal, Spacing.xsmall)
         .background(Color.panelBackground)
-        .cornerRadius(3)
+        .cornerRadius(CornerRadius.xsmall)
     }
 }
 

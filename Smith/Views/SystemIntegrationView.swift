@@ -88,7 +88,7 @@ struct SystemIntegrationView: View {
                             .padding(.horizontal, Spacing.small)
                             .padding(.vertical, Spacing.xsmall)
                             .background(systemIntegration.isURLSchemeEnabled ? Color.green.opacity(0.2) : Color.red.opacity(0.2))
-                            .cornerRadius(4)
+                            .cornerRadius(CornerRadius.small)
                     }
                     
                     // Supported URL patterns
@@ -145,7 +145,7 @@ struct SystemIntegrationView: View {
                             .padding(.horizontal, Spacing.small)
                             .padding(.vertical, Spacing.xsmall)
                             .background(systemIntegration.isAppleScriptEnabled ? Color.green.opacity(0.2) : Color.red.opacity(0.2))
-                            .cornerRadius(4)
+                            .cornerRadius(CornerRadius.small)
                     }
                     
                     if systemIntegration.isAppleScriptEnabled {
@@ -199,14 +199,14 @@ struct SystemIntegrationView: View {
                                 .padding(.horizontal, Spacing.small)
                                 .padding(.vertical, Spacing.xsmall)
                                 .background(Color.green.opacity(0.2))
-                                .cornerRadius(4)
+                                .cornerRadius(CornerRadius.small)
                         } else {
                             Text("macOS 13+ Required")
                                 .font(.caption)
                                 .padding(.horizontal, Spacing.small)
                                 .padding(.vertical, Spacing.xsmall)
                                 .background(Color.orange.opacity(0.2))
-                                .cornerRadius(4)
+                                .cornerRadius(CornerRadius.small)
                         }
                     }
                     
@@ -312,7 +312,7 @@ struct URLSchemeTestView: View {
                         .fontDesign(.monospaced)
                         .padding()
                         .background(Color.panelBackground)
-                        .cornerRadius(8)
+                        .cornerRadius(CornerRadius.large)
                 }
             }
             
