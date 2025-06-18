@@ -413,7 +413,7 @@ struct MainView: View {
                 // Quick Action Buttons
                 Button {
                     Task {
-                        await smithAgent.analyzeSystemHealth()
+                        smithAgent.analyzeSystemHealth()
                     }
                 } label: {
                     Image(systemName: "heart.text.square")
@@ -422,7 +422,7 @@ struct MainView: View {
                 
                 Button {
                     Task {
-                        await smithAgent.optimizePerformance()
+                        smithAgent.optimizePerformance()
                     }
                 } label: {
                     Image(systemName: "speedometer")

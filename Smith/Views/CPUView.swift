@@ -152,7 +152,7 @@ struct CPUView: View {
         let analysis = cpuMonitor.analyzeHighCPUUsage()
         
         Task {
-            await smithAgent.sendMessage("Analyze my current CPU usage:\n\n\(analysis)")
+            smithAgent.sendMessage("Analyze my current CPU usage:\n\n\(analysis)")
         }
     }
     
@@ -164,7 +164,7 @@ struct CPUView: View {
         let question = "Why are my CPU usage levels at \(String(format: "%.1f", cpuMonitor.cpuUsage))%? Here are my top processes:\n\n\(processesInfo)\n\nWhat should I do to optimize performance?"
         
         Task {
-            await smithAgent.sendMessage(question)
+            smithAgent.sendMessage(question)
         }
     }
     
@@ -172,7 +172,7 @@ struct CPUView: View {
         let question = "Why is \(process.name) using \(String(format: "%.1f", process.cpuUsage))% CPU? Is this normal and what can I do about it?"
         
         Task {
-            await smithAgent.sendMessage(question)
+            smithAgent.sendMessage(question)
         }
     }
 }

@@ -438,7 +438,7 @@ struct FloatingQuickStatsView: View {
             HStack {
                 Button("Full Analysis") {
                     Task {
-                        await smithAgent.analyzeSystemHealth()
+                        smithAgent.analyzeSystemHealth()
                     }
                     NSApp.activate(ignoringOtherApps: true)
                 }
@@ -711,7 +711,7 @@ struct FloatingAIChatView: View {
         
         messageText = ""
         Task {
-            await smithAgent.sendMessage(message)
+            smithAgent.sendMessage(message)
         }
     }
 }

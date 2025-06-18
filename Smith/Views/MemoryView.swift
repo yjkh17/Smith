@@ -107,7 +107,7 @@ struct MemoryView: View {
     private func askAboutProcesses() {
         let processes = memoryMonitor.topMemoryProcesses.prefix(5).map { "\($0.displayName): \(Int($0.memoryMB)) MB" }.joined(separator: "\n")
         Task {
-            await smithAgent.sendMessage("Which apps are consuming the most memory?\n\n\(processes)")
+            smithAgent.sendMessage("Which apps are consuming the most memory?\n\n\(processes)")
         }
     }
 }
