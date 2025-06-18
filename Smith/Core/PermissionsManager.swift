@@ -1,5 +1,6 @@
 import Foundation
 import AVFoundation
+import Combine
 import Cocoa
 
 /// Handles requesting sensitive permissions and tracking authorization status.
@@ -21,7 +22,7 @@ class PermissionsManager: ObservableObject {
     }
 
     private func requestMicrophoneAccess() {
-        AVAudioSession.sharedInstance().requestRecordPermission { granted in
+        AVCaptureDevice.requestAccess(for: .audio) { granted in
             Task { @MainActor in
                 self.microphoneAuthorized = granted
                 if !granted {
