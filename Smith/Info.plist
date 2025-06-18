@@ -34,6 +34,8 @@
         <string>Smith&apos;s Intelligence Engine uses Apple Events to monitor running applications for smart workload detection and system optimization.</string>
         <key>NSLocationUsageDescription</key>
         <string>Smith uses your current location to provide context-aware system insights.</string>
+        <key>NSLocationWhenInUseUsageDescription</key>
+        <string>Smith uses your current location to provide context-aware system insights.</string>
         <key>NSPrivacyAccessedAPITypes</key>
 	<array>
 		<dict>

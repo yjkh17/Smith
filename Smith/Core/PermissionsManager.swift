@@ -51,7 +51,7 @@ class PermissionsManager: NSObject, ObservableObject {
         }
     }
 
-    private func requestLocationAccess() {
+    func requestLocationAccess() {
         let status = locationManager.authorizationStatus
         if status == .notDetermined {
             locationManager.requestWhenInUseAuthorization()
