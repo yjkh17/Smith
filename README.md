@@ -148,6 +148,17 @@ launchctl load ~/Library/LaunchAgents/com.motherofbrand.Smith.BackgroundMonitor.
 launchctl unload ~/Library/LaunchAgents/com.motherofbrand.Smith.BackgroundMonitor.plist
 ```
 
+## Configuration
+
+Smith supports a few user defaults to adjust its behavior. To disable the optional
+network speed test set `smith.networktest.enabled` to `false`:
+
+```bash
+defaults write com.motherofbrand.Smith smith.networktest.enabled -bool false
+```
+
+When disabled, network quality will appear as **Unknown** and no download test is performed.
+
 ## 🛠️ Architecture
 
 Smith is built with modern Apple technologies for comprehensive system awareness:
