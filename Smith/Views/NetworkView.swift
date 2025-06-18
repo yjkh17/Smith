@@ -2,6 +2,7 @@ import SwiftUI
 
 struct NetworkView: View {
     @StateObject private var networkMonitor = NetworkMonitor()
+    @ObservedObject private var permissions = PermissionsManager.shared
 
     private func speedString(_ value: Double) -> String {
         String(format: "%.1f Mbps", value)
@@ -39,6 +40,13 @@ struct NetworkView: View {
                         Text("(\(networkMonitor.networkName))")
                             .font(.caption2)
                             .foregroundColor(Color.primary)
+                    } else if !permissions.locationAuthorized {
+                        Button("Allow Location") {
+                            permissions.requestLocationAccess()
+                        }
+                        .font(.caption2)
+                        .buttonStyle(.bordered)
+                        .controlSize(.mini)
                     }
                     Spacer()
 

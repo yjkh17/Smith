@@ -82,9 +82,12 @@ class NetworkMonitor: ObservableObject {
     
     func startMonitoring() {
         guard !isMonitoring else { return }
-        
+
         isMonitoring = true
-        
+
+        // Ensure location access so Wi-Fi SSID can be read
+        PermissionsManager.shared.requestLocationAccess()
+
         // Start path monitoring
         pathMonitor?.start(queue: monitorQueue)
         
@@ -241,6 +244,11 @@ class NetworkMonitor: ObservableObject {
     }
 
     private func fetchNetworkName(for path: NWPath) -> String? {
+        guard PermissionsManager.shared.locationAuthorized else {
+            logger.debug("Location permission not granted; cannot read Wi-Fi SSID")
+            return nil
+        }
+
         if path.usesInterfaceType(.wifi) {
             return CWWiFiClient.shared().interface()?.ssid()
         }
