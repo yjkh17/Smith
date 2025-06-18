@@ -37,7 +37,7 @@ struct ChatView: View {
                         .frame(width: 8, height: 8)
                         .overlay(
                             Circle()
-                                .stroke(.green, lineWidth: 1)
+                                .stroke(.green, lineWidth: BorderWidth.thin)
                                 .scaleEffect(1.5)
                                 .opacity(0.3)
                                 .animation(.easeInOut(duration: 1).repeatForever(autoreverses: true), value: smithAgent.isProcessing)
@@ -50,13 +50,16 @@ struct ChatView: View {
                 .padding(.horizontal, Spacing.medium)
                 .padding(.vertical, Spacing.small)
                 .background(.green.opacity(0.1), in: Capsule())
-                .overlay(Capsule().stroke(.green.opacity(0.3), lineWidth: 1))
+                .overlay(Capsule().stroke(.green.opacity(0.3), lineWidth: BorderWidth.thin))
             }
             .padding()
-            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
+            .background(
+                .ultraThinMaterial,
+                in: RoundedRectangle(cornerRadius: CornerRadius.massive)
+            )
             .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(.quaternary, lineWidth: 1)
+                RoundedRectangle(cornerRadius: CornerRadius.massive)
+                    .stroke(.quaternary, lineWidth: BorderWidth.thin)
             )
             .padding()
             
@@ -96,10 +99,13 @@ struct ChatView: View {
                     TextField("Message Smith...", text: $messageText, axis: .vertical)
                         .textFieldStyle(.plain)
                         .padding()
-                        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
+                        .background(
+                            .thinMaterial,
+                            in: RoundedRectangle(cornerRadius: CornerRadius.xxlarge)
+                        )
                         .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(.cyan.opacity(0.3), lineWidth: 1)
+                            RoundedRectangle(cornerRadius: CornerRadius.xxlarge)
+                                .stroke(.cyan.opacity(0.3), lineWidth: BorderWidth.thin)
                         )
                         .focused($isTextFieldFocused)
                         .onSubmit {
@@ -116,7 +122,10 @@ struct ChatView: View {
                     .background(.ultraThinMaterial, in: Circle())
                     .overlay(
                         Circle()
-                            .stroke(smithAgent.isProcessing ? .red.opacity(0.5) : .cyan.opacity(0.5), lineWidth: 1)
+                            .stroke(
+                                smithAgent.isProcessing ? .red.opacity(0.5) : .cyan.opacity(0.5),
+                                lineWidth: BorderWidth.thin
+                            )
                     )
                     .disabled(messageText.isEmpty && !smithAgent.isProcessing)
                     .animation(.easeInOut(duration: 0.2), value: smithAgent.isProcessing)
@@ -183,11 +192,11 @@ struct ModernMessageBubble: View {
                         .padding()
                         .background(
                             .blue.opacity(0.2),
-                            in: RoundedRectangle(cornerRadius: 16)
+                            in: RoundedRectangle(cornerRadius: CornerRadius.massive)
                         )
                         .overlay(
-                            RoundedRectangle(cornerRadius: 16)
-                                .stroke(.blue.opacity(0.3), lineWidth: 1)
+                            RoundedRectangle(cornerRadius: CornerRadius.massive)
+                                .stroke(.blue.opacity(0.3), lineWidth: BorderWidth.thin)
                         )
                 } else {
                     Text(message.content)
@@ -234,10 +243,13 @@ struct ModernTypingIndicator: View {
                     }
                 }
                 .padding()
-                .background(.cyan.opacity(0.1), in: RoundedRectangle(cornerRadius: 16))
+                .background(
+                    .cyan.opacity(0.1),
+                    in: RoundedRectangle(cornerRadius: CornerRadius.massive)
+                )
                 .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(.cyan.opacity(0.3), lineWidth: 1)
+                    RoundedRectangle(cornerRadius: CornerRadius.massive)
+                        .stroke(.cyan.opacity(0.3), lineWidth: BorderWidth.thin)
                 )
             }
             .frame(maxWidth: 300, alignment: .leading)
@@ -298,10 +310,13 @@ struct FocusedFileCard: View {
             .buttonStyle(.plain)
         }
         .padding(Spacing.small)
-        .background(.orange.opacity(0.1), in: RoundedRectangle(cornerRadius: 8))
+        .background(
+            .orange.opacity(0.1),
+            in: RoundedRectangle(cornerRadius: CornerRadius.large)
+        )
         .overlay(
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(.orange.opacity(0.3), lineWidth: 1)
+            RoundedRectangle(cornerRadius: CornerRadius.large)
+                .stroke(.orange.opacity(0.3), lineWidth: BorderWidth.thin)
         )
     }
 }
@@ -345,11 +360,14 @@ struct OptimizedMessageBubble: View {
                     .padding(.vertical, Spacing.small)
                     .background(
                         message.isUser ? .blue.opacity(0.2) : .cyan.opacity(0.1),
-                        in: RoundedRectangle(cornerRadius: 14)
+                        in: RoundedRectangle(cornerRadius: CornerRadius.huge)
                     )
                     .overlay(
-                        RoundedRectangle(cornerRadius: 14)
-                            .stroke(message.isUser ? .blue.opacity(0.3) : .cyan.opacity(0.3), lineWidth: 0.5)
+                        RoundedRectangle(cornerRadius: CornerRadius.huge)
+                            .stroke(
+                                message.isUser ? .blue.opacity(0.3) : .cyan.opacity(0.3),
+                                lineWidth: BorderWidth.hairline
+                            )
                     )
             }
             .frame(maxWidth: 280, alignment: message.isUser ? .trailing : .leading)
@@ -390,10 +408,13 @@ struct CompactTypingIndicator: View {
                 }
                 .padding(.horizontal, Spacing.medium)
                 .padding(.vertical, Spacing.small)
-                .background(.cyan.opacity(0.1), in: RoundedRectangle(cornerRadius: 14))
+                .background(
+                    .cyan.opacity(0.1),
+                    in: RoundedRectangle(cornerRadius: CornerRadius.huge)
+                )
                 .overlay(
-                    RoundedRectangle(cornerRadius: 14)
-                        .stroke(.cyan.opacity(0.3), lineWidth: 0.5)
+                    RoundedRectangle(cornerRadius: CornerRadius.huge)
+                        .stroke(.cyan.opacity(0.3), lineWidth: BorderWidth.hairline)
                 )
             }
             .frame(maxWidth: 280, alignment: .leading)
@@ -450,10 +471,13 @@ struct CompactFocusedFileCard: View {
         }
         .padding(.horizontal, Spacing.small)
         .padding(.vertical, Spacing.small)
-        .background(.orange.opacity(0.1), in: RoundedRectangle(cornerRadius: 8))
+        .background(
+            .orange.opacity(0.1),
+            in: RoundedRectangle(cornerRadius: CornerRadius.large)
+        )
         .overlay(
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(.orange.opacity(0.3), lineWidth: 0.5)
+            RoundedRectangle(cornerRadius: CornerRadius.large)
+                .stroke(.orange.opacity(0.3), lineWidth: BorderWidth.hairline)
         )
     }
 }

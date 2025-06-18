@@ -257,7 +257,7 @@ struct MainView: View {
                                     .frame(width: 6, height: 6)
                                     .overlay(
                                         Circle()
-                                            .stroke(selectedSystemView.color, lineWidth: 0.5)
+                                            .stroke(selectedSystemView.color, lineWidth: BorderWidth.hairline)
                                             .scaleEffect(2.0)
                                             .opacity(0.2)
                                             .animation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true), value: selectedSystemView)
@@ -359,7 +359,7 @@ struct MainView: View {
                                 .frame(width: 4, height: 4)
                                 .overlay(
                                     Circle()
-                                        .stroke(aiStatusColor, lineWidth: 0.3)
+                                        .stroke(aiStatusColor, lineWidth: BorderWidth.ultraThin)
                                         .scaleEffect(1.5)
                                         .opacity(0.4)
                                         .animation(.easeInOut(duration: 1).repeatForever(autoreverses: true), value: smithAgent.isProcessing)
@@ -373,7 +373,7 @@ struct MainView: View {
                         .padding(.horizontal, Spacing.small)
                         .padding(.vertical, Spacing.xsmall)
                         .background(aiStatusColor.opacity(0.08), in: Capsule())
-                        .overlay(Capsule().stroke(aiStatusColor.opacity(0.2), lineWidth: 0.3))
+                        .overlay(Capsule().stroke(aiStatusColor.opacity(0.2), lineWidth: BorderWidth.ultraThin))
                     }
                 }
                 .padding(.horizontal, Spacing.large)
@@ -594,10 +594,10 @@ struct CompactAutomationSection: View {
                 }
             }
             .padding(Spacing.medium)
-            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 10))
+            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: CornerRadius.xlarge))
             .overlay(
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(.green.opacity(0.2), lineWidth: 0.5)
+                RoundedRectangle(cornerRadius: CornerRadius.xlarge)
+                    .stroke(.green.opacity(0.2), lineWidth: BorderWidth.hairline)
             )
         }
     }
@@ -796,11 +796,14 @@ struct CompactSystemCard: View {
             .padding(.horizontal, Spacing.xsmall)
             .background(
                 isActive ? color.opacity(0.15) : .clear,
-                in: RoundedRectangle(cornerRadius: 6)
+                in: RoundedRectangle(cornerRadius: CornerRadius.medium)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 6)
-                    .stroke(isActive ? color.opacity(0.5) : Color.secondary.opacity(0.1), lineWidth: isActive ? 1 : 0.5)
+                RoundedRectangle(cornerRadius: CornerRadius.medium)
+                    .stroke(
+                        isActive ? color.opacity(0.5) : Color.secondary.opacity(0.1),
+                        lineWidth: isActive ? BorderWidth.thin : BorderWidth.hairline
+                    )
             )
             .scaleEffect(isActive ? 1.05 : 1.0)
             .animation(.easeInOut(duration: 0.15), value: isActive)
@@ -862,10 +865,10 @@ struct CompactCPUSection: View {
                 }
             }
             .padding(Spacing.medium)
-            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 10))
+            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: CornerRadius.xlarge))
             .overlay(
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(.green.opacity(0.2), lineWidth: 0.5)
+                RoundedRectangle(cornerRadius: CornerRadius.xlarge)
+                    .stroke(.green.opacity(0.2), lineWidth: BorderWidth.hairline)
             )
             
             // Compact CPU View with Reduced Padding
@@ -874,7 +877,7 @@ struct CompactCPUSection: View {
                     .environmentObject(cpuMonitor)
             }
             .frame(maxHeight: 220)
-            .background(.black.opacity(0.02), in: RoundedRectangle(cornerRadius: 8))
+            .background(.black.opacity(0.02), in: RoundedRectangle(cornerRadius: CornerRadius.large))
         }
     }
 }
@@ -912,11 +915,11 @@ struct CompactBatterySection: View {
                 // Compact Battery Visual
                 HStack(spacing: 8) {
                     ZStack {
-                        RoundedRectangle(cornerRadius: 3)
-                            .stroke(.gray.opacity(0.3), lineWidth: 1)
+                        RoundedRectangle(cornerRadius: CornerRadius.xsmall)
+                            .stroke(.gray.opacity(0.3), lineWidth: BorderWidth.thin)
                             .frame(width: 30, height: 16)
                         
-                        RoundedRectangle(cornerRadius: 2)
+                        RoundedRectangle(cornerRadius: CornerRadius.tiny)
                             .fill(Color.green.gradient)
                             .frame(width: 26 * (Double(safeBatteryLevel) / 100), height: 12)
                             .animation(.easeInOut(duration: 0.5), value: safeBatteryLevel)
@@ -942,10 +945,10 @@ struct CompactBatterySection: View {
                 }
             }
             .padding(Spacing.medium)
-            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 10))
+            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: CornerRadius.xlarge))
             .overlay(
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(.yellow.opacity(0.2), lineWidth: 0.5)
+                RoundedRectangle(cornerRadius: CornerRadius.xlarge)
+                    .stroke(.yellow.opacity(0.2), lineWidth: BorderWidth.hairline)
             )
             
             // Compact Battery View with Reduced Padding
@@ -954,7 +957,7 @@ struct CompactBatterySection: View {
                     .environmentObject(batteryMonitor)
             }
             .frame(maxHeight: 200)
-            .background(.black.opacity(0.02), in: RoundedRectangle(cornerRadius: 8))
+            .background(.black.opacity(0.02), in: RoundedRectangle(cornerRadius: CornerRadius.large))
         }
     }
 }
@@ -1003,12 +1006,12 @@ struct CompactDiskSection: View {
                 HStack(spacing: 8) {
                     ZStack {
                         Circle()
-                            .stroke(Color.secondary.opacity(0.2), lineWidth: 3)
+                            .stroke(Color.secondary.opacity(0.2), lineWidth: BorderWidth.thick)
                             .frame(width: 36, height: 36)
 
                         Circle()
                             .trim(from: 0, to: ringProgress)
-                            .stroke(.purple.gradient, style: StrokeStyle(lineWidth: 3, lineCap: .round))
+                            .stroke(.purple.gradient, style: StrokeStyle(lineWidth: BorderWidth.thick, lineCap: .round))
                             .frame(width: 36, height: 36)
                             .rotationEffect(.degrees(-90))
                             .animation(.easeInOut(duration: 1), value: ringProgress)
@@ -1034,10 +1037,10 @@ struct CompactDiskSection: View {
                 }
             }
             .padding(Spacing.medium)
-            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 10))
+            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: CornerRadius.xlarge))
             .overlay(
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(.purple.opacity(0.2), lineWidth: 0.5)
+                RoundedRectangle(cornerRadius: CornerRadius.xlarge)
+                    .stroke(.purple.opacity(0.2), lineWidth: BorderWidth.hairline)
             )
             
             // Compact Disk View with Reduced Padding
@@ -1046,7 +1049,7 @@ struct CompactDiskSection: View {
                     .environmentObject(storageMonitor)
             }
             .frame(maxHeight: 240)
-            .background(.black.opacity(0.02), in: RoundedRectangle(cornerRadius: 8))
+            .background(.black.opacity(0.02), in: RoundedRectangle(cornerRadius: CornerRadius.large))
         }
     }
 }
@@ -1069,7 +1072,7 @@ struct CompactStatItem: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, Spacing.xsmall)
-        .background(color.opacity(0.08), in: RoundedRectangle(cornerRadius: 3))
+        .background(color.opacity(0.08), in: RoundedRectangle(cornerRadius: CornerRadius.xsmall))
     }
 }
 
@@ -1104,10 +1107,10 @@ struct EnhancedIntegrationSection: View {
                 }
             }
             .padding()
-            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
+            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: CornerRadius.xxlarge))
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(.indigo.opacity(0.2), lineWidth: 0.5)
+                RoundedRectangle(cornerRadius: CornerRadius.xxlarge)
+                    .stroke(.indigo.opacity(0.2), lineWidth: BorderWidth.hairline)
             )
             
             // Detailed Integration View
@@ -1138,7 +1141,7 @@ struct ModernIntegrationCard: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, Spacing.small)
-        .background((status ? Color.green : Color.red).opacity(0.08), in: RoundedRectangle(cornerRadius: 6))
+        .background((status ? Color.green : Color.red).opacity(0.08), in: RoundedRectangle(cornerRadius: CornerRadius.medium))
     }
 }
 

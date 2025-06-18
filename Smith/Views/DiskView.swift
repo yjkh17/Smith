@@ -211,7 +211,7 @@ struct FileRowView: View {
         }
         .padding(.vertical, Spacing.xsmall)
         .background(
-            RoundedRectangle(cornerRadius: 6)
+            RoundedRectangle(cornerRadius: CornerRadius.medium)
                 .fill(isSelected ? .cyan.opacity(0.2) : .clear)
         )
     }
@@ -252,7 +252,7 @@ struct CompactFileRowView: View {
         }
         .padding(.vertical, Spacing.xsmall)
         .background(
-            RoundedRectangle(cornerRadius: 4)
+            RoundedRectangle(cornerRadius: CornerRadius.small)
                 .fill(isSelected ? .cyan.opacity(0.2) : .clear)
         )
     }
@@ -294,7 +294,7 @@ struct UltraCompactFileRowView: View {
         .padding(.vertical, Spacing.xsmall)
         .padding(.horizontal, Spacing.xsmall)
         .background(
-            RoundedRectangle(cornerRadius: 3)
+            RoundedRectangle(cornerRadius: CornerRadius.xsmall)
                 .fill(isSelected ? .cyan.opacity(0.2) : .clear)
         )
     }

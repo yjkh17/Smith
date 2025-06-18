@@ -46,12 +46,12 @@ struct MemoryView: View {
                 HStack(spacing: 8) {
                     ZStack {
                         Circle()
-                            .stroke(.gray.opacity(0.3), lineWidth: 3)
+                            .stroke(.gray.opacity(0.3), lineWidth: BorderWidth.thick)
                             .frame(width: 40, height: 40)
 
                         Circle()
                             .trim(from: 0, to: min(usagePercentage / 100, 1))
-                            .stroke(usageColor, lineWidth: 3)
+                            .stroke(usageColor, lineWidth: BorderWidth.thick)
                             .frame(width: 40, height: 40)
                             .rotationEffect(.degrees(-90))
                             .animation(.easeInOut, value: usagePercentage)

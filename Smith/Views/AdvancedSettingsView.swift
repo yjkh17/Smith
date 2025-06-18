@@ -87,7 +87,10 @@ struct AdvancedSettingsView: View {
                             .foregroundColor(.secondary)
                     }
                     .padding(Spacing.small)
-                    .background(.orange.opacity(0.1), in: RoundedRectangle(cornerRadius: 6))
+                    .background(
+                        .orange.opacity(0.1),
+                        in: RoundedRectangle(cornerRadius: CornerRadius.medium)
+                    )
                 }
             }
             

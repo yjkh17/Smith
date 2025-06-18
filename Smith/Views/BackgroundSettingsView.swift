@@ -127,7 +127,7 @@ struct InstallBackgroundMonitoringCard: View {
         }
         .padding()
         .background(Color.blue.opacity(0.1))
-        .cornerRadius(8)
+        .cornerRadius(CornerRadius.large)
         .confirmationDialog("Install Background Monitoring",
                           isPresented: $showingConfirmation,
                           titleVisibility: .visible) {
@@ -371,7 +371,7 @@ struct BackgroundStatsView: View {
                 }
                 .padding()
                 .background(Color.panelBackground)
-                .cornerRadius(8)
+                .cornerRadius(CornerRadius.large)
             }
         }
     }
@@ -408,7 +408,7 @@ struct StatCard: View {
         }
         .padding(Spacing.small)
         .background(color.opacity(0.1))
-        .cornerRadius(6)
+        .cornerRadius(CornerRadius.medium)
     }
 }
 
