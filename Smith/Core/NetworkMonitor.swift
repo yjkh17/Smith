@@ -30,6 +30,7 @@ class NetworkMonitor: ObservableObject {
 
     private let testURLKey = "smith.networktest.url"
     private let pingHostKey = "smith.networktest.pinghost"
+    private let networkTestEnabledKey = "smith.networktest.enabled"
     
     enum ConnectionType: String, CaseIterable {
         case wifi = "WiFi"
@@ -164,11 +165,15 @@ class NetworkMonitor: ObservableObject {
     private func performNetworkSpeedTest() async {
         guard isConnected else { return }
         let defaults = UserDefaults.standard
+        let enabled = defaults.object(forKey: networkTestEnabledKey) as? Bool ?? true
+        guard enabled else {
+            await MainActor.run { self.networkQuality = .unknown }
+            return
+        }
         let testURLString = defaults.string(forKey: testURLKey) ?? "https://httpbin.org/bytes/1048576"
 
         guard let testURL = URL(string: testURLString) else {
-            logger.error("Invalid network test URL: \(testURLString, privacy: .public)")
-            networkQuality = .unknown
+            await MainActor.run { self.networkQuality = .unknown }
             return
         }
 
@@ -191,7 +196,6 @@ class NetworkMonitor: ObservableObject {
             }
 
         } catch {
-            logger.error("Network speed test failed: \(error.localizedDescription, privacy: .public)")
             await MainActor.run {
                 self.networkQuality = .unknown
                 self.downloadSpeed = 0
