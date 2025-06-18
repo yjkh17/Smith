@@ -30,7 +30,7 @@ struct MemoryView: View {
                     Text("Memory Monitor")
                         .font(.callout)
                         .fontWeight(.bold)
-                        .foregroundColor(.white)
+                        .foregroundColor(Color.primary)
                     Spacer()
                     Button(memoryMonitor.isMonitoring ? "Stop" : "Start") {
                         if memoryMonitor.isMonitoring {
@@ -59,22 +59,22 @@ struct MemoryView: View {
                         Text("\(Int(usagePercentage))%")
                             .font(.caption2)
                             .fontWeight(.bold)
-                            .foregroundColor(.white)
+                            .foregroundColor(Color.primary)
                     }
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Used: \(byteString(memoryMonitor.usedMemory))")
                             .font(.caption2)
-                            .foregroundColor(.white)
+                            .foregroundColor(Color.primary)
                         Text("Free: \(byteString(memoryMonitor.freeMemory))")
                             .font(.caption2)
-                            .foregroundColor(.white)
+                            .foregroundColor(Color.primary)
                     }
                     Spacer()
                 }
             }
             .padding(Spacing.small)
-            .background(.gray.opacity(0.1))
+            .background(Color.panelBackground)
 
             ScrollView(showsIndicators: false) {
                 if !memoryMonitor.topMemoryProcesses.isEmpty {
@@ -83,7 +83,7 @@ struct MemoryView: View {
                             Text("Top Processes")
                                 .font(.caption)
                                 .fontWeight(.medium)
-                                .foregroundColor(.white)
+                                .foregroundColor(Color.primary)
                             Spacer()
                             Button("Ask") { askAboutProcesses() }
                                 .buttonStyle(.bordered)
@@ -118,7 +118,7 @@ struct MemoryProcessRowView: View {
     var body: some View {
         HStack {
             Text(process.displayName)
-                .foregroundColor(.white)
+                .foregroundColor(Color.primary)
             Spacer()
             Text("\(Int(process.memoryMB)) MB")
                 .foregroundColor(process.statusColor)

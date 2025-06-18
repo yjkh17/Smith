@@ -19,7 +19,7 @@ struct BatteryView: View {
                     Text("Battery Monitor")
                         .font(.callout)
                         .fontWeight(.bold)
-                        .foregroundColor(.white)
+                        .foregroundColor(Color.primary)
                     
                     Spacer()
                     
@@ -57,7 +57,7 @@ struct BatteryView: View {
                         Text("\(Int(batteryMonitor.batteryLevel))%")
                             .font(.caption2)
                             .fontWeight(.bold)
-                            .foregroundColor(.white)
+                            .foregroundColor(Color.primary)
                         
                         // Battery tip
                         RoundedRectangle(cornerRadius: 1)
@@ -74,7 +74,7 @@ struct BatteryView: View {
                                 .font(.caption2)
                             Text("Status: \(batteryMonitor.batteryState.description)")
                                 .font(.caption2)
-                                .foregroundColor(.white)
+                                .foregroundColor(Color.primary)
                         }
                         
                         HStack {
@@ -97,7 +97,7 @@ struct BatteryView: View {
                 }
             }
             .padding(Spacing.small)
-            .background(.gray.opacity(0.1))
+            .background(Color.panelBackground)
             
             // Ultra-Compact Power Sources and Tips
             ScrollView(showsIndicators: false) {
@@ -108,7 +108,7 @@ struct BatteryView: View {
                             Text("Power Sources")
                                 .font(.caption)
                                 .fontWeight(.medium)
-                                .foregroundColor(.white)
+                                .foregroundColor(Color.primary)
                             
                             ForEach(batteryMonitor.powerSources.prefix(2), id: \.name) { source in
                                 UltraCompactPowerSourceView(source: source)
@@ -122,7 +122,7 @@ struct BatteryView: View {
                         Text("Optimization Tips")
                             .font(.caption)
                             .fontWeight(.medium)
-                            .foregroundColor(.white)
+                            .foregroundColor(Color.primary)
                         
                         VStack(alignment: .leading, spacing: 2) {
                             UltraCompactTipView(icon: "lightbulb", title: "Reduce Brightness")
@@ -176,7 +176,7 @@ struct PowerSourceRowView: View {
         HStack {
             VStack(alignment: .leading) {
                 Text(source.name)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.primary)
                     .fontWeight(.medium)
                 
                 Text(source.type)
@@ -189,7 +189,7 @@ struct PowerSourceRowView: View {
             VStack(alignment: .trailing) {
                 if source.maxCapacity > 0 {
                     Text("\(source.currentCapacity)/\(source.maxCapacity)")
-                        .foregroundColor(.white)
+                        .foregroundColor(Color.primary)
                         .font(.caption)
                 }
                 
@@ -200,7 +200,7 @@ struct PowerSourceRowView: View {
         }
         .padding(.vertical, Spacing.xsmall)
         .padding(.horizontal, Spacing.small)
-        .background(.gray.opacity(0.1))
+        .background(Color.panelBackground)
         .cornerRadius(8)
     }
 }
@@ -218,7 +218,7 @@ struct TipRowView: View {
             
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.primary)
                     .fontWeight(.medium)
                 
                 Text(description)
@@ -240,7 +240,7 @@ struct CompactPowerSourceView: View {
             VStack(alignment: .leading, spacing: 1) {
                 Text(source.name)
                     .font(.caption)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.primary)
                     .fontWeight(.medium)
                 
                 Text(source.type)
@@ -254,7 +254,7 @@ struct CompactPowerSourceView: View {
                 if source.maxCapacity > 0 {
                     Text("\(source.currentCapacity)/\(source.maxCapacity)")
                         .font(.caption2)
-                        .foregroundColor(.white)
+                        .foregroundColor(Color.primary)
                 }
                 
                 Text(source.batteryState.description)
@@ -264,7 +264,7 @@ struct CompactPowerSourceView: View {
         }
         .padding(.vertical, Spacing.xsmall)
         .padding(.horizontal, Spacing.small)
-        .background(.gray.opacity(0.1))
+        .background(Color.panelBackground)
         .cornerRadius(4)
     }
 }
@@ -282,7 +282,7 @@ struct CompactTipView: View {
             
             Text(title)
                 .font(.caption)
-                .foregroundColor(.white)
+                .foregroundColor(Color.primary)
                 .fontWeight(.medium)
             
             Spacer()
@@ -298,7 +298,7 @@ struct UltraCompactPowerSourceView: View {
         HStack {
             Text(source.name)
                 .font(.caption2)
-                .foregroundColor(.white)
+                .foregroundColor(Color.primary)
                 .fontWeight(.medium)
             
             Spacer()
@@ -306,7 +306,7 @@ struct UltraCompactPowerSourceView: View {
             if source.maxCapacity > 0 {
                 Text("\(source.currentCapacity)/\(source.maxCapacity)")
                     .font(.caption2)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.primary)
             }
             
             Text(source.batteryState.description)
@@ -315,7 +315,7 @@ struct UltraCompactPowerSourceView: View {
         }
         .padding(.vertical, Spacing.xsmall)
         .padding(.horizontal, Spacing.xsmall)
-        .background(.gray.opacity(0.1))
+        .background(Color.panelBackground)
         .cornerRadius(3)
     }
 }
@@ -333,7 +333,7 @@ struct UltraCompactTipView: View {
             
             Text(title)
                 .font(.caption2)
-                .foregroundColor(.white)
+                .foregroundColor(Color.primary)
                 .fontWeight(.medium)
             
             Spacer()

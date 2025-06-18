@@ -233,6 +233,7 @@ Smith follows Apple's design principles while prioritizing system intelligence:
 - **Unobtrusive Monitoring** - Comprehensive awareness without impacting performance
 - **Intuitive Interface** - Complex system data presented simply
 - **Contextual Intelligence** - Understanding the relationships between system components
+- **Accessible Colors** - Uses system colors (`Color.primary`, `Color.secondary`) for legible high-contrast UI
 - **Proactive Assistance** - Anticipating needs before problems occur
 - **Privacy Respect** - Complete system knowledge with zero data collection
 
