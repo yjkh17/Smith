@@ -118,6 +118,12 @@ Smith requests several macOS permissions on first launch:
 - **macOS 26.0 or later**
 - **Xcode 15 or later**
 
+### Building Smith
+
+1. Open `Smith.xcodeproj` in **Xcode 15** or later.
+2. In the **Signing & Capabilities** tab for the **Smith** target, enable the **Apple Intelligence** capability. This adds the required `com.apple.developer.apple-intelligence` entitlements found in `Smith/Smith.entitlements`.
+3. Select the **Smith** scheme and click **Run** (or press <kbd>⌘R</kbd>) to build and launch the app.
+
 ### Build & Run
 
 1. Open `Smith.xcodeproj` in Xcode.
