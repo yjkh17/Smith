@@ -125,10 +125,10 @@ class MemoryMonitor: ObservableObject {
         // Update memory pressure if not already set by system events
         if memoryPressure == .normal {
             let usagePercentage = Double(usedMemory) / Double(totalMemory) * 100
-            if usagePercentage > 85 {
-                memoryPressure = .warning
-            } else if usagePercentage > 95 {
+            if usagePercentage > 95 {
                 memoryPressure = .critical
+            } else if usagePercentage > 85 {
+                memoryPressure = .warning
             }
         }
         
@@ -161,8 +161,10 @@ class MemoryMonitor: ObservableObject {
             return MemoryStats(used: 0, free: 0, app: 0, wired: 0, compressed: 0, cached: 0, swap: 0)
         }
         
-        // Use fixed page size instead of vm_kernel_page_size for concurrency safety
-        let pageSize = UInt64(4096) // Standard 4KB page size on modern systems
+        // Determine the system page size dynamically for accurate calculations
+        var hostPageSize: vm_size_t = 0
+        host_page_size(mach_host_self(), &hostPageSize)
+        let pageSize = UInt64(hostPageSize)
         
         let freePages = UInt64(vmStats.free_count)
         let inactivePages = UInt64(vmStats.inactive_count)
