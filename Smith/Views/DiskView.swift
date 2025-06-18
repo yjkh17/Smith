@@ -164,7 +164,7 @@ struct DiskView: View {
         let question = "What does this file do?"
         
         Task {
-            await smithAgent.sendMessage(question)
+            smithAgent.sendMessage(question)
         }
     }
     
@@ -172,7 +172,7 @@ struct DiskView: View {
         let question = "Is this file necessary and safe to delete?"
         
         Task {
-            await smithAgent.sendMessage(question)
+            smithAgent.sendMessage(question)
         }
     }
     
@@ -180,7 +180,7 @@ struct DiskView: View {
         let question = "Please provide a detailed analysis of this file."
         
         Task {
-            await smithAgent.sendMessage(question)
+            smithAgent.sendMessage(question)
         }
     }
 }

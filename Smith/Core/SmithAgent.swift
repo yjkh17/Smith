@@ -29,6 +29,8 @@ class SmithAgent: ObservableObject {
     
     // MARK: - Intelligence Engine
     @Published var intelligenceEngine = IntelligenceEngine()
+
+    private var currentTask: Task<Void, Never>?
     
     
     // MARK: - Foundation Models Properties
@@ -132,7 +134,7 @@ class SmithAgent: ObservableObject {
     }
     
     // MARK: - Message Processing with Streaming
-    func sendMessage(_ text: String) async {
+    func sendMessage(_ text: String) {
         let trimmedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedText.isEmpty else { return }
         
@@ -152,7 +154,9 @@ class SmithAgent: ObservableObject {
         }
         
         // Process with streaming
-        await processMessageWithStreaming(trimmedText)
+        currentTask = Task {
+            await self.processMessageWithStreaming(trimmedText)
+        }
     }
     
     private func processMessageWithStreaming(_ input: String) async {
@@ -293,11 +297,15 @@ class SmithAgent: ObservableObject {
     private func simulateStreaming(_ fullText: String, messageId: UUID) async {
         let words = fullText.components(separatedBy: " ")
         var currentText = ""
-        
+
         for (index, word) in words.enumerated() {
+            if Task.isCancelled {
+                await updateMessage(messageId: messageId, content: currentText, isStreaming: false)
+                return
+            }
             currentText += (index > 0 ? " " : "") + word
             await updateMessage(messageId: messageId, content: currentText, isStreaming: true)
-            
+
             // Small delay to make streaming visible
             try? await Task.sleep(nanoseconds: 50_000_000) // 50ms
         }
@@ -317,12 +325,20 @@ class SmithAgent: ObservableObject {
                 isStreaming: isStreaming
             )
             messages[index] = updatedMessage
-            
+
             // Update conversation message as well
             if let convIndex = currentConversation?.messages.firstIndex(where: { $0.id == messageId }) {
                 currentConversation?.messages[convIndex] = updatedMessage
             }
         }
+    }
+
+    func cancelCurrentTask() {
+        currentTask?.cancel()
+        isStreaming = false
+        streamingMessageId = nil
+        isProcessing = false
+        setStatus(.idle)
     }
     
     private func generateConversationTitle(from message: String) -> String {
@@ -331,7 +347,7 @@ class SmithAgent: ObservableObject {
     }
     
     // MARK: - Quick Analysis Actions
-    func analyzeSystemHealth() async {
+    func analyzeSystemHealth() {
         let intelligenceContext = buildSystemIntelligenceContext()
         let healthReport = """
         System Health Analysis Request:
@@ -346,10 +362,10 @@ class SmithAgent: ObservableObject {
         - Intelligent maintenance suggestions
         """
         
-        await sendMessage(healthReport)
+        sendMessage(healthReport)
     }
-    
-    func optimizePerformance() async {
+
+    func optimizePerformance() {
         let intelligenceContext = buildSystemIntelligenceContext()
         let optimizationRequest = """
         Performance Optimization Request:
@@ -364,7 +380,7 @@ class SmithAgent: ObservableObject {
         - Intelligent performance tuning
         """
         
-        await sendMessage(optimizationRequest)
+        sendMessage(optimizationRequest)
     }
     
     func setFocusedFile(_ file: FileItem?) {

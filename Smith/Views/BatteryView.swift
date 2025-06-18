@@ -156,7 +156,7 @@ struct BatteryView: View {
         let analysis = batteryMonitor.analyzeBatteryHealth()
         
         Task {
-            await smithAgent.sendMessage("Analyze my battery health and provide recommendations:\n\n\(analysis)")
+            smithAgent.sendMessage("Analyze my battery health and provide recommendations:\n\n\(analysis)")
         }
     }
     
@@ -164,7 +164,7 @@ struct BatteryView: View {
         let analysis = batteryMonitor.analyzeHighEnergyApps()
         
         Task {
-            await smithAgent.sendMessage("Which apps are draining my battery?\n\n\(analysis)")
+            smithAgent.sendMessage("Which apps are draining my battery?\n\n\(analysis)")
         }
     }
 }

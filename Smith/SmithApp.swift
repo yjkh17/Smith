@@ -38,7 +38,7 @@ struct SmithApp: App {
                 .onReceive(NotificationCenter.default.publisher(for: .smithSendMessage)) { notification in
                     if let message = notification.object as? String {
                         Task {
-                            await smithAgent.sendMessage(message)
+                            smithAgent.sendMessage(message)
                         }
                     }
                 }
@@ -48,7 +48,7 @@ struct SmithApp: App {
                 .onReceive(NotificationCenter.default.publisher(for: .smithShowCleanup)) { _ in
                     // Show cleanup suggestions
                     Task {
-                        await smithAgent.sendMessage("Please provide system cleanup suggestions for my Mac.")
+                        smithAgent.sendMessage("Please provide system cleanup suggestions for my Mac.")
                     }
                 }
                 .onReceive(NotificationCenter.default.publisher(for: .smithLaunchAgentStatusChanged)) { _ in
@@ -140,7 +140,7 @@ struct SmithApp: App {
             smithAgent.setFocusedFile(fileItem)
             
             Task {
-                await smithAgent.sendMessage("Please analyze this file and tell me what it does.")
+                smithAgent.sendMessage("Please analyze this file and tell me what it does.")
             }
         }
     }
@@ -157,16 +157,16 @@ struct SmithApp: App {
             }
         case "system-health":
             Task {
-                await smithAgent.analyzeSystemHealth()
+                smithAgent.analyzeSystemHealth()
             }
         case "optimize":
             Task {
-                await smithAgent.optimizePerformance()
+                smithAgent.optimizePerformance()
             }
         case "chat":
             if let message = components?.queryItems?.first(where: { $0.name == "message" })?.value {
                 Task {
-                    await smithAgent.sendMessage(message)
+                    smithAgent.sendMessage(message)
                 }
             }
             // Bring app to front
@@ -277,7 +277,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     @objc private func quickHealthCheck() {
         Task { @MainActor in
-            await smithAgent?.analyzeSystemHealth()
+            smithAgent?.analyzeSystemHealth()
             openMainWindow()
         }
     }
@@ -289,21 +289,21 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     @objc private func showBatteryStatus() {
         Task { @MainActor in
-            await smithAgent?.sendMessage("Show me detailed battery status and health information")
+            smithAgent?.sendMessage("Show me detailed battery status and health information")
             openMainWindow()
         }
     }
     
     @objc private func showStorageAnalysis() {
         Task { @MainActor in
-            await smithAgent?.sendMessage("Analyze my storage usage and provide cleanup recommendations")
+            smithAgent?.sendMessage("Analyze my storage usage and provide cleanup recommendations")
             openMainWindow()
         }
     }
     
     @objc private func optimizeSystem() {
         Task { @MainActor in
-            await smithAgent?.optimizePerformance()
+            smithAgent?.optimizePerformance()
             openMainWindow()
         }
     }
@@ -318,7 +318,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             if let fileItem = FileItem(url: url) {
                 smithAgent?.setFocusedFile(fileItem)
                 Task { @MainActor in
-                    await smithAgent?.sendMessage("Please analyze this file/folder and provide insights.")
+                    smithAgent?.sendMessage("Please analyze this file/folder and provide insights.")
                     openMainWindow()
                 }
             }
@@ -409,7 +409,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             if let fileItem = FileItem(url: url) {
                 smithAgent?.setFocusedFile(fileItem)
                 Task { @MainActor in
-                    await smithAgent?.sendMessage("Please analyze this file and provide detailed insights about its purpose, contents, and recommendations.")
+                    smithAgent?.sendMessage("Please analyze this file and provide detailed insights about its purpose, contents, and recommendations.")
                     openMainWindow()
                 }
             }
@@ -421,7 +421,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         if let text = pasteboard.string(forType: .string) {
             Task { @MainActor in
-                await smithAgent?.sendMessage("Context from user selection: \(text)\n\nPlease provide insights or answer questions about this content.")
+                smithAgent?.sendMessage("Context from user selection: \(text)\n\nPlease provide insights or answer questions about this content.")
                 openMainWindow()
             }
         }
@@ -429,7 +429,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     @objc func analyzeSystemPerformanceService(_ pasteboard: NSPasteboard, userData: String, error: UnsafeMutablePointer<NSString>) {
         Task { @MainActor in
-            await smithAgent?.analyzeSystemHealth()
+            smithAgent?.analyzeSystemHealth()
             openMainWindow()
         }
     }
@@ -506,7 +506,7 @@ struct QuickStatsView: View {
             HStack {
                 Button("Full Analysis") {
                     Task {
-                        await smithAgent.analyzeSystemHealth()
+                        smithAgent.analyzeSystemHealth()
                     }
                     NSApp.activate(ignoringOtherApps: true)
                 }
@@ -621,7 +621,7 @@ struct AppQuickStatsView: View {
             HStack {
                 Button("Full Analysis") {
                     Task {
-                        await smithAgent.analyzeSystemHealth()
+                        smithAgent.analyzeSystemHealth()
                     }
                     NSApp.activate(ignoringOtherApps: true)
                 }

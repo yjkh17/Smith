@@ -143,7 +143,7 @@ struct ChatView: View {
     
     private func sendMessage() {
         guard !messageText.isEmpty else {
-            // Stop processing if button is pressed while processing
+            smithAgent.cancelCurrentTask()
             return
         }
         
@@ -151,7 +151,7 @@ struct ChatView: View {
         messageText = ""
         
         Task {
-            await smithAgent.sendMessage(message)
+            smithAgent.sendMessage(message)
         }
     }
 }
