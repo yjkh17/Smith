@@ -71,7 +71,7 @@ struct SmithApp: App {
                 }
                 .onReceive(NotificationCenter.default.publisher(for: .smithBackgroundIntensityChanged)) { notification in
                     if let intensityString = notification.object as? String,
-                       let intensity = LaunchAgentManager.BackgroundIntensity(rawValue: intensityString) {
+                       let intensity = BackgroundIntensity(rawValue: intensityString) {
                         Task {
                             await launchAgentManager.setBackgroundIntensity(intensity)
                         }
