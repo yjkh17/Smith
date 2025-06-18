@@ -71,7 +71,11 @@ class BatteryMonitor: ObservableObject {
                 
                 // Update main battery info if this is the internal battery
                 if source.type == "InternalBattery" {
-                    batteryLevel = Double(source.currentCapacity)
+                    if source.maxCapacity > 0 {
+                        batteryLevel = Double(source.currentCapacity) / Double(source.maxCapacity) * 100
+                    } else {
+                        batteryLevel = 0
+                    }
                     isCharging = source.isCharging
                     batteryState = source.batteryState
                     
@@ -457,8 +461,8 @@ struct PowerSourceInfo {
     init(from info: [String: Any]) {
         self.name = info["Name"] as? String ?? "Unknown"
         self.type = info["Type"] as? String ?? "Unknown"
-        self.currentCapacity = info["CurrentCapacity"] as? Int ?? 0
-        self.maxCapacity = info["MaxCapacity"] as? Int ?? 0
+        self.currentCapacity = info["Current Capacity"] as? Int ?? 0
+        self.maxCapacity = info["Max Capacity"] as? Int ?? 0
         
         let powerSourceState = info["PowerSourceState"] as? String ?? ""
         let isCharging = powerSourceState == "AC Power"
