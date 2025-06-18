@@ -65,6 +65,15 @@ struct CPUView: View {
                                 .font(.caption2)
                                 .foregroundColor(Color.primary)
                         }
+
+                        HStack {
+                            Circle()
+                                .fill(.green)
+                                .frame(width: 4, height: 4)
+                            Text("Load: \(String(format: "%.1f", cpuMonitor.cpuLoadPercentage))%")
+                                .font(.caption2)
+                                .foregroundColor(Color.primary)
+                        }
                         
                         HStack {
                             Circle()

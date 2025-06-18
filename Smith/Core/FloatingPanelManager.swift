@@ -477,7 +477,10 @@ struct FloatingCPUMonitorView: View {
                     .fontWeight(.bold)
                     .foregroundColor(.green)
             }
-            
+            Text("Load: \(String(format: "%.1f", cpuMonitor.cpuLoadPercentage))%")
+                .font(.caption)
+                .foregroundColor(.primary)
+
             // CPU Usage Chart
             VStack(spacing: 8) {
                 GeometryReader { geometry in
