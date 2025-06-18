@@ -6,7 +6,7 @@ import CoreLocation
 
 /// Handles requesting sensitive permissions and tracking authorization status.
 @MainActor
-class PermissionsManager: ObservableObject {
+class PermissionsManager: NSObject, ObservableObject {
     static let shared = PermissionsManager()
 
     @Published var microphoneAuthorized: Bool = false
@@ -16,7 +16,8 @@ class PermissionsManager: ObservableObject {
 
     private let locationManager = CLLocationManager()
 
-    private init() {
+    private override init() {
+        super.init()
         locationManager.delegate = self
     }
 
