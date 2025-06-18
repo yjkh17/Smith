@@ -6,6 +6,11 @@
 //
 
 import SwiftUI
+#if os(macOS)
+import AppKit
+#else
+import UIKit
+#endif
 
 struct ChatView: View {
     @EnvironmentObject var smithAgent: SmithAgent
@@ -158,6 +163,15 @@ struct ChatView: View {
 
 struct ModernMessageBubble: View {
     let message: ChatMessage
+
+    private func copyResponse() {
+#if os(macOS)
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(message.content, forType: .string)
+#else
+        UIPasteboard.general.string = message.content
+#endif
+    }
     
     var body: some View {
         HStack {
@@ -203,9 +217,15 @@ struct ModernMessageBubble: View {
                         .font(.body)
                         .foregroundColor(Color.primary)
                         .padding()
+                        .overlay(alignment: .topTrailing) {
+                            Button(action: copyResponse) {
+                                Image(systemName: "doc.on.doc")
+                            }
+                            .buttonStyle(.plain)
+                        }
                 }
             }
-            .frame(maxWidth: 300, alignment: message.isUser ? .trailing : .leading)
+            .frame(maxWidth: .infinity, alignment: message.isUser ? .trailing : .leading)
             
             if !message.isUser {
                 Spacer()
@@ -252,7 +272,7 @@ struct ModernTypingIndicator: View {
                         .stroke(.cyan.opacity(0.3), lineWidth: BorderWidth.thin)
                 )
             }
-            .frame(maxWidth: 300, alignment: .leading)
+            .frame(maxWidth: .infinity, alignment: .leading)
             
             Spacer()
         }
@@ -324,6 +344,15 @@ struct FocusedFileCard: View {
 // MARK: - Optimized Chat Components
 struct OptimizedMessageBubble: View {
     let message: ChatMessage
+
+    private func copyResponse() {
+#if os(macOS)
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(message.content, forType: .string)
+#else
+        UIPasteboard.general.string = message.content
+#endif
+    }
     
     var body: some View {
         HStack(alignment: .top, spacing: 8) {
@@ -369,8 +398,16 @@ struct OptimizedMessageBubble: View {
                                 lineWidth: BorderWidth.hairline
                             )
                     )
+                    .overlay(alignment: .topTrailing) {
+                        if !message.isUser {
+                            Button(action: copyResponse) {
+                                Image(systemName: "doc.on.doc")
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
             }
-            .frame(maxWidth: 280, alignment: message.isUser ? .trailing : .leading)
+            .frame(maxWidth: .infinity, alignment: message.isUser ? .trailing : .leading)
             
             if !message.isUser {
                 Spacer(minLength: 40)
@@ -417,7 +454,7 @@ struct CompactTypingIndicator: View {
                         .stroke(.cyan.opacity(0.3), lineWidth: BorderWidth.hairline)
                 )
             }
-            .frame(maxWidth: 280, alignment: .leading)
+            .frame(maxWidth: .infinity, alignment: .leading)
             
             Spacer(minLength: 40)
         }
