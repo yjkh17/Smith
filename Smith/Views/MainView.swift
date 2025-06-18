@@ -114,7 +114,7 @@ struct MainView: View {
                             .font(.callout)
                             .fontWeight(.bold)
                             .fontDesign(.monospaced)
-                            .foregroundColor(.white)
+                            .foregroundColor(.primary)
                         
                         Spacer()
                         
@@ -240,7 +240,7 @@ struct MainView: View {
                                 Text(selectedSystemView.title)
                                     .font(.headline)
                                     .fontWeight(.semibold)
-                                    .foregroundColor(.white)
+                                    .foregroundColor(.primary)
                                 
                                 Text(selectedSystemView.description)
                                     .font(.caption2)
@@ -326,7 +326,7 @@ struct MainView: View {
                             .font(.callout)
                             .fontWeight(.bold)
                             .fontDesign(.monospaced)
-                            .foregroundColor(.white)
+                            .foregroundColor(.primary)
                         
                         Text("Your intelligent assistant")
                             .font(.caption2)
@@ -390,10 +390,10 @@ struct MainView: View {
                 ChatView()
                     .environmentObject(smithAgent)
             }
-            .background(.black)
+            .background(Color(.windowBackgroundColor))
         }
         .navigationSplitViewStyle(.balanced)
-        .background(.black)
+        .background(Color(.windowBackgroundColor))
         .sheet(isPresented: $showingSettings) {
             EnhancedSettingsView()
                 .environmentObject(automationManager)
@@ -514,7 +514,7 @@ struct CompactAutomationSection: View {
                     Text("System Automation")
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                        .foregroundColor(.white)
+                        .foregroundColor(.primary)
                     
                     Spacer()
                     
@@ -786,7 +786,7 @@ struct CompactSystemCard: View {
                 Text(value)
                     .font(.caption2)
                     .fontWeight(.medium)
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
             }
@@ -825,7 +825,7 @@ struct CompactCPUSection: View {
                     Text("Performance")
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                        .foregroundColor(.white)
+                        .foregroundColor(.primary)
                     
                     Spacer()
                     
@@ -895,7 +895,7 @@ struct CompactBatterySection: View {
                     Text("Battery Health")
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                        .foregroundColor(.white)
+                        .foregroundColor(.primary)
                     
                     Spacer()
                     
@@ -930,7 +930,7 @@ struct CompactBatterySection: View {
                         Text("\(safeBatteryLevel)%")
                             .font(.callout)
                             .fontWeight(.bold)
-                            .foregroundColor(.white)
+                            .foregroundColor(.primary)
                         
                         Text("4h 32m remaining")
                             .font(.caption2)
@@ -989,7 +989,7 @@ struct CompactDiskSection: View {
                     Text("Storage Usage")
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                        .foregroundColor(.white)
+                        .foregroundColor(.primary)
 
                     Spacer()
 
@@ -1015,14 +1015,14 @@ struct CompactDiskSection: View {
                         Text("\(safeDiskUsage)%")
                             .font(.caption2)
                             .fontWeight(.bold)
-                            .foregroundColor(.white)
+                            .foregroundColor(.primary)
                     }
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text("\(formattedUsedSpace) used")
                             .font(.caption)
                             .fontWeight(.medium)
-                            .foregroundColor(.white)
+                            .foregroundColor(.primary)
 
                         Text("\(formattedAvailableSpace) available")
                             .font(.caption2)
@@ -1081,7 +1081,7 @@ struct EnhancedIntegrationSection: View {
                     Text("System Integration")
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                        .foregroundColor(.white)
+                        .foregroundColor(.primary)
                     
                     Spacer()
                     

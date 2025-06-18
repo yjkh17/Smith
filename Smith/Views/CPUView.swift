@@ -19,7 +19,7 @@ struct CPUView: View {
                     Text("CPU Monitor")
                         .font(.callout)
                         .fontWeight(.bold)
-                        .foregroundColor(.white)
+                        .foregroundColor(.primary)
                     
                     Spacer()
                     
@@ -52,7 +52,7 @@ struct CPUView: View {
                             Text("\(Int(cpuMonitor.cpuUsage))%")
                                 .font(.caption2)
                                 .fontWeight(.bold)
-                                .foregroundColor(.white)
+                                .foregroundColor(.primary)
                         }
                     }
                     
@@ -63,7 +63,7 @@ struct CPUView: View {
                                 .frame(width: 4, height: 4)
                             Text("Usage: \(String(format: "%.1f", cpuMonitor.cpuUsage))%")
                                 .font(.caption2)
-                                .foregroundColor(.white)
+                                .foregroundColor(.primary)
                         }
                         
                         HStack {
@@ -72,7 +72,7 @@ struct CPUView: View {
                                 .frame(width: 4, height: 4)
                             Text("Processes: \(cpuMonitor.processes.count)")
                                 .font(.caption2)
-                                .foregroundColor(.white)
+                                .foregroundColor(.primary)
                         }
                         
                         Button("Analyze CPU") {
@@ -95,7 +95,7 @@ struct CPUView: View {
                     Text("Top Processes")
                         .font(.caption)
                         .fontWeight(.medium)
-                        .foregroundColor(.white)
+                        .foregroundColor(.primary)
                     
                     Spacer()
                     
@@ -122,7 +122,7 @@ struct CPUView: View {
             }
             .background(.black.opacity(0.02))
         }
-        .background(.black)
+        .background(Color(.windowBackgroundColor))
         .frame(maxHeight: 220)
         .onAppear {
             Task {
@@ -185,7 +185,7 @@ struct ProcessRowView: View {
         HStack {
             VStack(alignment: .leading) {
                 Text(process.displayName)
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
                     .lineLimit(1)
                 
                 Text("PID: \(process.pid)")
@@ -233,7 +233,7 @@ struct CompactProcessRowView: View {
             VStack(alignment: .leading, spacing: 1) {
                 Text(process.displayName)
                     .font(.caption2)
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
                     .lineLimit(1)
                 
                 Text("PID: \(process.pid)")

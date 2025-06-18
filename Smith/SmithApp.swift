@@ -15,6 +15,7 @@ struct SmithApp: App {
     @StateObject private var smithAgent = SmithAgent()
     @StateObject private var launchAgentManager = LaunchAgentManager()
     @StateObject private var backgroundService = BackgroundMonitorService()
+    @AppStorage("smith.darkMode") private var darkMode = false
     
     var body: some Scene {
         WindowGroup {
@@ -22,7 +23,7 @@ struct SmithApp: App {
                 .environmentObject(smithAgent)
                 .environmentObject(launchAgentManager)
                 .environmentObject(backgroundService)
-                .preferredColorScheme(.dark)
+                .preferredColorScheme(darkMode ? .dark : .light)
                 .background(.ultraThinMaterial)
                 .onOpenURL { url in
                     handleSmithURL(url)

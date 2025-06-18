@@ -113,7 +113,7 @@ struct DiskView: View {
                                 VStack(alignment: .leading, spacing: 1) {
                                     Text(selectedItem.name)
                                         .font(.caption2)
-                                        .foregroundColor(.white)
+                                        .foregroundColor(.primary)
                                         .lineLimit(2)
                                     
                                     Text(selectedItem.isDirectory ? "Folder" : "File")
@@ -156,7 +156,7 @@ struct DiskView: View {
                 .background(.gray.opacity(0.05))
             }
         }
-        .background(.black)
+        .background(Color(.windowBackgroundColor))
         .frame(maxHeight: 200)
     }
     
@@ -192,12 +192,12 @@ struct FileRowView: View {
     var body: some View {
         HStack {
             Image(systemName: item.icon)
-                .foregroundColor(item.isDirectory ? .cyan : .white)
+                .foregroundColor(item.isDirectory ? .cyan : .primary)
                 .frame(width: 20)
             
             VStack(alignment: .leading) {
                 Text(item.name)
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
                     .lineLimit(1)
                 
                 if !item.isDirectory {
@@ -231,14 +231,14 @@ struct CompactFileRowView: View {
     var body: some View {
         HStack {
             Image(systemName: item.icon)
-                .foregroundColor(item.isDirectory ? .cyan : .white)
+                .foregroundColor(item.isDirectory ? .cyan : .primary)
                 .font(.caption)
                 .frame(width: 12)
             
             VStack(alignment: .leading, spacing: 1) {
                 Text(item.name)
                     .font(.caption)
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
                     .lineLimit(1)
                 
                 if !item.isDirectory {
@@ -272,14 +272,14 @@ struct UltraCompactFileRowView: View {
     var body: some View {
         HStack {
             Image(systemName: item.icon)
-                .foregroundColor(item.isDirectory ? .cyan : .white)
+                .foregroundColor(item.isDirectory ? .cyan : .primary)
                 .font(.caption2)
                 .frame(width: 10)
             
             VStack(alignment: .leading, spacing: 0) {
                 Text(item.name)
                     .font(.caption2)
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
                     .lineLimit(1)
                 
                 if !item.isDirectory {
