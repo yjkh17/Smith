@@ -12,6 +12,7 @@ struct MainView: View {
     @StateObject private var batteryMonitor = BatteryMonitor()
     @StateObject private var cpuMonitor = CPUMonitor()
     @StateObject private var memoryMonitor = MemoryMonitor()
+    @StateObject private var networkMonitor = NetworkMonitor()
     @StateObject private var storageMonitor = StorageMonitor()
     @StateObject private var automationManager = SystemAutomationManager()
     @StateObject private var floatingPanelManager = FloatingPanelManager()
@@ -40,6 +41,17 @@ struct MainView: View {
         if usage > 75 { return .orange }
         return .purple
     }
+
+    private var memoryStatusColor: Color {
+        let usage = safeMemoryUsage
+        if usage > 90 { return .red }
+        if usage > 75 { return .orange }
+        return .blue
+    }
+
+    private var networkStatusColor: Color {
+        return networkMonitor.networkQuality.color
+    }
     
     // Safe conversion helpers
     private var safeCPUUsage: Int {
@@ -57,6 +69,12 @@ struct MainView: View {
     private var safeDiskUsage: Int {
         guard storageMonitor.totalSpace > 0 else { return 0 }
         let percentage = Double(storageMonitor.usedSpace) / Double(storageMonitor.totalSpace) * 100
+        return Int(max(0, min(100, percentage)))
+    }
+
+    private var safeMemoryUsage: Int {
+        guard memoryMonitor.totalMemory > 0 else { return 0 }
+        let percentage = Double(memoryMonitor.usedMemory) / Double(memoryMonitor.totalMemory) * 100
         return Int(max(0, min(100, percentage)))
     }
 
@@ -149,7 +167,16 @@ struct MainView: View {
                         .onLongPressGesture {
                             floatingPanelManager.showCPUMonitor()
                         }
-                        
+
+                        CompactSystemCard(
+                            icon: "memorychip",
+                            value: "\(safeMemoryUsage)%",
+                            color: memoryStatusColor,
+                            isActive: selectedSystemView == .memory
+                        ) {
+                            selectedSystemView = .memory
+                        }
+
                         CompactSystemCard(
                             icon: "battery.100",
                             value: "\(safeBatteryLevel)%",
@@ -161,7 +188,7 @@ struct MainView: View {
                         .onLongPressGesture {
                             floatingPanelManager.showBatteryMonitor()
                         }
-                        
+
                         CompactSystemCard(
                             icon: "internaldrive",
                             value: "\(safeDiskUsage)%",
@@ -170,7 +197,16 @@ struct MainView: View {
                         ) {
                             selectedSystemView = .disk
                         }
-                        
+
+                        CompactSystemCard(
+                            icon: "wifi",
+                            value: networkMonitor.isConnected ? networkMonitor.connectionType.rawValue : "Off",
+                            color: networkStatusColor,
+                            isActive: selectedSystemView == .network
+                        ) {
+                            selectedSystemView = .network
+                        }
+
                         CompactSystemCard(
                             icon: "gearshape.2",
                             value: "Auto",
@@ -244,12 +280,19 @@ struct MainView: View {
                             case .cpu:
                                 CompactCPUSection()
                                     .environmentObject(cpuMonitor)
+                            case .memory:
+                                MemoryView()
+                                    .environmentObject(memoryMonitor)
+                                    .environmentObject(smithAgent)
                             case .battery:
                                 CompactBatterySection()
                                     .environmentObject(batteryMonitor)
                             case .disk:
                                 CompactDiskSection()
                                     .environmentObject(storageMonitor)
+                            case .network:
+                                NetworkView()
+                                    .environmentObject(networkMonitor)
                             case .automation:
                                 CompactAutomationSection()
                                     .environmentObject(automationManager)
@@ -419,6 +462,7 @@ struct MainView: View {
         cpuMonitor.startMonitoring()
         batteryMonitor.startMonitoring()
         memoryMonitor.startMonitoring()
+        networkMonitor.startMonitoring()
         storageMonitor.startMonitoring()
         
         // Setup integrations
@@ -431,6 +475,7 @@ struct MainView: View {
         cpuMonitor.stopMonitoring()
         batteryMonitor.stopMonitoring()
         memoryMonitor.stopMonitoring()
+        networkMonitor.stopMonitoring()
         storageMonitor.stopMonitoring()
     }
     
@@ -675,8 +720,10 @@ struct AutomationSettingsView: View {
 // MARK: - System Monitor Views Enum (Updated)
 enum SystemMonitorView: String, CaseIterable {
     case cpu = "CPU"
+    case memory = "Memory"
     case battery = "Battery"
     case disk = "Disk"
+    case network = "Network"
     case automation = "Automation"
     case integration = "Integration"
     
@@ -687,8 +734,10 @@ enum SystemMonitorView: String, CaseIterable {
     var icon: String {
         switch self {
         case .cpu: return "cpu.fill"
+        case .memory: return "memorychip"
         case .battery: return "battery.100.circle.fill"
         case .disk: return "externaldrive.fill"
+        case .network: return "wifi"
         case .automation: return "gearshape.2.fill"
         case .integration: return "gearshape.2.fill"
         }
@@ -697,8 +746,10 @@ enum SystemMonitorView: String, CaseIterable {
     var description: String {
         switch self {
         case .cpu: return "Monitor processor performance and usage"
+        case .memory: return "Monitor RAM usage and pressure"
         case .battery: return "Track power consumption and health"
         case .disk: return "Analyze storage usage and files"
+        case .network: return "Analyze network connectivity and speed"
         case .automation: return "Automated system maintenance"
         case .integration: return "Configure system integration features"
         }
@@ -707,8 +758,10 @@ enum SystemMonitorView: String, CaseIterable {
     var color: Color {
         switch self {
         case .cpu: return .green
+        case .memory: return .orange
         case .battery: return .yellow
         case .disk: return .purple
+        case .network: return .cyan
         case .automation: return .blue
         case .integration: return .indigo
         }
