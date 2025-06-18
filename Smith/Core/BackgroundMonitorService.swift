@@ -21,10 +21,18 @@ final class BackgroundMonitorService: ObservableObject {
     @Published var isRunning = false
     @Published var lastUpdateTime: Date?
     @Published var backgroundStats: BackgroundSystemStats?
-    
+
     private let logger = Logger(subsystem: "com.motherofbrand.Smith", category: "BackgroundMonitor")
     private var monitoringTimer: Timer?
     private var cancellables = Set<AnyCancellable>()
+
+    // Location to store the most recent stats on disk
+    private let statsFileURL: URL = {
+        let supportDir = FileManager.default
+            .homeDirectoryForCurrentUser
+            .appendingPathComponent("Library/Application Support/Smith", isDirectory: true)
+        return supportDir.appendingPathComponent("background_stats.json")
+    }()
     
     // Core monitors
     private let cpuMonitor: CPUMonitor
@@ -41,7 +49,10 @@ final class BackgroundMonitorService: ObservableObject {
         self.cpuMonitor = CPUMonitor()
         self.memoryMonitor = MemoryMonitor()
         self.batteryMonitor = BatteryMonitor()
-        
+
+        createStatsDirectory()
+        loadSavedStats()
+
         setupNotificationObservers()
         checkBackgroundModeArguments()
     }
@@ -137,6 +148,27 @@ final class BackgroundMonitorService: ObservableObject {
             }
         }
     }
+
+    private func createStatsDirectory() {
+        let directory = statsFileURL.deletingLastPathComponent()
+        do {
+            try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        } catch {
+            logger.error("Failed to create stats directory: \(error.localizedDescription)")
+        }
+    }
+
+    private func loadSavedStats() {
+        guard FileManager.default.fileExists(atPath: statsFileURL.path) else { return }
+        do {
+            let data = try Data(contentsOf: statsFileURL)
+            let stats = try JSONDecoder().decode(BackgroundSystemStats.self, from: data)
+            backgroundStats = stats
+            lastUpdateTime = stats.timestamp
+        } catch {
+            logger.error("Failed to load saved stats: \(error.localizedDescription)")
+        }
+    }
     
     private func scheduleMonitoring() {
         monitoringTimer = Timer.scheduledTimer(withTimeInterval: monitoringInterval, repeats: true) { [weak self] _ in
@@ -193,9 +225,13 @@ final class BackgroundMonitorService: ObservableObject {
     
     private func saveStatsToFile(_ stats: BackgroundSystemStats) async throws {
         logger.info("Background stats: CPU: \(String(format: "%.1f", stats.cpuUsage))%, Memory: \(String(format: "%.1f", stats.memoryUsage))%, Battery: \(String(format: "%.0f", stats.batteryLevel))%")
-        
-        // TODO: Implement proper file storage in later update
-        // For now, we'll just maintain in-memory stats to avoid Codable complexity
+        do {
+            let data = try JSONEncoder().encode(stats)
+            try data.write(to: statsFileURL, options: [.atomic])
+        } catch {
+            logger.error("Failed to save stats: \(error.localizedDescription)")
+            throw error
+        }
     }
     
     private func checkForAnomalies(_ stats: BackgroundSystemStats) async throws {
@@ -272,7 +308,7 @@ final class BackgroundMonitorService: ObservableObject {
 
 // MARK: - Background System Stats Model
 
-struct BackgroundSystemStats: Sendable {
+struct BackgroundSystemStats: Codable, Sendable {
     let timestamp: Date
     let cpuUsage: Double
     let cpuTemperature: Double?
