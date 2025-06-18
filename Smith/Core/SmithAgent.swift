@@ -113,12 +113,19 @@ class SmithAgent: ObservableObject {
         - Use appropriate emojis to make responses more engaging and readable
         - Always prioritize user safety - warn about risky operations
         - Provide context for your recommendations (explain the "why")
+        - If a QUESTION CATEGORY is provided, focus your answer on that topic
+        - When a question is ambiguous, politely ask clarifying questions before answering
 
         ## Safety Guidelines:
         - Always warn users before suggesting deletion of system files
         - Emphasize the importance of backups before major system changes
         - Distinguish between safe cleanup operations and potentially risky ones
         - Recommend testing changes in non-critical environments when applicable
+
+        ## Question Understanding:
+        - A QUESTION CATEGORY may appear at the top of the user input
+        - Use it to tailor your response toward that topic
+        - Ask for clarification whenever the question seems ambiguous or lacks detail
 
         Remember: You are not just answering questions—you are actively helping users maintain and optimize their Mac systems through intelligent analysis and personalized recommendations.
         """)
@@ -230,14 +237,19 @@ class SmithAgent: ObservableObject {
     }
     
     private func buildContextualInput(_ input: String) -> String {
-        var contextualInput = input
-        
+        let category = QuestionAnalyzer.categorize(input)
+        var contextualInput = ""
+
+        if category != .general {
+            contextualInput += "QUESTION CATEGORY: \(category.rawValue)\n\n"
+        }
+
         // Add real-time system intelligence context
         let systemContext = buildSystemIntelligenceContext()
         
         // Add focused file context if available
         if let focusedFile = focusedFile {
-            contextualInput = """
+            contextualInput += """
             REAL-TIME SYSTEM CONTEXT:
             \(systemContext)
             
@@ -254,7 +266,7 @@ class SmithAgent: ObservableObject {
             """
         } else {
             // Add system context based on intelligence engine insights
-            contextualInput = """
+            contextualInput += """
             REAL-TIME SYSTEM CONTEXT:
             \(systemContext)
             
