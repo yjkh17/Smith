@@ -4,6 +4,8 @@
 
 Smith is an intelligent macOS system assistant that monitors, analyzes, and understands every aspect of your Mac. Built with Apple's Foundation Models framework, Smith provides comprehensive system knowledge and AI-powered insights for optimal macOS experience.
 
+**Experimental Preview** - Smith is a proof-of-concept project. Many features described in this repository, such as deep Foundation Models integration, are still under active development and not yet fully implemented.
+
 ## 🎯 **Ultimate Goal**
 
 **Complete Mac Awareness** - Smith's mission is to know everything about your Mac's current state, so when you ask any question about system status, performance, files, applications, or optimization, it can provide accurate, contextual, and actionable answers.
