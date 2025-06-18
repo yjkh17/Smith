@@ -200,6 +200,16 @@ class SmithAgent: ObservableObject {
             contextualInput += "QUESTION CATEGORY: \(category.rawValue)\n\n"
         }
 
+        // Skip system context for identity questions
+        if category == .identity {
+            contextualInput += """
+            USER QUESTION: \(input)
+
+            The user is asking about your identity. Introduce yourself briefly and highlight your capabilities without discussing current system status.
+            """
+            return contextualInput
+        }
+
         // Add real-time system intelligence context
         let systemContext = buildSystemIntelligenceContext()
         
